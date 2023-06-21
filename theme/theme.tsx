@@ -1,17 +1,49 @@
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import type { Preview } from '@storybook/react';
-import React from 'react';
-import { Palette, shape, typography } from '../theme/theme';
-import { pink, cyan, blueGrey, red } from '@mui/material/colors';
-import { rgba, darken } from "polished"
+import {
+    createTheme,
+    PaletteOptions,
+    StyledEngineProvider,
+    ThemeProvider,
+} from '@mui/material/styles';
+import { useMemo } from 'react';
+import { rgba, darken } from "polished";
+import { red } from '@mui/material/colors';
 
-// const newTheme = createTheme({
-//     palette: Palette(colorPalette),
-//     shape,
-//     typography,
-// });
 
-const colorPalette = {
+export function Typography() {
+    const localeFontFamily = `Inter`;
+    const localeWeightLight = 300;
+    const localeWeightMedium = 400;
+    const localeWeightRegular = 400;
+    const localeWeightBold = 700;
+
+    const fonts = [
+        localeFontFamily,
+        `-apple-system`,
+        `Segoe UI`,
+        `Helvetica`,
+        `sans-serif`,
+    ];
+
+    const fontFamily = fonts.map(font => `"${font}"`).join(`,`);
+
+    return {
+        fontFamily: fontFamily,
+        fontWeightBold: localeWeightLight,
+        fontWeightLight: localeWeightMedium,
+        fontWeightMedium: localeWeightRegular,
+        fontWeightRegular: localeWeightBold,
+    };
+}
+
+
+export const shape = {
+    borderRadius: 12,
+};
+
+export const typography = Typography();
+
+export const colorPalette = {
+
     text: {
         light: `#222`,
         dark: `#f7f8fa`,
@@ -38,10 +70,12 @@ const colorPalette = {
         dark: `#661a00`,
         main: `#FF4200`,
     },
-};
 
-export const theme = createTheme({
-    palette: {
+}
+
+export function Palette(colorPalette): PaletteOptions {
+
+    return {
         mode: `dark`,
         background: {
             default: `transparent`,
@@ -79,27 +113,9 @@ export const theme = createTheme({
             dark: colorPalette.warning.dark,
             main: colorPalette.warning.main,
         },
-    },
-});
-const preview: Preview = {
-    parameters: {
-        actions: { argTypesRegex: '^on[A-Z].*' },
-        controls: {
-            expanded: true, // Adds the description and default columns
-            matchers: {
-                color: /(background|color)$/i,
-                date: /Date$/,
-            },
-        },
-    },
-    decorators: [
-        (Story) => (
-            <ThemeProvider theme={theme}>
-                {/* 👇 Decorators in Storybook also accept a function. Replace <Story/> with Story() to enable it  */}
-                <Story />
-            </ThemeProvider>
-        ),
-    ],
-};
+    };
+}
 
-export default preview;
+
+
+
