@@ -1,0 +1,39 @@
+{
+  "name": "@hashport/sdk",
+  "version": "0.0.0",
+  "description": "Utility functions for interacting with the hashport bridge",
+  "main": "./dist/index.js",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc --project tsconfig.build.json",
+    "test:e2e": "ts-node ./lib/test/e2e.ts"
+  },
+  "keywords": [
+    "hashport",
+    "bridge",
+    "sdk"
+  ],
+  "author": "BCWResearch",
+  "license": "MIT",
+  "dependencies": {
+    "cross-fetch": "^3.1.5",
+    "uuid": "^9.0.0"
+  },
+  "peerDependencies": {
+    "@hashgraph/sdk": "^2.24.2",
+    "viem": "^1.0.7"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.2",
+    "abitype": "^0.8.11",
+    "dotenv": "^16.3.1"
+  }
+}
