@@ -1,0 +1,16 @@
+{
+  "name": "@hashport/react-client",
+  "version": "0.0.0",
+  "description": "React Context for hashport bridging operations",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@hashport/sdk": "file:../sdk",
+    "@tanstack/react-query": "^4.29.25"
+  }
+}
