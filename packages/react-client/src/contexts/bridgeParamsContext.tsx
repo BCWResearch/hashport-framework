@@ -1,22 +1,29 @@
 import type { BridgeParams } from '@hashport/sdk';
-import { createContext } from 'react';
+import React, { ReactNode, createContext, useMemo, useReducer } from 'react';
 
-// context that defaults to empty params
-const bridgeParamsContext = createContext<BridgeParams>({
+const defaultBridgeParams = {
     recipient: '',
     sourceAssetId: '',
     sourceNetworkId: '',
     targetNetworkId: '',
     amount: '',
-});
-// action type for what gets passed to the reducer
+};
+export const BridgeParamsContext = createContext<BridgeParams>(defaultBridgeParams);
+
+type BridgeParamsDispatch = {
+    updateBridgeParams(params: Partial<BridgeParams>): void;
+    resetBridgeParams(): void;
+};
+
+export const BridgeParamsDispatchContext = createContext<BridgeParamsDispatch | null>(null);
+
 type Action =
     | {
           type: 'reset';
           payload?: never;
       }
     | { type: 'update'; payload: Partial<BridgeParams> };
-// reducer that handles updating the params object (should allow amount or tokenId, but not both)
+
 const bridgeParamsReducer: React.Reducer<BridgeParams, Action> = (state, { type, payload }) => {
     switch (type) {
         case 'update': {
@@ -54,8 +61,26 @@ const bridgeParamsReducer: React.Reducer<BridgeParams, Action> = (state, { type,
     }
 };
 
-// provider & interface that provides dispatch functions to modify the state
-// provider & interface that provides the bridge params state
+export const BridgeParamsProvider = ({ children }: { children: ReactNode }) => {
+    const [bridgeParams, dispatch] = useReducer(bridgeParamsReducer, defaultBridgeParams);
 
-// (external file) hook that provides bridge params as state
-// (external file) hook that provides dispatch functions as state
+    const bridgeParamsDispatch = useMemo<BridgeParamsDispatch>(
+        () => ({
+            updateBridgeParams(params) {
+                dispatch({ type: 'update', payload: params });
+            },
+            resetBridgeParams() {
+                dispatch({ type: 'reset' });
+            },
+        }),
+        [dispatch],
+    );
+
+    return (
+        <BridgeParamsContext.Provider value={bridgeParams}>
+            <BridgeParamsDispatchContext.Provider value={bridgeParamsDispatch}>
+                {children}
+            </BridgeParamsDispatchContext.Provider>
+        </BridgeParamsContext.Provider>
+    );
+};
