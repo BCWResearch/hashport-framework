@@ -1,14 +1,14 @@
 import type { BridgeParams } from '@hashport/sdk';
-import React, { ReactNode, createContext, useMemo, useReducer } from 'react';
+import { ReactNode, createContext, useMemo, useReducer } from 'react';
 
-const defaultBridgeParams = {
+const DEFAULT_BRIDGE_PARAMS = {
     recipient: '',
     sourceAssetId: '',
     sourceNetworkId: '',
     targetNetworkId: '',
     amount: '',
 };
-export const BridgeParamsContext = createContext<BridgeParams>(defaultBridgeParams);
+export const BridgeParamsContext = createContext<BridgeParams>(DEFAULT_BRIDGE_PARAMS);
 
 type BridgeParamsDispatch = {
     updateBridgeParams(params: Partial<BridgeParams>): void;
@@ -62,7 +62,7 @@ const bridgeParamsReducer: React.Reducer<BridgeParams, Action> = (state, { type,
 };
 
 export const BridgeParamsProvider = ({ children }: { children: ReactNode }) => {
-    const [bridgeParams, dispatch] = useReducer(bridgeParamsReducer, defaultBridgeParams);
+    const [bridgeParams, dispatch] = useReducer(bridgeParamsReducer, DEFAULT_BRIDGE_PARAMS);
 
     const bridgeParamsDispatch = useMemo<BridgeParamsDispatch>(
         () => ({

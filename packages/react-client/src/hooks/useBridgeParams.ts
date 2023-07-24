@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { BridgeParamsContext, BridgeParamsDispatchContext } from '../contexts/bridgeParamsContext';
+import { BridgeParamsContext, BridgeParamsDispatchContext } from '../contexts/bridgeParams';
 
 export const useBridgeParams = () => {
     return useContext(BridgeParamsContext);
