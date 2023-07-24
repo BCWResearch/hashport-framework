@@ -1,4 +1,5 @@
-import { HashportApiClient } from '@hashport/sdk';
+// TODO: replace after publishing package
+import { HashportApiClient } from '../../../sdk/lib/clients/hashportApiClient';
 import { createContext, useMemo } from 'react';
 
 export const HashportApiContext = createContext<HashportApiClient | null>(null);
