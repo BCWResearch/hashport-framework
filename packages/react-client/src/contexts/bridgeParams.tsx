@@ -18,10 +18,30 @@ const bridgeParamsReducer: React.Reducer<BridgeParams, BridgeParamsAction> = (
     { type, payload },
 ) => {
     switch (type) {
-        // TODO: Add specific functions for different params
-        // amount (ft)
-        // tokenId (nft)
-        // recipient
+        case 'setAmount': {
+            const { amount, decimals } = payload;
+            const { tokenId: _, ...prevState } = state;
+            // TODO: validate amount according to decimals
+            return {
+                ...prevState,
+                amount,
+            };
+        }
+        case 'setTokenId': {
+            const { tokenId } = payload;
+            const { amount: _, ...prevState } = state;
+            return {
+                ...prevState,
+                tokenId,
+            };
+        }
+        case 'setRecipient': {
+            const { recipient } = payload;
+            return {
+                ...state,
+                recipient,
+            };
+        }
         case 'selectToken': {
             const { id, chainId, bridgeableAssets } = payload;
             const { sourceAssetId, sourceNetworkId } = state;
@@ -45,30 +65,7 @@ const bridgeParamsReducer: React.Reducer<BridgeParams, BridgeParamsAction> = (
                 };
             }
         }
-        case 'update': {
-            const { amount, tokenId, ...updatePayload } = payload;
-            if (tokenId) {
-                const { amount: _, ...prevState } = state;
-                return {
-                    ...prevState,
-                    ...payload,
-                    tokenId,
-                };
-            } else if (amount) {
-                const { tokenId: _, ...prevState } = state;
-                return {
-                    ...prevState,
-                    ...payload,
-                    amount,
-                };
-            } else {
-                return {
-                    ...state,
-                    ...updatePayload,
-                };
-            }
-        }
-        case 'reset': {
+        case 'resetBridgeParams': {
             return {
                 recipient: '',
                 sourceAssetId: '',
@@ -85,14 +82,20 @@ export const BridgeParamsProvider = ({ children }: { children: ReactNode }) => {
 
     const bridgeParamsDispatch = useMemo<BridgeParamsDispatch>(
         () => ({
-            selectToken(token) {
-                dispatch({ type: 'selectToken', payload: token });
-            },
-            updateBridgeParams(params) {
-                dispatch({ type: 'update', payload: params });
-            },
             resetBridgeParams() {
-                dispatch({ type: 'reset' });
+                dispatch({ type: 'resetBridgeParams' });
+            },
+            selectToken(payload) {
+                dispatch({ type: 'selectToken', payload });
+            },
+            setAmount(payload) {
+                dispatch({ type: 'setAmount', payload });
+            },
+            setRecipient(payload) {
+                dispatch({ type: 'setRecipient', payload });
+            },
+            setTokenId(payload) {
+                dispatch({ type: 'setTokenId', payload });
             },
         }),
         [dispatch],
