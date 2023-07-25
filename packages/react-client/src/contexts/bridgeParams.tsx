@@ -1,5 +1,6 @@
 import type { BridgeParams } from '@hashport/sdk';
 import { ReactNode, createContext, useMemo, useReducer } from 'react';
+import { BridgeParamsAction, BridgeParamsDispatch } from 'types';
 
 const DEFAULT_BRIDGE_PARAMS = {
     recipient: '',
@@ -10,22 +11,40 @@ const DEFAULT_BRIDGE_PARAMS = {
 };
 export const BridgeParamsContext = createContext<BridgeParams>(DEFAULT_BRIDGE_PARAMS);
 
-type BridgeParamsDispatch = {
-    updateBridgeParams(params: Partial<BridgeParams>): void;
-    resetBridgeParams(): void;
-};
-
 export const BridgeParamsDispatchContext = createContext<BridgeParamsDispatch | null>(null);
 
-type Action =
-    | {
-          type: 'reset';
-          payload?: never;
-      }
-    | { type: 'update'; payload: Partial<BridgeParams> };
-
-const bridgeParamsReducer: React.Reducer<BridgeParams, Action> = (state, { type, payload }) => {
+const bridgeParamsReducer: React.Reducer<BridgeParams, BridgeParamsAction> = (
+    state,
+    { type, payload },
+) => {
     switch (type) {
+        // TODO: Add specific functions for different params
+        // amount (ft)
+        // tokenId (nft)
+        // recipient
+        case 'selectToken': {
+            const { id, chainId, bridgeableAssets } = payload;
+            const { sourceAssetId, sourceNetworkId } = state;
+            const isSourceAsset =
+                Boolean(!sourceAssetId && !sourceNetworkId) ||
+                !bridgeableAssets.find(
+                    ({ assetId, chainId }) =>
+                        chainId === +sourceNetworkId && sourceAssetId === assetId.split('-')[0],
+                );
+            if (isSourceAsset) {
+                return {
+                    ...state,
+                    sourceAssetId: id,
+                    sourceNetworkId: chainId.toString(),
+                    targetNetworkId: '',
+                };
+            } else {
+                return {
+                    ...state,
+                    targetNetworkId: chainId.toString(),
+                };
+            }
+        }
         case 'update': {
             const { amount, tokenId, ...updatePayload } = payload;
             if (tokenId) {
@@ -66,6 +85,9 @@ export const BridgeParamsProvider = ({ children }: { children: ReactNode }) => {
 
     const bridgeParamsDispatch = useMemo<BridgeParamsDispatch>(
         () => ({
+            selectToken(token) {
+                dispatch({ type: 'selectToken', payload: token });
+            },
             updateBridgeParams(params) {
                 dispatch({ type: 'update', payload: params });
             },

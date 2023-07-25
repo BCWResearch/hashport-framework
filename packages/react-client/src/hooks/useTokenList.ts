@@ -1,30 +1,18 @@
-import { CondensedAsset, NetworkAssets } from '@hashport/sdk';
+import { NetworkAssets } from '@hashport/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { useHashportApiClient } from './useHashportApiClient';
-
-type ChainId = number;
-
-type AssetId = `${string}-${ChainId}`;
-
-type AssetInfo = Omit<CondensedAsset, 'bridgeableNetworks'> & {
-    chainId: ChainId;
-    bridgeableAssets: { chainId: ChainId; assetId: AssetId }[];
-};
-
-type AssetMap = Map<AssetId, AssetInfo>;
-
-type HashportAssets = {
-    fungible: AssetMap;
-    nonfungible: AssetMap;
-};
+import { AssetId, AssetInfo, HashportAssets, SelectTokenPayload, TokenListProps } from 'types';
+import { useBridgeParamsDispatch } from './useBridgeParams';
 
 export const validateAssets = (
     asset: [AssetId, Partial<AssetInfo>],
 ): asset is [AssetId, AssetInfo] => {
-    const { bridgeableAssets, chainId, decimals, icon, id, isNative, name, symbol } = asset[1];
+    const { bridgeableAssets, chainId, decimals, icon, id, isNative, name, symbol, handleSelect } =
+        asset[1];
     const hasWrappedAssets = (bridgeableAssets?.length ?? 0) > 0;
     return Boolean(
         hasWrappedAssets &&
+            handleSelect &&
             chainId &&
             typeof decimals === 'number' &&
             icon &&
@@ -35,7 +23,10 @@ export const validateAssets = (
     );
 };
 
-export const formatAssets = (networkAssets: NetworkAssets[]): HashportAssets => {
+export const formatAssets = (
+    networkAssets: NetworkAssets[],
+    options: { handleSelect: (token: SelectTokenPayload) => void },
+): HashportAssets => {
     const partialFungibles = new Map<AssetId, Partial<AssetInfo>>();
     const partialNonfungibles = new Map<AssetId, Partial<AssetInfo>>();
 
@@ -68,6 +59,8 @@ export const formatAssets = (networkAssets: NetworkAssets[]): HashportAssets => 
                 decimals,
                 isNative,
                 icon: assetDetails.icon,
+                handleSelect: () =>
+                    options.handleSelect({ id: tokenId, chainId, bridgeableAssets }),
             };
             (isNft ? partialNonfungibles : partialFungibles).set(assetId, token);
         });
@@ -80,17 +73,20 @@ export const formatAssets = (networkAssets: NetworkAssets[]): HashportAssets => 
     };
 };
 
-// TODO: pass in optional onSelect handlers, etc
-export const useTokenList = () => {
+export const useTokenList = ({ onSelect }: TokenListProps = {}) => {
     const hashportApiClient = useHashportApiClient();
-    const { isLoading, isError, data, error } = useQuery({
+    const { selectToken } = useBridgeParamsDispatch();
+
+    return useQuery({
         queryKey: ['token-list'],
         queryFn: async () => {
             const assets = await hashportApiClient.assets();
-            return assets;
+            return formatAssets(assets, {
+                handleSelect(token) {
+                    selectToken(token);
+                    onSelect?.();
+                },
+            });
         },
     });
-    //  TODO: think about how to handle network errors, etc
-    if (!data || isLoading || isError) return null;
-    return formatAssets(data);
 };
