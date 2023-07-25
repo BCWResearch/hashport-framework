@@ -6,7 +6,7 @@ export const HashportApiContext = createContext<HashportApiClient | null>(null);
 
 export const HashportApiProvider = ({
     children,
-    mode = 'mainnet',
+    mode,
 }: {
     children: React.ReactNode;
     mode: 'mainnet' | 'testnet';
