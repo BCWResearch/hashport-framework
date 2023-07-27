@@ -25,7 +25,7 @@ export const validateAssets = (
 
 export const formatAssets = (
     networkAssets: NetworkAssets[],
-    options: { handleSelect: (token: SelectTokenPayload) => void },
+    options?: { handleSelect: (token: SelectTokenPayload) => void },
 ): HashportAssets => {
     const partialFungibles = new Map<AssetId, Partial<AssetInfo>>();
     const partialNonfungibles = new Map<AssetId, Partial<AssetInfo>>();
@@ -60,7 +60,7 @@ export const formatAssets = (
                 isNative,
                 icon: assetDetails.icon,
                 handleSelect: () =>
-                    options.handleSelect({ id: tokenId, chainId, bridgeableAssets }),
+                    options?.handleSelect({ id: tokenId, chainId, bridgeableAssets }),
             };
             (isNft ? partialNonfungibles : partialFungibles).set(assetId, token);
         });

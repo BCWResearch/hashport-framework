@@ -21,9 +21,12 @@ const bridgeParamsReducer: React.Reducer<BridgeParams, BridgeParamsAction> = (
         case 'setAmount': {
             const { amount, decimals } = payload;
             const { tokenId: _, ...prevState } = state;
-            // TODO: validate that amount is number, can have leading 0s, and only 1 decimal
-            const decimalRegex = /^(?:0|[1-9]\d+|)?(?:\.?\d+)?$/gm;
-            if (!amount.match(decimalRegex)) return state;
+            const validInputRegex = new RegExp(
+                `^(?:0{1}?|[1-9]+)?(?:\\.\\d{0,${decimals}}|[1-9]\\d*)?$`,
+                'gm',
+            );
+            // TODO: set state that indicates input error if invalid decimals, etc
+            if (!amount.match(validInputRegex)) return state;
             return {
                 ...prevState,
                 amount,
