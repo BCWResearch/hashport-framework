@@ -24,7 +24,7 @@ import { formatTransactionId } from '../../utils/formatters.js';
 
 const miscHandlers = [
     rest.get(FETCH_TEST_URL, (_, res, ctx) => {
-        return res(ctx.status(200), ctx.json(''));
+        return res(ctx.status(200), ctx.json('mock_data'));
     }),
 ];
 
