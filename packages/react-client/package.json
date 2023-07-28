@@ -11,7 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "@hashport/sdk": "file:../sdk",
-    "@tanstack/react-query": "^4.29.25"
+    "@tanstack/react-query": "^4.29.25",
+    "viem": "^1.4.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

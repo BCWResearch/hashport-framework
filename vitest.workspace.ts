@@ -13,7 +13,10 @@ export default defineWorkspace([
         test: {
             include: ['./packages/react-client/src/**/*.test.*'],
             name: 'react-client',
-            setupFiles: ['./packages/react-client/src/test/setup.ts'],
+            setupFiles: [
+                './packages/react-client/src/test/setup.ts',
+                './packages/sdk/lib/test/setup.ts',
+            ],
             environment: 'jsdom',
             globals: true,
         },

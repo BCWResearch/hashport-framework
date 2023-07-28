@@ -1,5 +1,7 @@
 import { createContext, PropsWithChildren } from 'react';
-import { HashportClient, HashportClientConfig } from '@hashport/sdk';
+// TODO: replace after publishing package
+import { HashportClient } from '@hashport/sdk/lib/clients/hashportClient';
+import { HashportClientConfig } from '@hashport/sdk/lib/types/clients';
 import { BridgeParamsProvider } from './bridgeParams';
 import { HashportApiProvider } from './hashportApi';
 import { HashportQueryClient } from './hashportQueryClient';
