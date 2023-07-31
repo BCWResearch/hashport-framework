@@ -2,7 +2,7 @@ import { Transaction } from '@hashgraph/sdk';
 import { HederaSigner } from '../types/signers';
 import type { HashConnect, HashConnectTypes } from 'hashconnect';
 
-export const createHashpackSigner = (
+export const createHashPackSigner = (
     hashconnect: HashConnect,
     pairingData: HashConnectTypes.SavedPairingData,
     // TODO: if accountIds array is unreliable, pass in directly

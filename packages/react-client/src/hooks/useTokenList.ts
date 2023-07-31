@@ -84,7 +84,7 @@ export const useTokenList = ({ onSelect }: TokenListProps = {}) => {
             return formatAssets(assets, {
                 handleSelect(token) {
                     selectToken(token);
-                    onSelect?.();
+                    onSelect?.(token);
                 },
             });
         },

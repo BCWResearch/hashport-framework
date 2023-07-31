@@ -39,7 +39,24 @@ const client = new HashportClient({
 
 #### Initialization with Injected Wallet Signers
 
-_Coming soon..._
+The hashport SDK comes with a number of adapters for different wallets. Refer to the respective wallet documentation on how to initialize a connection, then pass the connected instance to the adapter before initializing the Hashport Client. Here's a simple example using [Hashconnect](https://github.com/Hashpack/hashconnect) to integrate the HashPack extension.
+
+```ts
+import { createHashPackSigner } from '@hashport/sdk';
+import { evmSigner } from './evmSigner';
+import { appMetadata } from './hashpackMetadata';
+
+const hashconnect = new HashConnect();
+
+const initialize = async () => {
+    await hashconnect.init(appMetadata, 'testnet', false);
+    return new HashportClient({
+        evmSigner,
+        hederaSigner: createHashPackSigner(hashconnect, hashconnect.hcData.pairingData[0]),
+        mode: 'testnet',
+    });
+};
+```
 
 ### Submitting Transactions
 

@@ -1,6 +1,9 @@
 import { AssetInfo } from 'types';
 
-export type SelectTokenPayload = Pick<AssetInfo, 'id' | 'chainId' | 'bridgeableAssets'>;
+export type SelectTokenPayload = Pick<
+    AssetInfo,
+    'id' | 'chainId' | 'bridgeableAssets' | 'decimals'
+>;
 
 export type BridgeParamsAction =
     | {
@@ -10,7 +13,7 @@ export type BridgeParamsAction =
     | { type: 'selectToken'; payload: SelectTokenPayload }
     | { type: 'setAmount'; payload: { amount: string; decimals: number } }
     | { type: 'setTokenId'; payload: { tokenId: string } }
-    | { type: 'setRecipient'; payload: { recipient: string } };
+    | { type: 'setRecipient'; payload: string };
 
 export type BridgeParamsDispatch = {
     [Action in BridgeParamsAction as Action['type']]: (payload: Action['payload']) => void;

@@ -19,5 +19,5 @@ export type HashportAssets = {
 };
 
 export type TokenListProps = {
-    onSelect?: () => void;
+    onSelect?: (token: SelectTokenPayload) => void;
 };

@@ -41,10 +41,9 @@ const bridgeParamsReducer: React.Reducer<BridgeParams, BridgeParamsAction> = (
             };
         }
         case 'setRecipient': {
-            const { recipient } = payload;
             return {
                 ...state,
-                recipient,
+                recipient: payload,
             };
         }
         case 'selectToken': {
