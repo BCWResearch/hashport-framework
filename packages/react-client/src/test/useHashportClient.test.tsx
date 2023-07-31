@@ -54,6 +54,6 @@ describe('useHashportClient', () => {
         user.click(btn);
         await waitForElementToBeRemoved(() => screen.queryByTestId(BUTTON_ID));
         const preTag = await screen.findByTestId(PRE_TAG);
-        expect(preTag.innerHTML).toMatchInlineSnapshot('should fail');
-    }, 6000000);
+        expect(preTag.innerHTML).to.match(/^(?:[a-fA-F0-9]+-){4}[a-fA-F0-9]+$/);
+    });
 });
