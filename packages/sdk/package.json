@@ -29,7 +29,20 @@
   },
   "peerDependencies": {
     "@hashgraph/sdk": "^2.24.2",
-    "viem": "^1.0.7"
+    "hashconnect": "^0.2.4",
+    "viem": "^1.0.7",
+    "wagmi": "^1.3.9"
+  },
+  "peerDependenciesMeta": {
+    "hashconnect": {
+      "optional": true
+    },
+    "wagmi": {
+      "optional": true
+    },
+    "viem": {
+      "optional": false
+    }
   },
   "devDependencies": {
     "@types/uuid": "^9.0.2",

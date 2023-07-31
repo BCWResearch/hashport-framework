@@ -14,6 +14,10 @@ export * from './signers/hederaSdkSigner.js';
 export * from './signers/localEvmSigner.js';
 
 //////////////////////////////////////////////////
+// Adapters
+export * from './adapters';
+
+//////////////////////////////////////////////////
 // Types
 export * from './types/index.js';
 
