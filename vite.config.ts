@@ -8,7 +8,10 @@ export default defineConfig({
     plugins: [react(), tsconfigPaths()],
     optimizeDeps: {
         esbuildOptions: {
-            plugins: [polyfillNode({ globals: { process: false } })],
+            define: { global: 'globalThis' },
+            plugins: [
+                polyfillNode({ globals: { process: false, __dirname: false, buffer: false } }),
+            ],
         },
     },
 });

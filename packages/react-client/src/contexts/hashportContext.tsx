@@ -10,7 +10,7 @@ export type HashportContextProps = PropsWithChildren<Partial<HashportClientConfi
     disconnectedAccountsFallback?: React.ReactNode;
 };
 
-export const HashportContext = createContext<null | HashportClient>(null);
+export const HashportContext = createContext<undefined | HashportClient>(undefined);
 
 export const HashportContextProvider = ({
     children,
@@ -35,15 +35,15 @@ export const HashportContextProvider = ({
             mode,
             persistOptions,
         });
-    return hashportClient ? (
+    return (
         <HashportContext.Provider value={hashportClient}>
             <BridgeParamsProvider>
                 <HashportQueryClient>
-                    <HashportApiProvider mode={mode}>{children}</HashportApiProvider>
+                    <HashportApiProvider mode={mode}>
+                        {hashportClient ? children : disconnectedAccountsFallback}
+                    </HashportApiProvider>
                 </HashportQueryClient>
             </BridgeParamsProvider>
         </HashportContext.Provider>
-    ) : (
-        disconnectedAccountsFallback
     );
 };
