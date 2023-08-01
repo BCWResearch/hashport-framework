@@ -2,7 +2,6 @@ import { NetworkAssets } from '@hashport/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { useHashportApiClient } from './useHashportApiClient';
 import { AssetId, AssetInfo, HashportAssets, SelectTokenPayload, TokenListProps } from 'types';
-import { useBridgeParamsDispatch } from './useBridgeParams';
 
 export const validateAssets = (
     asset: [AssetId, Partial<AssetInfo>],
@@ -75,7 +74,6 @@ export const formatAssets = (
 
 export const useTokenList = ({ onSelect }: TokenListProps = {}) => {
     const hashportApiClient = useHashportApiClient();
-    const { selectToken } = useBridgeParamsDispatch();
 
     return useQuery({
         queryKey: ['token-list'],
@@ -83,7 +81,6 @@ export const useTokenList = ({ onSelect }: TokenListProps = {}) => {
             const assets = await hashportApiClient.assets();
             return formatAssets(assets, {
                 handleSelect(token) {
-                    selectToken(token);
                     onSelect?.(token);
                 },
             });

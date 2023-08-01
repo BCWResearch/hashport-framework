@@ -36,14 +36,14 @@ export const HashportContextProvider = ({
             persistOptions,
         });
     return (
-        <HashportContext.Provider value={hashportClient}>
-            <BridgeParamsProvider>
-                <HashportQueryClient>
-                    <HashportApiProvider mode={mode}>
+        <HashportApiProvider mode={mode}>
+            <HashportContext.Provider value={hashportClient}>
+                <BridgeParamsProvider>
+                    <HashportQueryClient>
                         {hashportClient ? children : disconnectedAccountsFallback}
-                    </HashportApiProvider>
-                </HashportQueryClient>
-            </BridgeParamsProvider>
-        </HashportContext.Provider>
+                    </HashportQueryClient>
+                </BridgeParamsProvider>
+            </HashportContext.Provider>
+        </HashportApiProvider>
     );
 };

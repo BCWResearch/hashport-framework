@@ -26,6 +26,7 @@ const bridgeParamsReducer: React.Reducer<BridgeParams, BridgeParamsAction> = (
                 'gm',
             );
             // TODO: set state that indicates input error if invalid decimals, etc
+            // TODO: might need to allow for multiple leading 0s for people editing the start of the value
             if (!amount.match(validInputRegex)) return state;
             return {
                 ...prevState,
