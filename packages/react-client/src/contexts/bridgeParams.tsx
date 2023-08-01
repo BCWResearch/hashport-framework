@@ -46,28 +46,22 @@ const bridgeParamsReducer: React.Reducer<BridgeParams, BridgeParamsAction> = (
                 recipient: payload,
             };
         }
-        case 'selectToken': {
+        case 'setSourceAsset': {
             const { id, chainId, bridgeableAssets } = payload;
-            const { sourceAssetId, sourceNetworkId } = state;
-            const isSourceAsset =
-                Boolean(!sourceAssetId && !sourceNetworkId) ||
-                !bridgeableAssets.find(
-                    ({ assetId, chainId }) =>
-                        chainId === +sourceNetworkId && sourceAssetId === assetId.split('-')[0],
-                );
-            if (isSourceAsset) {
-                return {
-                    ...state,
-                    sourceAssetId: id,
-                    sourceNetworkId: chainId.toString(),
-                    targetNetworkId: '',
-                };
-            } else {
-                return {
-                    ...state,
-                    targetNetworkId: chainId.toString(),
-                };
-            }
+            return {
+                ...state,
+                sourceAssetId: id,
+                sourceNetworkId: chainId.toString(),
+                targetNetworkId:
+                    bridgeableAssets.length === 1 ? bridgeableAssets[0].chainId.toString() : '',
+            };
+        }
+        case 'setTargetAsset': {
+            const { chainId } = payload;
+            return {
+                ...state,
+                targetNetworkId: chainId.toString(),
+            };
         }
         case 'resetBridgeParams': {
             return {
@@ -89,8 +83,11 @@ export const BridgeParamsProvider = ({ children }: { children: ReactNode }) => {
             resetBridgeParams() {
                 dispatch({ type: 'resetBridgeParams' });
             },
-            selectToken(payload) {
-                dispatch({ type: 'selectToken', payload });
+            setSourceAsset(payload) {
+                dispatch({ type: 'setSourceAsset', payload });
+            },
+            setTargetAsset(payload) {
+                dispatch({ type: 'setTargetAsset', payload });
             },
             setAmount(payload) {
                 dispatch({ type: 'setAmount', payload });
