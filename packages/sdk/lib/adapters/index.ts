@@ -1,2 +1,2 @@
-export { createHashpackSigner } from './hashpack';
+export { createHashPackSigner } from './hashpack';
 export { createWagmiSigner } from './wagmi';
