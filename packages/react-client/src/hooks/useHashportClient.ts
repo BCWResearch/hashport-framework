@@ -32,6 +32,7 @@ export const useQueueHashportTransaction = () => {
             // TODO: throw some sort of error or return something that explains what went wrong
             // TODO: use parseUnits with decimals to get the actual amount
             console.error('invalid bridge params');
+            return;
         }
         return await hashportClient.queueTransaction(bridgeParams);
     }, [bridgeParams, hashportClient]);

@@ -4,7 +4,15 @@ import { AbiFunction } from 'abitype';
 import { AbiItem, TransactionReceipt, isHex, toBytes, toHex } from 'viem';
 import { HashportError } from './error';
 
-export function formatTransactionId(id: TransactionId) {
+export function formatTransactionId(id: TransactionId | string) {
+    if (typeof id === 'string') {
+        const txIdRegex = /^((?:\d\.){2}(?:\d)+[@-]\d+)([.-]\d+)$/;
+        const matches = id.match(txIdRegex);
+        if (!matches || matches.length < 3) throw 'Invalid hedera transactionId';
+        const idAndSeconds = matches[1].replace('@', '-');
+        const nanos = matches[2].substring(1).padStart(9, '0');
+        return `${idAndSeconds}-${nanos}`;
+    }
     if (!id.validStart) throw 'No valid start for hedera transaction id';
     return `${id.accountId}-${id.validStart.seconds}-${id.validStart.nanos
         .toString()
