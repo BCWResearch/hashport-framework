@@ -36,10 +36,10 @@ export const formatAssets = (
             const assetId: AssetId = `${tokenId}-${chainId}`;
             const decimals = assetDetails.decimals ?? 0;
             const isNft = decimals === 0;
+            const assetCollection = isNft ? partialNonfungibles : partialFungibles;
             const bridgeableAssets = Object.entries(bridgeableNetworks ?? {}).map(
                 ([wrappedChainId, { wrappedAsset }]) => {
                     const wrappedAssetId: AssetId = `${wrappedAsset}-${+wrappedChainId}`;
-                    const assetCollection = isNft ? partialNonfungibles : partialFungibles;
                     const wrappedAssetInfo = assetCollection.get(wrappedAssetId) ?? {};
                     assetCollection.set(wrappedAssetId, {
                         ...wrappedAssetInfo,
@@ -49,19 +49,20 @@ export const formatAssets = (
                 },
             );
 
+            const currentBridgeableAssets = assetCollection.get(assetId)?.bridgeableAssets ?? [];
             const token: Partial<AssetInfo> = {
                 id: tokenId,
                 symbol,
                 chainId,
                 name,
-                bridgeableAssets,
+                bridgeableAssets: [...bridgeableAssets, ...currentBridgeableAssets],
                 decimals,
                 isNative,
                 icon: assetDetails.icon,
                 handleSelect: () =>
                     options?.handleSelect({ id: tokenId, chainId, bridgeableAssets }),
             };
-            (isNft ? partialNonfungibles : partialFungibles).set(assetId, token);
+            assetCollection.set(assetId, token);
         });
     }
     const fungible = new Map(Array.from(partialFungibles).filter(validateAssets));
@@ -76,6 +77,7 @@ export const useTokenList = ({ onSelect }: TokenListProps = {}) => {
     const hashportApiClient = useHashportApiClient();
 
     return useQuery({
+        staleTime: Infinity,
         queryKey: ['token-list'],
         queryFn: async () => {
             const assets = await hashportApiClient.assets();

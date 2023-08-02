@@ -3,16 +3,15 @@ import { describe, expect, test } from 'vitest';
 import { formatAssets } from '../hooks/useTokenList';
 
 describe('useTokenList', () => {
-    test('should have no undefined properties', () => {
+    test('should have correct number of assets', () => {
+        const totalFungible = assets.reduce((acc, curr) => {
+            return acc + Object.values(curr.assets).filter(({ decimals }) => !!decimals).length;
+        }, 0);
+        const totalNonfungible = assets.reduce((acc, curr) => {
+            return acc + Object.values(curr.assets).filter(({ decimals }) => !decimals).length;
+        }, 0);
         const formattedAssets = formatAssets(assets);
-        const isValid = Array.from(formattedAssets.fungible).every(([_, assetInfo]) => {
-            const { chainId, bridgeableAssets, icon, decimals, id, isNative, name, symbol } =
-                assetInfo;
-            const hasWrapped = Object.entries(bridgeableAssets ?? {}).length > 0;
-            return Boolean(
-                chainId ?? hasWrapped ?? icon ?? decimals ?? id ?? isNative ?? name ?? symbol,
-            );
-        });
-        expect(isValid).toBe(true);
+        expect(totalFungible).toEqual(formattedAssets.fungible.size);
+        expect(totalNonfungible).toEqual(formattedAssets.nonfungible.size);
     });
 });
