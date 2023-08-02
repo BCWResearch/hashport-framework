@@ -30,7 +30,7 @@ export const RainbowKitBoilerPlate = ({
     children,
     chains = [],
     ...rainbowKitProps
-}: PropsWithChildren<RainbowKitProviderProps>) => {
+}: PropsWithChildren<Partial<RainbowKitProviderProps>>) => {
     return (
         <WagmiConfig config={wagmiConfig}>
             <RainbowKitProvider chains={[...chains, ...hashportChains]} {...rainbowKitProps}>
