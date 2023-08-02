@@ -28,7 +28,7 @@ const wagmiConfig = createConfig({
 // TODO: allow configuring chains, testnet and mainnet
 export const RainbowKitBoilerPlate = ({
     children,
-    chains,
+    chains = [],
     ...rainbowKitProps
 }: PropsWithChildren<RainbowKitProviderProps>) => {
     return (
