@@ -1,17 +1,19 @@
-import { HashportContext } from 'contexts/hashportContext';
+import { HashportClientContext } from 'contexts/hashportClient';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useBridgeParams } from './useBridgeParams';
 import { HashportTransactionData } from '@hashport/sdk';
 
 export const useHashportClient = () => {
-    const hashportClient = useContext(HashportContext);
+    const hashportClient = useContext(HashportClientContext);
     if (!hashportClient) throw 'useHashportClient must be used within HashportContext';
     return hashportClient;
 };
 
 export const useQueue = () => {
     const hashportClient = useHashportClient();
-    const [queue, setQueue] = useState<Map<string, HashportTransactionData>>(new Map());
+    const [queue, setQueue] = useState<Map<string, HashportTransactionData>>(
+        hashportClient.transactionStore.queue,
+    );
 
     useEffect(() => {
         // TODO: think about passing in an id to only watch the state of a particulate transaction

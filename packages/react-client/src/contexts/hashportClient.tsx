@@ -3,16 +3,14 @@ import { createContext, PropsWithChildren } from 'react';
 import { HashportClient } from '@hashport/sdk/lib/clients/hashportClient';
 import { HashportClientConfig } from '@hashport/sdk/lib/types/clients';
 import { BridgeParamsProvider } from './bridgeParams';
-import { HashportApiProvider } from './hashportApi';
-import { HashportQueryClient } from './hashportQueryClient';
 
 export type HashportContextProps = PropsWithChildren<Partial<HashportClientConfig>> & {
     disconnectedAccountsFallback?: React.ReactNode;
 };
 
-export const HashportContext = createContext<undefined | HashportClient>(undefined);
+export const HashportClientContext = createContext<undefined | HashportClient>(undefined);
 
-export const HashportContextProvider = ({
+export const HashportClientContextProvider = ({
     children,
     evmSigner,
     hederaSigner,
@@ -36,14 +34,10 @@ export const HashportContextProvider = ({
             persistOptions,
         });
     return (
-        <HashportApiProvider mode={mode}>
-            <HashportContext.Provider value={hashportClient}>
-                <BridgeParamsProvider>
-                    <HashportQueryClient>
-                        {hashportClient ? children : disconnectedAccountsFallback}
-                    </HashportQueryClient>
-                </BridgeParamsProvider>
-            </HashportContext.Provider>
-        </HashportApiProvider>
+        <HashportClientContext.Provider value={hashportClient}>
+            <BridgeParamsProvider>
+                {hashportClient ? children : disconnectedAccountsFallback}
+            </BridgeParamsProvider>
+        </HashportClientContext.Provider>
     );
 };

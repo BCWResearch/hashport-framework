@@ -1,4 +1,4 @@
-import { HashportContextProvider } from 'contexts/hashportContext';
+import { HashportClientContextProvider } from 'contexts/hashportClient';
 import { describe, test, expect } from 'vitest';
 import { mockEvmSigner, mockHederaSigner } from '@hashport/sdk/lib/test/mocks/mockSigners';
 import { bridgeParamsMock } from '@hashport/sdk/lib/test/mockData/api/bridge';
@@ -46,9 +46,12 @@ describe('useHashportClient', () => {
     test('should fail', async () => {
         const user = userEvent.setup();
         render(
-            <HashportContextProvider evmSigner={mockEvmSigner} hederaSigner={mockHederaSigner}>
+            <HashportClientContextProvider
+                evmSigner={mockEvmSigner}
+                hederaSigner={mockHederaSigner}
+            >
                 <TestComponent />
-            </HashportContextProvider>,
+            </HashportClientContextProvider>,
         );
         const btn = await screen.findByTestId(BUTTON_ID);
         user.click(btn);
