@@ -1,13 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { HashportWidget } from '../packages/react-client/src/components/HashportWidget';
-import { HashportClientContextProvider } from '../packages/react-client/src/contexts/hashportClient';
 import { HashConnect, HashConnectTypes, MessageTypes } from 'hashconnect';
 import React, { useEffect, useState } from 'react';
 import { createHashPackSigner } from '../packages/sdk/lib/adapters/hashpack';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useRainbowKitSigner } from '../packages/react-client/src/hooks/useRainbowKitSigner';
-import { RainbowKitBoilerPlate } from '../packages/react-client/src/contexts/rainbowKitProvider';
-import { HashportApiProvider } from '../packages/react-client/src/contexts/hashportApi';
+import { HashportClientAndRainbowKitProvider } from '../packages/react-client/src/contexts/hashportClient';
 
 const meta = {
     title: 'Hashport Widget',
@@ -30,7 +27,6 @@ const APP_CONFIG = {
 const hashconnect = new HashConnect(true);
 
 const HashportContextWithHashpack = ({ children }: { children: React.ReactNode }) => {
-    const evmSigner = useRainbowKitSigner();
     const [pairingData, setPairingData] = useState<HashConnectTypes.SavedPairingData>();
     const [foundExtension, setFoundExtension] = useState(false);
 
@@ -79,14 +75,13 @@ const HashportContextWithHashpack = ({ children }: { children: React.ReactNode }
         <>
             <button onClick={connect}>Connect HashConnect</button>
             <button onClick={() => hashconnect.clearConnectionsAndData()}>Clear HashConnect</button>
-            <ConnectButton />
-            <HashportClientContextProvider
+            <HashportClientAndRainbowKitProvider
                 mode="testnet"
-                evmSigner={evmSigner}
                 hederaSigner={pairingData && createHashPackSigner(hashconnect, pairingData)}
             >
+                <ConnectButton />
                 {children}
-            </HashportClientContextProvider>
+            </HashportClientAndRainbowKitProvider>
         </>
     );
 };
@@ -94,14 +89,7 @@ const HashportContextWithHashpack = ({ children }: { children: React.ReactNode }
 export const Widget: Story = {
     decorators: [
         story => {
-            return (
-                // TODO: the api provider needs to be moved
-                <HashportApiProvider mode="testnet">
-                    <RainbowKitBoilerPlate>
-                        <HashportContextWithHashpack>{story()}</HashportContextWithHashpack>
-                    </RainbowKitBoilerPlate>
-                </HashportApiProvider>
-            );
+            return <HashportContextWithHashpack>{story()}</HashportContextWithHashpack>;
         },
     ],
 };

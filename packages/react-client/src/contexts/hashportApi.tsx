@@ -9,10 +9,10 @@ export const HashportApiContext = createContext<HashportApiClient | null>(null);
 
 export const HashportApiProvider = ({
     children,
-    mode,
+    mode = "mainnet",
 }: {
     children: React.ReactNode;
-    mode: 'mainnet' | 'testnet';
+    mode?: 'mainnet' | 'testnet';
 }) => {
     const hashportApiClient = useMemo(() => new HashportApiClient(mode), [mode]);
     return (

@@ -18,6 +18,19 @@ const AmountInput = () => {
     );
 };
 
+const NO_SELECTED_TOKEN_AMOUNT = 'NO_SELECTED_TOKEN_AMOUNT';
+const NoSelectedTokenAmountInput = () => {
+    const params = useBridgeParams();
+    const { setAmount } = useBridgeParamsDispatch();
+    return (
+        <input
+            data-testid={NO_SELECTED_TOKEN_AMOUNT}
+            value={params.amount}
+            onChange={({ target }) => setAmount({ amount: target.value, decimals: 0 })}
+        />
+    );
+};
+
 describe('useBridgeParams', () => {
     test('should accept only 1 decimal character, and correct decimal places', async () => {
         const user = userEvent.setup();
@@ -44,9 +57,9 @@ describe('useBridgeParams', () => {
         await waitFor(() => user.clear(inputElement));
         await waitFor(() => user.type(inputElement, '00'));
         expect(inputElement.value).toBe('00');
-        await user.keyboard('[ArrowLeft][ArrowLeft][Digit1]');
+        await waitFor(() => user.keyboard('[ArrowLeft][ArrowLeft][Digit1]'));
         expect(inputElement.value).toBe('100');
-        await user.keyboard('[Backspace][Digit2]');
+        await waitFor(() => user.keyboard('[Backspace][Digit2]'));
         expect(inputElement.value).toBe('200');
 
         await waitFor(() => user.clear(inputElement));
@@ -60,5 +73,16 @@ describe('useBridgeParams', () => {
         await waitFor(() => user.clear(inputElement));
         await waitFor(() => user.type(inputElement, '0.000000000'));
         expect(inputElement.value).toBe('0.00000000');
+    });
+    test('should allow a max of 6 decimals if token not selected', async () => {
+        const user = userEvent.setup();
+        render(
+            <BridgeParamsProvider>
+                <NoSelectedTokenAmountInput />
+            </BridgeParamsProvider>,
+        );
+        const inputElement: HTMLInputElement = await screen.findByTestId(NO_SELECTED_TOKEN_AMOUNT);
+        await waitFor(() => user.type(inputElement, '1.1234567'));
+        expect(inputElement.value).toBe('1.123456');
     });
 });

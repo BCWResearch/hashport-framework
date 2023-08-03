@@ -22,8 +22,9 @@ const bridgeParamsReducer: React.Reducer<BridgeParams, BridgeParamsAction> = (
             const { amount, decimals } = payload;
             const { tokenId: _, ...prevState } = state;
             // Allows for leading 0s. viem's parseUnit will trim them later
+            // Decimals default to 6 if token not selected
             const validInputRegex = new RegExp(
-                `^(?:[0-9]+)?(?:\\.\\d{0,${decimals}}|[1-9]\\d*)?$`,
+                `^(?:[0-9]+)?(?:\\.\\d{0,${decimals || 6}}|\\d*)?$`,
                 'gm',
             );
             if (!amount.match(validInputRegex)) return state;
