@@ -17,5 +17,7 @@ export type BridgeParamsAction =
     | { type: 'setRecipient'; payload: string };
 
 export type BridgeParamsDispatch = {
-    [Action in BridgeParamsAction as Action['type']]: (payload: Action['payload']) => void;
+    [Action in BridgeParamsAction as Action['type']]: Action extends { payload?: never }
+        ? () => void
+        : (payload: Action['payload']) => void;
 };

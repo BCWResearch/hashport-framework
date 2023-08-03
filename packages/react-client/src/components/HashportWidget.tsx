@@ -1,14 +1,16 @@
 import { useBridgeParams, useBridgeParamsDispatch } from 'hooks/useBridgeParams';
-import { useHashportClient, useQueue } from 'hooks/useHashportClient';
+import { useHashportClient, useQueue, useQueueHashportTransaction } from 'hooks/useHashportClient';
 import { useTokenList } from 'hooks/useTokenList';
 import { ChangeEventHandler, FormEventHandler } from 'react';
 
 export const HashportWidget = () => {
     const hashportClient = useHashportClient();
     const queue = useQueue();
+    const queueTransaction = useQueueHashportTransaction();
     const bridgeParams = useBridgeParams();
     const { recipient, sourceAssetId, sourceNetworkId, amount, targetNetworkId } = bridgeParams;
-    const { setSourceAsset, setTargetAsset, setAmount, setRecipient } = useBridgeParamsDispatch();
+    const { setSourceAsset, setTargetAsset, setAmount, setRecipient, resetBridgeParams } =
+        useBridgeParamsDispatch();
     const { data: tokens } = useTokenList();
 
     const sourceId =
@@ -24,10 +26,7 @@ export const HashportWidget = () => {
 
     const handleSubmit: FormEventHandler<HTMLFormElement> = e => {
         e.preventDefault();
-        // TODO: where should amount parsing logic be held? Need access to the decimals before queing
-        console.log(bridgeParams);
-        hashportClient.queueTransaction(bridgeParams).then(res => console.log('queued: ', res));
-        // TODO: clear params
+        queueTransaction?.().then(() => resetBridgeParams());
     };
 
     const handleRecipient: ChangeEventHandler<HTMLInputElement> = e => {
@@ -98,7 +97,7 @@ export const HashportWidget = () => {
                     </label>
                 </>
             )}
-            <button type="submit" disabled={Object.values(bridgeParams).some(v => v === '')}>
+            <button type="submit" disabled={!queueTransaction}>
                 Queue transaction
             </button>
             <button

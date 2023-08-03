@@ -19,7 +19,7 @@ const AmountInput = () => {
 };
 
 describe('useBridgeParams', () => {
-    test('should accept only 1 decimal, no leading 0s, and correct decimal places', async () => {
+    test('should accept only 1 decimal character, and correct decimal places', async () => {
         const user = userEvent.setup();
         render(
             <BridgeParamsProvider>
@@ -43,7 +43,11 @@ describe('useBridgeParams', () => {
 
         await waitFor(() => user.clear(inputElement));
         await waitFor(() => user.type(inputElement, '00'));
-        expect(inputElement.value).toBe('0');
+        expect(inputElement.value).toBe('00');
+        await user.keyboard('[ArrowLeft][ArrowLeft][Digit1]');
+        expect(inputElement.value).toBe('100');
+        await user.keyboard('[Backspace][Digit2]');
+        expect(inputElement.value).toBe('200');
 
         await waitFor(() => user.clear(inputElement));
         await waitFor(() => user.type(inputElement, '1.0'));

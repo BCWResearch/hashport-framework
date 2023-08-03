@@ -21,12 +21,11 @@ const bridgeParamsReducer: React.Reducer<BridgeParams, BridgeParamsAction> = (
         case 'setAmount': {
             const { amount, decimals } = payload;
             const { tokenId: _, ...prevState } = state;
+            // Allows for leading 0s. viem's parseUnit will trim them later
             const validInputRegex = new RegExp(
-                `^(?:0{1}?|[1-9]+)?(?:\\.\\d{0,${decimals}}|[1-9]\\d*)?$`,
+                `^(?:[0-9]+)?(?:\\.\\d{0,${decimals}}|[1-9]\\d*)?$`,
                 'gm',
             );
-            // TODO: set state that indicates input error if invalid decimals, etc
-            // TODO: might need to allow for multiple leading 0s for people editing the start of the value
             if (!amount.match(validInputRegex)) return state;
             return {
                 ...prevState,
