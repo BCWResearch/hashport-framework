@@ -7,47 +7,48 @@ export const HashportWidget = () => {
     const hashportClient = useHashportClient();
     const queue = useQueue();
     const queueTransaction = useQueueHashportTransaction();
-    const bridgeParams = useBridgeParams();
-    const { recipient, sourceAssetId, sourceNetworkId, amount, targetNetworkId } = bridgeParams;
-    const { setSourceAsset, setTargetAsset, setAmount, setRecipient, resetBridgeParams } =
-        useBridgeParamsDispatch();
+    const dispatch = useBridgeParamsDispatch();
     const { data: tokens } = useTokenList();
+    const bridgeParams = useBridgeParams();
+    const { sourceAssetId, sourceNetworkId, amount, targetNetworkId } = bridgeParams;
 
-    const sourceId =
-        sourceAssetId && sourceNetworkId
-            ? (`${sourceAssetId}-${+sourceNetworkId}` as const)
-            : undefined;
+    const source = { id: sourceAssetId, chain: sourceNetworkId };
+    const sourceId = source.id && source.chain ? (`${source.id}-${+source.chain}` as const) : null;
     const sourceAsset = sourceId && tokens?.fungible.get(sourceId);
-    const bridgeableAssets = sourceId && tokens?.fungible.get(sourceId)?.bridgeableAssets;
-    const targetId =
-        targetNetworkId &&
-        (bridgeableAssets?.find(({ chainId }) => chainId.toString() === targetNetworkId)?.assetId ??
-            '');
+    const bridgeable = sourceAsset ? sourceAsset?.bridgeableAssets : null;
+    const target = bridgeable?.find(({ chainId }) => chainId === +targetNetworkId);
+    const targetAsset = target && tokens?.fungible.get(target.assetId);
 
     const handleSubmit: FormEventHandler<HTMLFormElement> = e => {
         e.preventDefault();
-        queueTransaction?.().then(() => resetBridgeParams());
-    };
-
-    const handleRecipient: ChangeEventHandler<HTMLInputElement> = e => {
-        setRecipient(e.target.value);
+        queueTransaction?.().then(() => dispatch.resetBridgeParams());
     };
 
     const handleAmount: ChangeEventHandler<HTMLInputElement> = e => {
-        setAmount({
+        dispatch.setAmount({
             amount: e.target.value,
-            decimals: sourceAsset?.decimals ?? 0,
+            sourceAssetDecimals: sourceAsset?.decimals,
+            targetAssetDecimals: targetAsset?.decimals,
         });
     };
 
     const handleSetSource: ChangeEventHandler<HTMLSelectElement> = e => {
-        const token = tokens?.fungible.get(e.target.value as `${string}-${number}`);
-        if (token) setSourceAsset(token);
+        dispatch.setSourceAsset(tokens?.fungible.get(e.target.value as `${string}-${number}`));
     };
 
     const handleSetTarget: ChangeEventHandler<HTMLSelectElement> = e => {
         const token = tokens?.fungible.get(e.target.value as `${string}-${number}`);
-        if (token) setTargetAsset(token);
+        if (token) {
+            dispatch.setTargetAsset(token);
+            const { chainId } = token;
+            const hederaId = hashportClient.hederaSigner.accountId;
+            const evmAccount = hashportClient.evmSigner.getAddress();
+            const hederaChains = [296, 295];
+            dispatch.setRecipient(hederaChains.includes(chainId) ? hederaId : evmAccount);
+        } else {
+            dispatch.setRecipient('');
+            dispatch.setTargetAsset(undefined);
+        }
     };
 
     return (
@@ -56,10 +57,6 @@ export const HashportWidget = () => {
             style={{ display: 'flex', flexDirection: 'column', gap: '1em' }}
         >
             <label>
-                Recipient:
-                <input onChange={handleRecipient} value={recipient} />
-            </label>
-            <label>
                 Amount:
                 <input onChange={handleAmount} value={amount} />
             </label>
@@ -67,7 +64,7 @@ export const HashportWidget = () => {
                 <>
                     <label>
                         Source Asset:
-                        <select value={sourceId} onChange={handleSetSource}>
+                        <select value={sourceId ?? ''} onChange={handleSetSource}>
                             <option value="">Choose a source asset</option>
                             {Array.from(tokens.fungible)
                                 .sort((a, b) => a[1].symbol.localeCompare(b[1].symbol))
@@ -82,9 +79,9 @@ export const HashportWidget = () => {
                     </label>
                     <label>
                         TargetAsset:
-                        <select value={targetId} onChange={handleSetTarget}>
+                        <select value={target?.assetId ?? ''} onChange={handleSetTarget}>
                             <option value="">Choose a target asset</option>
-                            {bridgeableAssets?.map(({ assetId }) => {
+                            {bridgeable?.map(({ assetId }) => {
                                 const token = tokens.fungible.get(assetId);
                                 if (!token) return;
                                 return (

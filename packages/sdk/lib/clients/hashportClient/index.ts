@@ -29,12 +29,12 @@ import { erc20ABI, erc721ABI } from '../../constants/abi';
  */
 export class HashportClient {
     protected apiClient: HashportApiClient;
-    protected evmSigner: EvmSigner;
-    protected hederaSigner: HederaSigner;
     protected mirrorNodeClient: MirrorNodeClient;
+    protected logger: Logger;
+    evmSigner: EvmSigner;
+    hederaSigner: HederaSigner;
     transactionStore: ReturnType<ReturnType<typeof createHashportStore>['getState']>;
     subscribe: ReturnType<typeof createHashportStore>['subscribe'];
-    logger: Logger;
 
     constructor({
         evmSigner,

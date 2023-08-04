@@ -10,9 +10,16 @@ export type BridgeParamsAction =
           type: 'resetBridgeParams';
           payload?: never;
       }
-    | { type: 'setSourceAsset'; payload: SelectTokenPayload }
-    | { type: 'setTargetAsset'; payload: SelectTokenPayload }
-    | { type: 'setAmount'; payload: { amount: string; decimals: number } }
+    | { type: 'setSourceAsset'; payload?: SelectTokenPayload }
+    | { type: 'setTargetAsset'; payload?: SelectTokenPayload }
+    | {
+          type: 'setAmount';
+          payload: {
+              amount: string;
+              sourceAssetDecimals: number | undefined;
+              targetAssetDecimals: number | undefined;
+          };
+      }
     | { type: 'setTokenId'; payload: { tokenId: string } }
     | { type: 'setRecipient'; payload: string };
 

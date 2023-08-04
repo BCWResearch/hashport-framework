@@ -19,10 +19,11 @@ const bridgeParamsReducer: React.Reducer<BridgeParams, BridgeParamsAction> = (
 ) => {
     switch (type) {
         case 'setAmount': {
-            const { amount, decimals } = payload;
+            const { amount, sourceAssetDecimals, targetAssetDecimals } = payload;
             const { tokenId: _, ...prevState } = state;
             // Allows for leading 0s. viem's parseUnit will trim them later
-            // Decimals default to 6 if token not selected
+            // Decimals default to 6 if tokens are not selected
+            const decimals = Math.min(sourceAssetDecimals ?? 6, targetAssetDecimals ?? 6);
             const validInputRegex = new RegExp(
                 `^(?:[0-9]+)?(?:\\.\\d{0,${decimals || 6}}|\\d*)?$`,
                 'gm',
@@ -48,6 +49,14 @@ const bridgeParamsReducer: React.Reducer<BridgeParams, BridgeParamsAction> = (
             };
         }
         case 'setSourceAsset': {
+            if (!payload) {
+                return {
+                    ...state,
+                    sourceAssetId: '',
+                    sourceNetworkId: '',
+                    targetNetworkId: '',
+                };
+            }
             const { id, chainId, bridgeableAssets } = payload;
             return {
                 ...state,
@@ -58,10 +67,10 @@ const bridgeParamsReducer: React.Reducer<BridgeParams, BridgeParamsAction> = (
             };
         }
         case 'setTargetAsset': {
-            const { chainId } = payload;
+            const chainId = payload?.chainId.toString() ?? '';
             return {
                 ...state,
-                targetNetworkId: chainId.toString(),
+                targetNetworkId: chainId,
             };
         }
         case 'resetBridgeParams': {

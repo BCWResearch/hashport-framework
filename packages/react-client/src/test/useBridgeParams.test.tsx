@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event';
 import { render, screen, waitFor } from '@testing-library/react';
 import { BridgeParamsProvider } from 'contexts/bridgeParams';
 
-// TODO: Repalce with actual component
 const AMOUNT_INPUT_ID = 'AMOUNT_INPUT_ID';
 const AmountInput = () => {
     const params = useBridgeParams();
@@ -13,7 +12,9 @@ const AmountInput = () => {
         <input
             data-testid={AMOUNT_INPUT_ID}
             value={params.amount}
-            onChange={({ target }) => setAmount({ amount: target.value, decimals: 8 })}
+            onChange={({ target }) =>
+                setAmount({ amount: target.value, sourceAssetDecimals: 8, targetAssetDecimals: 8 })
+            }
         />
     );
 };
@@ -26,7 +27,13 @@ const NoSelectedTokenAmountInput = () => {
         <input
             data-testid={NO_SELECTED_TOKEN_AMOUNT}
             value={params.amount}
-            onChange={({ target }) => setAmount({ amount: target.value, decimals: 0 })}
+            onChange={({ target }) =>
+                setAmount({
+                    amount: target.value,
+                    sourceAssetDecimals: undefined,
+                    targetAssetDecimals: undefined,
+                })
+            }
         />
     );
 };
