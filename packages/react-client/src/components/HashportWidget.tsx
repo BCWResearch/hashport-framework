@@ -1,7 +1,8 @@
+import { HashportTransactionState } from '@hashport/sdk/lib/types';
 import { useBridgeParams, useBridgeParamsDispatch } from 'hooks/useBridgeParams';
 import { useHashportClient, useQueue, useQueueHashportTransaction } from 'hooks/useHashportClient';
 import { useTokenList } from 'hooks/useTokenList';
-import { ChangeEventHandler, FormEventHandler } from 'react';
+import { ChangeEventHandler, FormEventHandler, useEffect, useState } from 'react';
 
 export const HashportWidget = () => {
     const hashportClient = useHashportClient();
@@ -10,14 +11,35 @@ export const HashportWidget = () => {
     const dispatch = useBridgeParamsDispatch();
     const { data: tokens } = useTokenList();
     const bridgeParams = useBridgeParams();
-    const { sourceAssetId, sourceNetworkId, amount, targetNetworkId } = bridgeParams;
 
+    const [isPorting, setIsPorting] = useState(false);
+    const [transactionResult, setTransactionResult] = useState<
+        HashportTransactionState | { error: string }
+    >();
+
+    const { sourceAssetId, sourceNetworkId, amount, targetNetworkId } = bridgeParams;
     const source = { id: sourceAssetId, chain: sourceNetworkId };
     const sourceId = source.id && source.chain ? (`${source.id}-${+source.chain}` as const) : null;
     const sourceAsset = sourceId && tokens?.fungible.get(sourceId);
     const bridgeable = sourceAsset ? sourceAsset?.bridgeableAssets : null;
     const target = bridgeable?.find(({ chainId }) => chainId === +targetNetworkId);
     const targetAsset = target && tokens?.fungible.get(target.assetId);
+
+    useEffect(() => {
+        if (!targetNetworkId) {
+            dispatch.setRecipient('');
+            return;
+        }
+        const hederaId = hashportClient.hederaSigner.accountId;
+        const evmAccount = hashportClient.evmSigner.getAddress();
+        const hederaChains = [296, 295];
+        dispatch.setRecipient(hederaChains.includes(+targetNetworkId) ? hederaId : evmAccount);
+    }, [
+        targetNetworkId,
+        dispatch,
+        hashportClient.evmSigner,
+        hashportClient.hederaSigner.accountId,
+    ]);
 
     const handleSubmit: FormEventHandler<HTMLFormElement> = e => {
         e.preventDefault();
@@ -37,17 +59,23 @@ export const HashportWidget = () => {
     };
 
     const handleSetTarget: ChangeEventHandler<HTMLSelectElement> = e => {
-        const token = tokens?.fungible.get(e.target.value as `${string}-${number}`);
-        if (token) {
-            dispatch.setTargetAsset(token);
-            const { chainId } = token;
-            const hederaId = hashportClient.hederaSigner.accountId;
-            const evmAccount = hashportClient.evmSigner.getAddress();
-            const hederaChains = [296, 295];
-            dispatch.setRecipient(hederaChains.includes(chainId) ? hederaId : evmAccount);
-        } else {
-            dispatch.setRecipient('');
-            dispatch.setTargetAsset(undefined);
+        dispatch.setTargetAsset(tokens?.fungible.get(e.target.value as `${string}-${number}`));
+    };
+
+    const handleExecuteTransaction = async () => {
+        try {
+            setIsPorting(true);
+            setTransactionResult(undefined);
+            const id = queue.keys().next().value;
+            const result = await hashportClient.execute(id);
+            setTransactionResult(result);
+        } catch (error) {
+            console.error(error);
+            if (error instanceof Error) {
+                setTransactionResult({ error: error.message });
+            }
+        } finally {
+            setIsPorting(false);
         }
     };
 
@@ -99,13 +127,12 @@ export const HashportWidget = () => {
             </button>
             <button
                 type="button"
-                onClick={() => {
-                    const id = queue.keys().next().value;
-                    hashportClient.execute(id);
-                }}
+                disabled={queue.size < 1 || isPorting}
+                onClick={handleExecuteTransaction}
             >
                 Execute first transaction
             </button>
+            {transactionResult && <pre>{JSON.stringify(transactionResult, null, 2)}</pre>}
             <h3>Bridge Params</h3>
             <pre>{JSON.stringify(bridgeParams, null, 2)}</pre>
             <h3>State</h3>

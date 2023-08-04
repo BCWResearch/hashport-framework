@@ -74,13 +74,7 @@ const bridgeParamsReducer: React.Reducer<BridgeParams, BridgeParamsAction> = (
             };
         }
         case 'resetBridgeParams': {
-            return {
-                recipient: '',
-                sourceAssetId: '',
-                sourceNetworkId: '',
-                targetNetworkId: '',
-                amount: '',
-            };
+            return DEFAULT_BRIDGE_PARAMS;
         }
     }
 };
@@ -90,24 +84,12 @@ export const BridgeParamsProvider = ({ children }: { children: ReactNode }) => {
 
     const bridgeParamsDispatch = useMemo<BridgeParamsDispatch>(
         () => ({
-            resetBridgeParams() {
-                dispatch({ type: 'resetBridgeParams' });
-            },
-            setSourceAsset(payload) {
-                dispatch({ type: 'setSourceAsset', payload });
-            },
-            setTargetAsset(payload) {
-                dispatch({ type: 'setTargetAsset', payload });
-            },
-            setAmount(payload) {
-                dispatch({ type: 'setAmount', payload });
-            },
-            setRecipient(payload) {
-                dispatch({ type: 'setRecipient', payload });
-            },
-            setTokenId(payload) {
-                dispatch({ type: 'setTokenId', payload });
-            },
+            resetBridgeParams: () => dispatch({ type: 'resetBridgeParams' }),
+            setSourceAsset: payload => dispatch({ type: 'setSourceAsset', payload }),
+            setTargetAsset: payload => dispatch({ type: 'setTargetAsset', payload }),
+            setAmount: payload => dispatch({ type: 'setAmount', payload }),
+            setRecipient: payload => dispatch({ type: 'setRecipient', payload }),
+            setTokenId: payload => dispatch({ type: 'setTokenId', payload }),
         }),
         [dispatch],
     );

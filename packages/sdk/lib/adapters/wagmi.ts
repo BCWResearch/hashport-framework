@@ -28,7 +28,7 @@ export const createWagmiSigner = (
                 async write({ functionName, args }) {
                     const { request } = await publicClient.simulateContract({
                         account: walletClient.account,
-                        address: walletClient.account.address,
+                        address: contractAddress,
                         abi,
                         functionName,
                         args,
