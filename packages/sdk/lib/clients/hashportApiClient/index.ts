@@ -124,7 +124,7 @@ export class HashportApiClient {
      * token, according to its decimals.
      */
     minAmounts(): Fetcher<NetworkMinAmounts>;
-    minAmounts(networkId: number, assetId: string): Fetcher<NetworkMinAmounts>;
+    minAmounts(networkId: number, assetId: string): Fetcher<AssetMinAmount>;
     minAmounts(networkId?: number, assetId?: string) {
         if (networkId === undefined && assetId === undefined) {
             return new Fetcher<NetworkMinAmounts>(this.configUrl + '/min-amounts');

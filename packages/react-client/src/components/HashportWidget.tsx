@@ -1,8 +1,10 @@
 import { HashportTransactionState } from '@hashport/sdk/lib/types';
 import { useBridgeParams, useBridgeParamsDispatch } from 'hooks/useBridgeParams';
 import { useHashportClient, useQueue, useQueueHashportTransaction } from 'hooks/useHashportClient';
+import { useMinAmount } from 'hooks/useMinAmount';
 import { useTokenList } from 'hooks/useTokenList';
 import { ChangeEventHandler, FormEventHandler, useEffect, useState } from 'react';
+import { formatUnits } from 'viem';
 
 export const HashportWidget = () => {
     const hashportClient = useHashportClient();
@@ -11,6 +13,7 @@ export const HashportWidget = () => {
     const dispatch = useBridgeParamsDispatch();
     const { data: tokens } = useTokenList();
     const bridgeParams = useBridgeParams();
+    const { data: minAmount } = useMinAmount();
 
     const [isPorting, setIsPorting] = useState(false);
     const [transactionResult, setTransactionResult] = useState<
@@ -121,6 +124,14 @@ export const HashportWidget = () => {
                         </select>
                     </label>
                 </>
+            )}
+            {minAmount && tokens && sourceId ? (
+                <p>
+                    Min amount:{' '}
+                    {formatUnits(BigInt(minAmount), tokens.fungible.get(sourceId)?.decimals ?? 0)}
+                </p>
+            ) : (
+                <></>
             )}
             <button type="submit" disabled={!queueTransaction}>
                 Queue transaction
