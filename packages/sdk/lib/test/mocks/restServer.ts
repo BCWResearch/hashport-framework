@@ -12,7 +12,7 @@ import {
 import { ValidatorPollResponse } from '../../types/validator/index.js';
 import { BridgeStep, BridgeValidation } from '../../types/api/bridge.js';
 import { bridgeSteps, bridgeValidateValid } from '../mockData/api/bridge.js';
-import { CondensedAsset } from '../../types/api/assets.js';
+import { CondensedAsset, NetworkAssets } from '../../types/api/assets.js';
 import { networksNetworkIdAssets } from '../mockData/api/networks.js';
 import { BRIDGE_PAYOUT_CONFIRMATION, FETCH_TEST_URL } from './constants.js';
 import {
@@ -21,6 +21,51 @@ import {
     mockHederaAccount,
 } from './mockSigners.js';
 import { formatTransactionId } from '../../utils/formatters.js';
+
+// Full value from mockData is too large for msw to handle
+export const assets: NetworkAssets[] = [
+    {
+        network: {
+            id: 1,
+            name: 'Ethereum',
+        },
+        assets: {
+            '0x14ab470682Bc045336B1df6262d538cB6c35eA2A': {
+                id: '0x14ab470682Bc045336B1df6262d538cB6c35eA2A',
+                name: 'HBAR[eth]',
+                symbol: 'HBAR[eth]',
+                isNative: false,
+                decimals: 8,
+                icon: 'https://cdn.hashport.network/HBAR.svg',
+            },
+        },
+    },
+    {
+        network: {
+            id: 295,
+            name: 'Hedera',
+        },
+        assets: {
+            HBAR: {
+                id: 'HBAR',
+                name: 'HBAR',
+                symbol: 'HBAR',
+                isNative: true,
+                decimals: 8,
+                bridgeableNetworks: {
+                    '1': {
+                        network: {
+                            id: 1,
+                            name: 'Ethereum',
+                        },
+                        wrappedAsset: '0x14ab470682Bc045336B1df6262d538cB6c35eA2A',
+                    },
+                },
+                icon: 'https://cdn.hashport.network/HBAR.svg',
+            },
+        },
+    },
+];
 
 const miscHandlers = [
     rest.get(FETCH_TEST_URL, (_, res, ctx) => {
@@ -138,6 +183,12 @@ const validatorHandlers = [
 ];
 
 const hashportApiHandlers = [
+    rest.get<DefaultBodyType, never, NetworkAssets[]>(
+        'https://mainnet.api.hashport.network/api/v1/assets',
+        (_, res, ctx) => {
+            return res(ctx.status(200), ctx.json(assets));
+        },
+    ),
     rest.get<DefaultBodyType, never, BridgeValidation>(
         'https://mainnet.api.hashport.network/api/v1/bridge/validate',
         (_, res, ctx) => res(ctx.json(bridgeValidateValid)),

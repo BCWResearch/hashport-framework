@@ -11,10 +11,8 @@ export const useHashportClient = () => {
     return hashportClient;
 };
 
-// TODO: think about passing in an id to only watch the state of a particulate transaction
 export const useQueue = () => {
     const hashportClient = useHashportClient();
-    // TODO: expose transaactionStore as zustand store in SDK for easier monitoring
     const [queue, setQueue] = useState<Map<string, HashportTransactionData>>(
         hashportClient.transactionStore.queue,
     );

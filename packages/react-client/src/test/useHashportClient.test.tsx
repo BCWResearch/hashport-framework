@@ -1,10 +1,8 @@
-import { HashportClientProvider } from 'contexts/hashportClient';
 import { describe, test, expect } from 'vitest';
-import { mockEvmSigner, mockHederaSigner } from '@hashport/sdk/lib/test/mocks/mockSigners';
 import { bridgeParamsMock } from '@hashport/sdk/lib/test/mockData/api/bridge';
 import { useHashportClient } from 'hooks/useHashportClient';
 import { useState } from 'react';
-import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { render, screen, waitForElementToBeRemoved } from './test-utils';
 import userEvent from '@testing-library/user-event';
 
 const BUTTON_ID = 'button';
@@ -45,11 +43,7 @@ describe('useHashportClient', () => {
     // TODO: test client mock tx execution
     test('should fail', async () => {
         const user = userEvent.setup();
-        render(
-            <HashportClientProvider evmSigner={mockEvmSigner} hederaSigner={mockHederaSigner}>
-                <TestComponent />
-            </HashportClientProvider>,
-        );
+        render(<TestComponent />);
         const btn = await screen.findByTestId(BUTTON_ID);
         user.click(btn);
         await waitForElementToBeRemoved(() => screen.queryByTestId(BUTTON_ID));
