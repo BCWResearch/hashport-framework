@@ -1,4 +1,4 @@
-import { useBridgeParams, useMinAmount, useTokenList } from 'hooks';
+import { useBridgeParams, useMinAmount, useTokenList } from '@hashport/react-client';
 import { formatUnits } from 'viem';
 
 export const MinAmount = () => {

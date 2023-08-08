@@ -2,10 +2,12 @@
   "name": "@hashport/react-client",
   "version": "0.0.0",
   "description": "React Context for hashport bridging operations",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc --project tsconfig.build.json && tsc-alias -p tsconfig.build.json"
   },
   "author": "",
   "license": "MIT",

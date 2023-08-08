@@ -1,4 +1,4 @@
-import { useBridgeParams, useBridgeParamsDispatch, useTokenList } from 'hooks';
+import { useBridgeParams, useBridgeParamsDispatch, useTokenList } from '@hashport/react-client';
 import { ChangeEventHandler } from 'react';
 
 export const AmountInput = () => {

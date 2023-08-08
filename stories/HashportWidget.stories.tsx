@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { HashportWidget } from '../packages/react-client/src/components/HashportWidget';
+import { HashportWidget } from '../packages/widget/src/components/HashportWidget';
 import { HashConnect, HashConnectTypes, MessageTypes } from 'hashconnect';
 import React, { useEffect, useState } from 'react';
-import { createHashPackSigner } from '../packages/sdk/lib/adapters/hashpack';
+import { createHashPackSigner } from '@hashport/sdk/lib/adapters/hashpack';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { HashportClientAndRainbowKitProvider } from '../packages/react-client/src/contexts/hashportClient';
+import { HashportClientAndRainbowKitProvider } from '@hashport/react-client';
 
 const meta = {
     title: 'Hashport Widget',

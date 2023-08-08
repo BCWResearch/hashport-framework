@@ -3,7 +3,7 @@ import {
     useBridgeParamsDispatch,
     useHashportClient,
     useTokenList,
-} from 'hooks';
+} from '@hashport/react-client';
 import { ChangeEventHandler, useEffect } from 'react';
 
 export const TargetAssetSelect = () => {

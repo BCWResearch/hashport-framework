@@ -1,5 +1,5 @@
-import { useBridgeParams, useBridgeParamsDispatch } from 'hooks/useBridgeParams';
-import { useQueue, useQueueHashportTransaction } from 'hooks/useHashportClient';
+import { useBridgeParams, useBridgeParamsDispatch } from '@hashport/react-client';
+import { useQueue, useQueueHashportTransaction } from '@hashport/react-client';
 import { FormEventHandler } from 'react';
 import { AmountInput } from './AmountInput';
 import { SourceAssetSelect } from './SourceAssetSelect';

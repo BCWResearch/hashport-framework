@@ -1,5 +1,5 @@
 import { HashportTransactionState } from '@hashport/sdk/lib/types';
-import { useHashportClient, useQueue } from 'hooks';
+import { useHashportClient, useQueue } from '@hashport/react-client';
 import { useState } from 'react';
 
 export const ExecuteTransactionButton = () => {
