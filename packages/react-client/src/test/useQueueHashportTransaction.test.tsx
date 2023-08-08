@@ -50,7 +50,6 @@ const TestComponent = () => {
                     data-testid={QUEUE_BUTTON}
                     onClick={async () => {
                         const id = await queueTransaction();
-                        console.log(id);
                         setSavedId(id);
                     }}
                 >
