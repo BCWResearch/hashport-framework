@@ -11,6 +11,13 @@ declare module '@mui/material/styles' {
     interface PaletteOptions {
         border?: PaletteOptions['primary'];
     }
+    interface PaletteColor {
+        darker: string;
+    }
+
+    interface SimplePaletteColorOptions {
+        darker?: string;
+    }
 }
 
 let theme = createTheme({
@@ -22,20 +29,33 @@ let theme = createTheme({
                 },
             },
         },
+        MuiBackdrop: {
+            styleOverrides: {
+                root: {
+                    backdropFilter: `blur(5px) brightness(50%)`,
+                },
+            },
+        },
+        MuiButton: {
+            defaultProps: {
+                variant: 'contained',
+            },
+        },
     },
     palette: {
         primary: {
-            main: 'rgba(45,132,235,1)',
-            light: 'hsl(213deg 82% 65% / 0.75)',
-            dark: 'hsl(213deg 98% 7% / 0.75)',
-            contrastText: '#FFF',
+            main: 'rgb(45,132,235)',
+            light: 'hsl(213deg 95% 69%)',
+            dark: 'hsl(213deg 50% 25% / 0.75)',
+            darker: 'hsl(213deg 98% 7% / 0.75)',
         },
         border: {
             main: 'hsl(213deg 82% 55% / 0.25)',
             light: 'hsl(213deg 87% 65% / 0.6)',
-            dark: 'rgba(46,132,234,0.25)',
+            dark: 'rgba(46, 132, 234, 0.25)',
         },
         mode: 'dark',
+        contrastThreshold: 4.5,
     },
     shape: {
         borderRadius: 16,
