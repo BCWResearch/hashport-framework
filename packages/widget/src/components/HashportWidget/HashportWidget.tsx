@@ -5,6 +5,8 @@ import { AmountInput } from './AmountInput';
 import { SourceAssetSelect } from './SourceAssetSelect';
 import { TargetAssetSelect } from './TargetAssetSelect';
 import { MinAmount } from './MinAmount';
+import { ThemeProvider } from 'theme';
+import { Container } from 'components/styled/Container';
 
 const WidgetContainer = ({ children }: { children: React.ReactNode }) => {
     const dispatch = useBridgeParamsDispatch();
@@ -15,12 +17,14 @@ const WidgetContainer = ({ children }: { children: React.ReactNode }) => {
     };
 
     return (
-        <form
-            onSubmit={handleSubmit}
-            style={{ display: 'flex', flexDirection: 'column', gap: '1em' }}
-        >
-            {children}
-        </form>
+        <Container>
+            <form
+                onSubmit={handleSubmit}
+                style={{ display: 'flex', flexDirection: 'column', gap: '1em' }}
+            >
+                {children}
+            </form>
+        </Container>
     );
 };
 
@@ -55,14 +59,16 @@ const TransactionStateViewer = () => {
 
 export const HashportWidget = () => {
     return (
-        <WidgetContainer>
-            <AmountInput />
-            <SourceAssetSelect />
-            <TargetAssetSelect />
-            <MinAmount />
-            <QueueTransactionButton />
+        <ThemeProvider>
+            <WidgetContainer>
+                <AmountInput />
+                <SourceAssetSelect />
+                <TargetAssetSelect />
+                <MinAmount />
+                <QueueTransactionButton />
+            </WidgetContainer>
             <BridgeParamsViewer />
             <TransactionStateViewer />
-        </WidgetContainer>
+        </ThemeProvider>
     );
 };
