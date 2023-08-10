@@ -24,6 +24,7 @@ export const AmountInput = () => {
 
     return (
         <Input
+            disabled={!sourceAssetId}
             placeholder="0.00000000"
             onChange={handleAmount}
             value={amount}
