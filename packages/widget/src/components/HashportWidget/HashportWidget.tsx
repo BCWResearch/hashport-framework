@@ -6,6 +6,7 @@ import { MinAmount } from './MinAmount';
 import { ThemeProvider } from 'theme';
 import { Container } from 'components/styled/Container';
 import { ReceivedAmount } from './ReceivedAmount';
+import { ConfirmationSlider } from 'components/styled/Slider';
 
 const WidgetContainer = ({ children }: { children: React.ReactNode }) => {
     const dispatch = useBridgeParamsDispatch();
@@ -63,7 +64,7 @@ export const HashportWidget = () => {
                 <AmountInput />
                 <ReceivedAmount />
                 <MinAmount />
-                <QueueTransactionButton />
+                <ConfirmationSlider disabled={false} onConfirm={() => console.log('confirmed')} />
             </WidgetContainer>
             <BridgeParamsViewer />
             <TransactionStateViewer />
