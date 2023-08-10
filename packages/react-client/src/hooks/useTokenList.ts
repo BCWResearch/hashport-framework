@@ -51,7 +51,7 @@ export const formatAssets = (networkAssets: NetworkAssets[]): HashportAssets => 
 export const useTokenList = ({ onSelect }: TokenListProps = {}) => {
     const hashportApiClient = useHashportApiClient();
 
-    const { data, ...queryInfo } = useQuery({
+    const queryInfo = useQuery({
         staleTime: Infinity,
         queryKey: ['token-list'],
         queryFn: async () => {
@@ -62,21 +62,21 @@ export const useTokenList = ({ onSelect }: TokenListProps = {}) => {
 
     return {
         ...queryInfo,
-        data: data
+        data: queryInfo.data
             ? {
                   fungible: new Map(
-                      Array.from(data.fungible).map(([id, assetInfo]) => [
+                      Array.from(queryInfo.data.fungible).map(([id, assetInfo]) => [
                           id,
                           { ...assetInfo, handleSelect: () => onSelect?.(assetInfo) },
                       ]),
                   ),
                   nonfungible: new Map(
-                      Array.from(data.nonfungible).map(([id, assetInfo]) => [
+                      Array.from(queryInfo.data.nonfungible).map(([id, assetInfo]) => [
                           id,
                           { ...assetInfo, handleSelect: () => onSelect?.(assetInfo) },
                       ]),
                   ),
               }
             : undefined,
-    };
+    } as typeof queryInfo;
 };
