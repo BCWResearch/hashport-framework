@@ -1,6 +1,7 @@
 import { useBridgeParams, useBridgeParamsDispatch, useTokenList } from '@hashport/react-client';
 import { Input } from 'components/styled/Input';
 import { ChangeEventHandler } from 'react';
+import { SourceAssetSelect } from './SourceAssetSelect';
 
 export const AmountInput = () => {
     const dispatch = useBridgeParamsDispatch();
@@ -26,7 +27,7 @@ export const AmountInput = () => {
             placeholder="0.00000000"
             onChange={handleAmount}
             value={amount}
-            // endAdornment={<TokenSelect/>}
+            endAdornment={<SourceAssetSelect />}
         />
     );
 };

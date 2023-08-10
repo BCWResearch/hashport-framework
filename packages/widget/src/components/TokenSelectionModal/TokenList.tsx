@@ -1,4 +1,9 @@
-import { AssetInfo, useBridgeParamsDispatch, useTokenList } from '@hashport/react-client';
+import {
+    AssetInfo,
+    useBridgeParams,
+    useBridgeParamsDispatch,
+    useTokenList,
+} from '@hashport/react-client';
 import { VariableSizeList, type ListChildComponentProps } from 'react-window';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
@@ -17,7 +22,7 @@ const TokenRowButton = styled(ListItemButton)(({ theme: { palette, spacing } }) 
     },
 }));
 
-export const TokenRow = ({ data, index }: ListChildComponentProps<AssetInfo[]>) => {
+const TokenRow = ({ data, index }: ListChildComponentProps<AssetInfo[]>) => {
     const token = data[index];
 
     return (
@@ -25,6 +30,29 @@ export const TokenRow = ({ data, index }: ListChildComponentProps<AssetInfo[]>) 
             <Avatar alt={token.symbol} src={token.icon} />
             <ListItemText primary={token.symbol} />
         </TokenRowButton>
+    );
+};
+
+const TokenList = ({ tokens }: { tokens: AssetInfo[] }) => {
+    const ITEM_SIZE = 56;
+    const LIST_HEIGHT = Math.max(window.innerHeight - 350, 250);
+    return (
+        <VariableSizeList
+            // ref={scrollRef}
+            className="selection-list"
+            itemCount={tokens.length}
+            itemSize={() => ITEM_SIZE}
+            height={LIST_HEIGHT}
+            itemData={tokens}
+            itemKey={(index, data) => {
+                const { chainId, id } = data[index];
+                return `${id}-${chainId}`;
+            }}
+            overscanCount={20}
+            width="100%"
+        >
+            {TokenRow}
+        </VariableSizeList>
     );
 };
 
@@ -42,9 +70,6 @@ export const SelectSourceTokenList = ({ onSelect }: { onSelect?: () => void } = 
     });
     const { filters, searchString } = useSelectionFilters();
 
-    const ITEM_SIZE = 56;
-    const LIST_HEIGHT = Math.max(window.innerHeight - 350, 250);
-
     if (isLoading) {
         return <p>Loading</p>;
     } else if (isError) {
@@ -55,7 +80,7 @@ export const SelectSourceTokenList = ({ onSelect }: { onSelect?: () => void } = 
         ({ id, symbol, name, ...rest }) => {
             const isSearchMatch =
                 !searchString ||
-                `${id}${symbol}${name}`.toLowerCase().includes(searchString.toLowerCase());
+                `${id}-${symbol}-${name}`.toLowerCase().includes(searchString.toLowerCase());
             // TODO: handle filters match
             const isFiltersMatch = false;
             return isSearchMatch || isFiltersMatch;
@@ -63,19 +88,55 @@ export const SelectSourceTokenList = ({ onSelect }: { onSelect?: () => void } = 
     );
 
     return fungibleTokens.length > 0 ? (
-        <VariableSizeList
-            // ref={scrollRef}
-            className="selection-list"
-            itemCount={fungibleTokens.length}
-            itemSize={() => ITEM_SIZE}
-            height={LIST_HEIGHT}
-            itemData={fungibleTokens}
-            itemKey={(index, data) => data[index].id}
-            overscanCount={20}
-            width="100%"
-        >
-            {TokenRow}
-        </VariableSizeList>
+        <TokenList tokens={fungibleTokens} />
+    ) : (
+        // TODO: better styling
+        <p>No results</p>
+    );
+};
+
+export const SelectTargetTokenList = ({ onSelect }: { onSelect?: () => void } = {}) => {
+    const { setTargetAsset } = useBridgeParamsDispatch();
+    const {
+        data: tokens,
+        isError,
+        isLoading,
+    } = useTokenList({
+        onSelect(token) {
+            setTargetAsset(token);
+            onSelect?.();
+        },
+    });
+    const { filters, searchString } = useSelectionFilters();
+    const { sourceAssetId, sourceNetworkId } = useBridgeParams();
+
+    // should use the sourceId to index into fungible tokens
+    const source = { id: sourceAssetId, chain: sourceNetworkId };
+    const sourceId = source.id && source.chain ? (`${source.id}-${+source.chain}` as const) : null;
+    const sourceAsset = sourceId && tokens?.fungible.get(sourceId);
+    const bridgeableAssets = sourceAsset ? sourceAsset?.bridgeableAssets : null;
+
+    if (isLoading) {
+        return <p>Loading</p>;
+    } else if (isError) {
+        return <p>Error</p>;
+    }
+
+    const targetTokens = (bridgeableAssets ?? [])
+        .map(({ assetId }) => tokens.fungible.get(assetId))
+        // TODO: remove double filter
+        .filter((token): token is AssetInfo => !!token)
+        .filter(({ id, symbol, name, ...rest }) => {
+            const isSearchMatch =
+                !searchString ||
+                `${id}-${symbol}-${name}`.toLowerCase().includes(searchString.toLowerCase());
+            // TODO: handle filters match
+            const isFiltersMatch = false;
+            return isSearchMatch || isFiltersMatch;
+        });
+
+    return targetTokens.length > 0 ? (
+        <TokenList tokens={targetTokens} />
     ) : (
         // TODO: better styling
         <p>No results</p>

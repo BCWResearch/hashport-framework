@@ -2,7 +2,6 @@ import { useBridgeParams, useBridgeParamsDispatch } from '@hashport/react-client
 import { useQueue, useQueueHashportTransaction } from '@hashport/react-client';
 import { FormEventHandler } from 'react';
 import { AmountInput } from './AmountInput';
-import { SourceAssetSelect } from './SourceAssetSelect';
 import { TargetAssetSelect } from './TargetAssetSelect';
 import { MinAmount } from './MinAmount';
 import { ThemeProvider } from 'theme';
@@ -62,7 +61,6 @@ export const HashportWidget = () => {
         <ThemeProvider>
             <WidgetContainer>
                 <AmountInput />
-                <SourceAssetSelect />
                 <TargetAssetSelect />
                 <MinAmount />
                 <QueueTransactionButton />

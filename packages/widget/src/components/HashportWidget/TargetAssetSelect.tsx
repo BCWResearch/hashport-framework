@@ -4,19 +4,38 @@ import {
     useHashportClient,
     useTokenList,
 } from '@hashport/react-client';
-import { ChangeEventHandler, useEffect } from 'react';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import { TokenFilters } from 'components/TokenSelectionModal/TokenFilters';
+import { SelectTargetTokenList } from 'components/TokenSelectionModal/TokenList';
+import { Button } from 'components/styled/Button';
+import { Modal } from 'components/styled/Modal';
+import { SelectionFilterProvider } from 'contexts/selectionFilterContext';
+import { useEffect, useState } from 'react';
+
+const ModalHeader = () => {
+    return (
+        <Stack spacing={1}>
+            <Typography variant="h6">Select a token</Typography>
+            <TokenFilters />
+        </Stack>
+    );
+};
 
 export const TargetAssetSelect = () => {
     const hashportClient = useHashportClient();
     const dispatch = useBridgeParamsDispatch();
-    const { data: tokens, isError, isLoading } = useTokenList();
-    const { sourceAssetId, sourceNetworkId, targetNetworkId } = useBridgeParams();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { data: tokens } = useTokenList();
 
+    const { sourceAssetId, sourceNetworkId, targetNetworkId } = useBridgeParams();
     const source = { id: sourceAssetId, chain: sourceNetworkId };
     const sourceId = source.id && source.chain ? (`${source.id}-${+source.chain}` as const) : null;
     const sourceAsset = sourceId && tokens?.fungible.get(sourceId);
     const bridgeable = sourceAsset ? sourceAsset?.bridgeableAssets : null;
-    const target = bridgeable?.find(({ chainId }) => chainId === +targetNetworkId);
+    const targetId = bridgeable?.find(({ chainId }) => chainId === +targetNetworkId)?.assetId;
+    const targetAsset = targetId && tokens?.fungible.get(targetId);
 
     useEffect(() => {
         if (!targetNetworkId) {
@@ -34,29 +53,24 @@ export const TargetAssetSelect = () => {
         hashportClient.hederaSigner.accountId,
     ]);
 
-    const handleSetTarget: ChangeEventHandler<HTMLSelectElement> = e => {
-        dispatch.setTargetAsset(tokens?.fungible.get(e.target.value as `${string}-${number}`));
-    };
+    const handleOpen = () => setIsModalOpen(true);
 
-    if (isLoading || isError) {
-        return <></>;
-    } else {
-        return (
-            <label>
-                TargetAsset:
-                <select value={target?.assetId ?? ''} onChange={handleSetTarget}>
-                    <option value="">Choose a target asset</option>
-                    {bridgeable?.map(({ assetId }) => {
-                        const token = tokens.fungible.get(assetId);
-                        if (!token) return;
-                        return (
-                            <option key={assetId} value={assetId}>
-                                {token.symbol}
-                            </option>
-                        );
-                    })}
-                </select>
-            </label>
-        );
-    }
+    return (
+        <>
+            <Button disabled={!sourceAsset} onClick={handleOpen} endIcon={<ArrowDropDownIcon />}>
+                {targetAsset?.symbol ?? 'Select'}
+            </Button>
+            <SelectionFilterProvider>
+                <Modal
+                    // TODO: side effect where we can dispatch selected token to undefined
+                    // so it doesn't change the button until the modal opens
+                    open={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    header={<ModalHeader />}
+                >
+                    <SelectTargetTokenList onSelect={() => setIsModalOpen(false)} />
+                </Modal>
+            </SelectionFilterProvider>
+        </>
+    );
 };
