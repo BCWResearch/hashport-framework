@@ -23,6 +23,7 @@ export const TokenFilters = () => {
 
     return (
         <Input
+            autoFocus
             placeholder="Search for token"
             onChange={e => filterDispatch.updateSearchString(e.target.value)}
         />

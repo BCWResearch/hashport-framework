@@ -1,4 +1,4 @@
-import { useBridgeParams, useBridgeParamsDispatch, useTokenList } from '@hashport/react-client';
+import { useBridgeParams, useTokenList } from '@hashport/react-client';
 import { Button } from 'components/styled/Button';
 import { useState } from 'react';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -20,7 +20,6 @@ const ModalHeader = () => {
 
 export const SourceAssetSelect = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { setSourceAsset } = useBridgeParamsDispatch();
     const { data: tokens } = useTokenList();
 
     const { sourceAssetId, sourceNetworkId } = useBridgeParams();
@@ -28,10 +27,8 @@ export const SourceAssetSelect = () => {
     const sourceId = source.id && source.chain ? (`${source.id}-${+source.chain}` as const) : null;
     const sourceAsset = sourceId && tokens?.fungible.get(sourceId);
 
-    const handleOpen = () => {
-        setSourceAsset(undefined);
-        setIsModalOpen(true);
-    };
+    const handleOpen = () => setIsModalOpen(true);
+    const handleClose = () => setIsModalOpen(false);
 
     return (
         <>
@@ -39,14 +36,8 @@ export const SourceAssetSelect = () => {
                 {sourceAsset?.symbol ?? 'Select'}
             </Button>
             <SelectionFilterProvider>
-                <Modal
-                    // TODO: side effect where we can dispatch selected token to undefined
-                    // so it doesn't change the button until the modal opens
-                    open={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    header={<ModalHeader />}
-                >
-                    <SelectSourceTokenList onSelect={() => setIsModalOpen(false)} />
+                <Modal open={isModalOpen} onClose={handleClose} header={<ModalHeader />}>
+                    <SelectSourceTokenList onSelect={handleClose} />
                 </Modal>
             </SelectionFilterProvider>
         </>

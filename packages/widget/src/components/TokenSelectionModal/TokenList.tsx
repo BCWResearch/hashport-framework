@@ -22,11 +22,11 @@ const TokenRowButton = styled(ListItemButton)(({ theme: { palette, spacing } }) 
     },
 }));
 
-const TokenRow = ({ data, index }: ListChildComponentProps<AssetInfo[]>) => {
+const TokenRow = ({ data, index, style }: ListChildComponentProps<AssetInfo[]>) => {
     const token = data[index];
 
     return (
-        <TokenRowButton key={token.id} onClick={() => token.handleSelect()}>
+        <TokenRowButton key={token.id} onClick={() => token.handleSelect()} style={style}>
             <Avatar alt={token.symbol} src={token.icon} />
             <ListItemText primary={token.symbol} />
         </TokenRowButton>
@@ -76,6 +76,7 @@ export const SelectSourceTokenList = ({ onSelect }: { onSelect?: () => void } = 
         return <p>Error</p>;
     }
 
+    // TODO: sort tokens
     const fungibleTokens = Array.from(tokens.fungible.values()).filter(
         ({ id, symbol, name, ...rest }) => {
             const isSearchMatch =
@@ -110,7 +111,6 @@ export const SelectTargetTokenList = ({ onSelect }: { onSelect?: () => void } = 
     const { filters, searchString } = useSelectionFilters();
     const { sourceAssetId, sourceNetworkId } = useBridgeParams();
 
-    // should use the sourceId to index into fungible tokens
     const source = { id: sourceAssetId, chain: sourceNetworkId };
     const sourceId = source.id && source.chain ? (`${source.id}-${+source.chain}` as const) : null;
     const sourceAsset = sourceId && tokens?.fungible.get(sourceId);
@@ -122,6 +122,7 @@ export const SelectTargetTokenList = ({ onSelect }: { onSelect?: () => void } = 
         return <p>Error</p>;
     }
 
+    // TODO: sort tokens
     const targetTokens = (bridgeableAssets ?? [])
         .map(({ assetId }) => tokens.fungible.get(assetId))
         // TODO: remove double filter

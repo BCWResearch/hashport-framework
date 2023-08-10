@@ -62,8 +62,6 @@ export const TargetAssetSelect = () => {
             </Button>
             <SelectionFilterProvider>
                 <Modal
-                    // TODO: side effect where we can dispatch selected token to undefined
-                    // so it doesn't change the button until the modal opens
                     open={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     header={<ModalHeader />}
