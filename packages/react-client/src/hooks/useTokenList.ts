@@ -1,31 +1,9 @@
 import { NetworkAssets } from '@hashport/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { useHashportApiClient } from './useHashportApiClient';
-import { AssetId, AssetInfo, HashportAssets, SelectTokenPayload, TokenListProps } from 'types';
+import { AssetId, AssetInfo, HashportAssets, TokenListProps } from 'types';
 
-export const validateAssets = (
-    asset: [AssetId, Partial<AssetInfo>],
-): asset is [AssetId, AssetInfo] => {
-    const { bridgeableAssets, chainId, decimals, icon, id, isNative, name, symbol, handleSelect } =
-        asset[1];
-    const hasWrappedAssets = (bridgeableAssets?.length ?? 0) > 0;
-    return Boolean(
-        hasWrappedAssets &&
-            handleSelect &&
-            chainId &&
-            typeof decimals === 'number' &&
-            icon &&
-            id &&
-            isNative !== undefined &&
-            name &&
-            symbol,
-    );
-};
-
-export const formatAssets = (
-    networkAssets: NetworkAssets[],
-    options?: { handleSelect: (token: SelectTokenPayload) => void },
-): HashportAssets => {
+export const formatAssets = (networkAssets: NetworkAssets[]): HashportAssets => {
     const partialFungibles = new Map<AssetId, Partial<AssetInfo>>();
     const partialNonfungibles = new Map<AssetId, Partial<AssetInfo>>();
 
@@ -50,7 +28,7 @@ export const formatAssets = (
             );
 
             const currentBridgeableAssets = assetCollection.get(assetId)?.bridgeableAssets ?? [];
-            const token: Partial<AssetInfo> = {
+            const token: AssetInfo = {
                 id: tokenId,
                 symbol,
                 chainId,
@@ -59,33 +37,46 @@ export const formatAssets = (
                 decimals,
                 isNative,
                 icon: assetDetails.icon,
-                handleSelect: () =>
-                    options?.handleSelect({ id: tokenId, chainId, bridgeableAssets }),
+                handleSelect: () => null,
             };
             assetCollection.set(assetId, token);
         });
     }
-    const fungible = new Map(Array.from(partialFungibles).filter(validateAssets));
-    const nonfungible = new Map(Array.from(partialNonfungibles).filter(validateAssets));
     return {
-        fungible,
-        nonfungible,
-    };
+        fungible: partialFungibles,
+        nonfungible: partialNonfungibles,
+    } as HashportAssets;
 };
 
 export const useTokenList = ({ onSelect }: TokenListProps = {}) => {
     const hashportApiClient = useHashportApiClient();
 
-    return useQuery({
+    const { data, ...queryInfo } = useQuery({
         staleTime: Infinity,
         queryKey: ['token-list'],
         queryFn: async () => {
             const assets = await hashportApiClient.assets();
-            return formatAssets(assets, {
-                handleSelect(token) {
-                    onSelect?.(token);
-                },
-            });
+            return formatAssets(assets);
         },
     });
+
+    return {
+        ...queryInfo,
+        data: data
+            ? {
+                  fungible: new Map(
+                      Array.from(data.fungible).map(([id, assetInfo]) => [
+                          id,
+                          { ...assetInfo, handleSelect: () => onSelect?.(assetInfo) },
+                      ]),
+                  ),
+                  nonfungible: new Map(
+                      Array.from(data.nonfungible).map(([id, assetInfo]) => [
+                          id,
+                          { ...assetInfo, handleSelect: () => onSelect?.(assetInfo) },
+                      ]),
+                  ),
+              }
+            : undefined,
+    };
 };

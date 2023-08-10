@@ -8,7 +8,7 @@ export type AssetId = `${string}-${ChainId}`;
 export type AssetInfo = Omit<CondensedAsset, 'bridgeableNetworks'> & {
     chainId: ChainId;
     bridgeableAssets: { chainId: ChainId; assetId: AssetId }[];
-    handleSelect: (token: SelectTokenPayload) => void;
+    handleSelect: () => void;
 };
 
 export type AssetMap = Map<AssetId, AssetInfo>;
