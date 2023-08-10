@@ -13,4 +13,7 @@ export const Input = styled(InputBase)(({ theme: { palette, shape, spacing, typo
     '&:hover, &:focus, &:focus-within': {
         outline: `1px solid ${palette.border.light}`,
     },
+    '&.MuiInputBase-adornedEnd .MuiButtonBase-root': {
+        flexShrink: 0,
+    },
 }));

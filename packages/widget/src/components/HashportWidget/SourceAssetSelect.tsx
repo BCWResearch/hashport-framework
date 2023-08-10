@@ -8,6 +8,8 @@ import { SelectSourceTokenList } from 'components/TokenSelectionModal/TokenList'
 import { SelectionFilterProvider } from 'contexts/selectionFilterContext';
 import Stack from '@mui/material/Stack';
 import { TokenFilters } from 'components/TokenSelectionModal/TokenFilters';
+import { TokenIcon } from 'components/TokenSelectionModal/TokenIcon';
+import { alpha } from '@mui/material/styles';
 
 const ModalHeader = () => {
     return (
@@ -30,10 +32,23 @@ export const SourceAssetSelect = () => {
     const handleOpen = () => setIsModalOpen(true);
     const handleClose = () => setIsModalOpen(false);
 
+    const icons = {
+        endIcon: sourceAsset ? undefined : <ArrowDropDownIcon />,
+        startIcon: sourceAsset ? <TokenIcon token={sourceAsset} /> : undefined,
+    } as const;
+
     return (
         <>
-            <Button onClick={handleOpen} endIcon={<ArrowDropDownIcon />}>
-                {sourceAsset?.symbol ?? 'Select'}
+            <Button
+                sx={({ palette }) =>
+                    sourceAsset
+                        ? { backgroundColor: alpha(palette.primary.main, 0.2), color: 'white' }
+                        : {}
+                }
+                onClick={handleOpen}
+                {...icons}
+            >
+                {sourceAsset?.symbol ?? 'SELECT'}
             </Button>
             <SelectionFilterProvider>
                 <Modal open={isModalOpen} onClose={handleClose} header={<ModalHeader />}>

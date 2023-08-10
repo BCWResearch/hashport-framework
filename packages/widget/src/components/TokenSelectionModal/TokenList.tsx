@@ -6,10 +6,10 @@ import {
 } from '@hashport/react-client';
 import { VariableSizeList, type ListChildComponentProps } from 'react-window';
 import ListItemText from '@mui/material/ListItemText';
-import Avatar from '@mui/material/Avatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import { styled } from '@mui/material/styles';
 import { useSelectionFilters } from 'hooks/selectionFilters';
+import { TokenIcon } from './TokenIcon';
 
 const TokenRowButton = styled(ListItemButton)(({ theme: { palette, spacing } }) => ({
     gap: spacing(2),
@@ -27,7 +27,7 @@ const TokenRow = ({ data, index, style }: ListChildComponentProps<AssetInfo[]>) 
 
     return (
         <TokenRowButton key={token.id} onClick={() => token.handleSelect()} style={style}>
-            <Avatar alt={token.symbol} src={token.icon} />
+            <TokenIcon token={token} />
             <ListItemText primary={token.symbol} />
         </TokenRowButton>
     );

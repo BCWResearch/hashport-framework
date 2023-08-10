@@ -8,6 +8,7 @@ export const Button = styled(MuiButton)(({ theme: { shape, palette, spacing } })
     color: 'black',
     fontWeight: 300,
     transition: 'all 250ms ease',
+    textTransform: 'none',
     '& .MuiButton-endIcon': {
         marginLeft: 0,
     },

@@ -7,7 +7,9 @@ import {
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 import { TokenFilters } from 'components/TokenSelectionModal/TokenFilters';
+import { TokenIcon } from 'components/TokenSelectionModal/TokenIcon';
 import { SelectTargetTokenList } from 'components/TokenSelectionModal/TokenList';
 import { Button } from 'components/styled/Button';
 import { Modal } from 'components/styled/Modal';
@@ -55,10 +57,24 @@ export const TargetAssetSelect = () => {
 
     const handleOpen = () => setIsModalOpen(true);
 
+    const icons = {
+        endIcon: targetAsset ? undefined : <ArrowDropDownIcon />,
+        startIcon: targetAsset ? <TokenIcon token={targetAsset} /> : undefined,
+    } as const;
+
     return (
         <>
-            <Button disabled={!sourceAsset} onClick={handleOpen} endIcon={<ArrowDropDownIcon />}>
-                {targetAsset?.symbol ?? 'Select'}
+            <Button
+                sx={({ palette }) =>
+                    targetAsset
+                        ? { backgroundColor: alpha(palette.primary.main, 0.2), color: 'white' }
+                        : {}
+                }
+                disabled={!sourceAsset}
+                onClick={handleOpen}
+                {...icons}
+            >
+                {targetAsset?.symbol ?? 'SELECT'}
             </Button>
             <SelectionFilterProvider>
                 <Modal
