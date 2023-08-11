@@ -10,7 +10,9 @@ export const MinAmount = () => {
     const sourceAssetDecimals = tokens?.fungible.get(sourceId)?.decimals;
 
     return minAmount && sourceAssetDecimals ? (
-        <p>Min amount: {formatUnits(BigInt(minAmount), sourceAssetDecimals)}</p>
+        <p style={{ color: 'white' }}>
+            Min amount: {formatUnits(BigInt(minAmount), sourceAssetDecimals)}
+        </p>
     ) : (
         <></>
     );

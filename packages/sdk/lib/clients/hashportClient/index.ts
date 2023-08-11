@@ -31,6 +31,7 @@ export class HashportClient {
     protected apiClient: HashportApiClient;
     protected mirrorNodeClient: MirrorNodeClient;
     protected logger: Logger;
+    mode: 'mainnet' | 'testnet';
     evmSigner: EvmSigner;
     hederaSigner: HederaSigner;
     transactionStore: ReturnType<ReturnType<typeof createHashportStore>['getState']>;
@@ -47,6 +48,7 @@ export class HashportClient {
     }: HashportClientConfig) {
         this.evmSigner = evmSigner;
         this.hederaSigner = hederaSigner;
+        this.mode = mode;
         this.apiClient = new HashportApiClient(mode);
         const store = createHashportStore(persistOptions);
         this.transactionStore = store.getState();

@@ -57,6 +57,12 @@ export class HashportApiClient {
         }
     }
     /**
+     * Returns a mapping of supported chain id to block explorer url.
+     */
+    explorers(): Fetcher<Record<number, string>> {
+        return new Fetcher<Record<number, string>>('https://cdn.hashport.network/explorers.json');
+    }
+    /**
      * Validates a bridging operation, returning a error if any of the
      * parameters have been input incorrectly.
      */

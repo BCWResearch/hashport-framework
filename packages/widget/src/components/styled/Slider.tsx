@@ -1,5 +1,5 @@
 import { Slider as MuiSlider } from '@mui/base/Slider';
-import Box, { BoxProps } from '@mui/material/Box';
+import Box from '@mui/material/Box';
 import { SliderProps as MuiSliderProps } from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
@@ -8,18 +8,12 @@ import { useState } from 'react';
 const THUMB_WIDTH = 10;
 const SLIDER_HEIGHT = 5;
 const ARROW_ICON = `url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiBox-root css-uqopch" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardRoundedIcon"><path d="M5 13h11.17l-4.88 4.88c-.39.39-.39 1.03 0 1.42.39.39 1.02.39 1.41 0l6.59-6.59c.39-.39.39-1.02 0-1.41l-6.58-6.6a.9959.9959 0 0 0-1.41 0c-.39.39-.39 1.02 0 1.41L16.17 11H5c-.55 0-1 .45-1 1s.45 1 1 1z"></path></svg>')`;
-interface SliderContainerProps extends BoxProps {
-    isError?: boolean;
-}
-const SliderContainer = styled(Box, {
-    shouldForwardProp(propName) {
-        return propName !== 'isError';
-    },
-})<SliderContainerProps>(({ theme: { palette, spacing }, isError }) => ({
+
+const SliderContainer = styled(Box)(({ theme: { palette, spacing } }) => ({
     display: 'flex',
     position: 'relative',
     padding: `${spacing(SLIDER_HEIGHT / 5)} ${spacing(THUMB_WIDTH / 2 + 1)}`,
-    backgroundColor: isError ? palette.error.main : palette.primary.light,
+    backgroundColor: palette.primary.light,
     borderRadius: spacing(4),
     transition: 'background-color 250ms ease',
 }));
@@ -68,13 +62,13 @@ const SliderText = styled(Typography)(({ theme: { palette } }) => ({
 type SliderProps = Omit<MuiSliderProps, 'value'> & {
     onConfirm: () => void;
     prompt?: string;
-    disabled: boolean;
     isError?: boolean;
 };
 export const Slider = ({
     onConfirm,
     prompt = `Swipe to confirm`,
     isError,
+    disabled,
     ...props
 }: SliderProps) => {
     const [value, setValue] = useState(0);
@@ -84,7 +78,7 @@ export const Slider = ({
             setValue(Math.min(100, newValue));
         }
     };
-
+    // TODO: add a way to reset after finished
     const handleConfirm = () => {
         if (value === 100) {
             onConfirm();
@@ -93,7 +87,12 @@ export const Slider = ({
         setValue(0);
     };
     return (
-        <SliderContainer isError={isError}>
+        <SliderContainer
+            sx={({ palette }) => ({
+                ...(disabled ? { backgroundColor: palette.primary.dark } : {}),
+                ...(isError ? { backgroundColor: palette.error.main } : {}),
+            })}
+        >
             <SliderText
                 align="center"
                 variant="caption"
@@ -104,6 +103,7 @@ export const Slider = ({
                 {prompt}
             </SliderText>
             <StyledSlider
+                disabled={disabled}
                 defaultValue={0}
                 value={value}
                 aria-label="Confirm"
