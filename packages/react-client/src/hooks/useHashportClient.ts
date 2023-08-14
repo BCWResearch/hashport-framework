@@ -11,7 +11,7 @@ export const useHashportClient = () => {
     return hashportClient;
 };
 
-export const useQueue = () => {
+export const useHashportTransactionQueue = () => {
     const hashportClient = useHashportClient();
     const [queue, setQueue] = useState<Map<string, HashportTransactionData>>(
         hashportClient.transactionStore.queue,
@@ -19,7 +19,7 @@ export const useQueue = () => {
 
     useEffect(() => {
         const unsubscribe = hashportClient.subscribe(state => {
-            setQueue(state.queue);
+            setQueue(new Map(state.queue));
         });
         return () => unsubscribe();
     }, [hashportClient]);

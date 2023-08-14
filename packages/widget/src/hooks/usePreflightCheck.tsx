@@ -1,7 +1,8 @@
 import { useBridgeParams, useMinAmount, useTokenList } from '@hashport/react-client';
 import { formatUnits } from 'viem';
 
-export const MinAmount = () => {
+// TODO: write a hook that can tell if queuing will work or not. ie, enough balance, meets minimum
+export const usePreflightCheck = () => {
     const { data: tokens } = useTokenList();
     const { data: minAmount } = useMinAmount();
     const { sourceAssetId, sourceNetworkId } = useBridgeParams();

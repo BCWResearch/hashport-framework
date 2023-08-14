@@ -1,44 +1,66 @@
 import { useExecuteHashportTransaction, useQueueHashportTransaction } from '@hashport/react-client';
 import { Slider } from 'components/styled/Slider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TransactionState } from '../TransactionState/TransactionState';
 import { Collapse } from 'components/styled/Collapse';
 import { TermsAndPolicy } from './TermsAndPolicy';
+import { useInProgressHashportId } from 'hooks/inProgressHashportId';
+import { TryAgainButton } from './TryAgainButton';
+import { HashportError, HashportTransactionData } from '@hashport/sdk';
+import { StepDescription } from 'components/TransactionState/StepDescription';
+import { AfterPortActions } from './AfterPortActions';
 
 export const ConfirmationSlider = () => {
     const queueTransaction = useQueueHashportTransaction();
     const execute = useExecuteHashportTransaction();
     const [isExecuting, setIsExecuting] = useState(false);
-    const [inProgressId, setInProgressId] = useState('');
+    const [inProgressId, setInProgressId] = useInProgressHashportId();
+    const [errorMessage, setErrorMessage] = useState('');
+    const [confirmationData, setConfirmationData] = useState<HashportTransactionData['state']>();
     // TODO: if isExecuting, don't let them leave page
 
     const isDisabled = !queueTransaction || isExecuting;
 
+    useEffect(() => {
+        // Handles reset in after port actions
+        setConfirmationData(prev => (inProgressId ? prev : undefined));
+    }, [inProgressId]);
+
     const handleConfirm = async () => {
         if (!queueTransaction) return;
         try {
+            setErrorMessage('');
             setIsExecuting(true);
-            const id = await queueTransaction();
-            setInProgressId(id);
+            let id: string;
+            if (inProgressId) {
+                id = inProgressId;
+            } else {
+                id = await queueTransaction();
+                setInProgressId(id);
+            }
             const confirmation = await execute(id);
-            // after confirmation, take the confirmation hash and pass it to a component below?
-            // that component should give the user a change to save the info as a receipt
-            // reset inProgressId? or in useEffect?
-        } catch (error) {
-            console.error(error);
-            // TODO: handle error and pass to try again button
+            setConfirmationData(confirmation);
+        } catch (e) {
+            setErrorMessage(
+                e instanceof HashportError ? e.message : 'Something went wrong. Please try again',
+            );
         } finally {
             setIsExecuting(false);
         }
     };
+
     return (
         <div>
             <Collapse in={!inProgressId}>
                 <Slider disabled={isDisabled} onConfirm={handleConfirm} />
                 <TermsAndPolicy />
             </Collapse>
-            {/* TODO: retry button */}
-            <TransactionState inProgressId={inProgressId} />
+            <Collapse in={Boolean(errorMessage)}>
+                <TryAgainButton onClick={handleConfirm} />
+            </Collapse>
+            {!errorMessage && <StepDescription />}
+            <TransactionState />
+            <AfterPortActions confirmationData={confirmationData} />
         </div>
     );
 };

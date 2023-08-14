@@ -1,9 +1,15 @@
+import { useHashportTransactionQueue } from '@hashport/react-client';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import { Collapse } from 'components/styled/Collapse';
 import { Row } from 'components/styled/Row';
+import { useInProgressHashportId } from 'hooks/inProgressHashportId';
 
-export const StepDescription = ({ description }: { description: string | undefined }) => {
+export const StepDescription = () => {
+    const [inProgressId] = useInProgressHashportId();
+    const transactionQueue = useHashportTransactionQueue();
+    // TODO: use the correct step description
+    const description = transactionQueue.get(inProgressId)?.steps?.[0].type;
     return (
         <Collapse in={!!description}>
             <Row alignItems="center">

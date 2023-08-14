@@ -63,7 +63,7 @@ const CopyButton = ({ copyText }: { copyText: string }) => {
 export const ViewConfirmationTransactionButton = ({
     confirmationId,
     ...props
-}: LinkProps & { confirmationId: string }) => {
+}: LinkProps & { confirmationId: string | undefined }) => {
     const { data: explorers } = useExplorerUrls();
     const { evmSigner, mode } = useHashportClient();
 
@@ -83,9 +83,10 @@ export const ViewConfirmationTransactionButton = ({
             underline="always"
             justifyContent="center"
             sx={({ palette, spacing, shape }) => ({
+                textWrap: 'nowrap',
                 borderRadius: shape.borderRadius,
                 outline: `1px solid ${palette.primary.main}`,
-                padding: spacing(1),
+                padding: spacing(1, 2),
             })}
         >
             View Transaction

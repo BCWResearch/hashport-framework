@@ -1,5 +1,9 @@
 import { HBAR, HBAR_ETH } from '@hashport/sdk/lib/test/mocks/constants';
-import { useBridgeParamsDispatch, useQueue, useQueueHashportTransaction } from 'hooks';
+import {
+    useBridgeParamsDispatch,
+    useHashportTransactionQueue,
+    useQueueHashportTransaction,
+} from 'hooks';
 import { useState } from 'react';
 import { describe, expect, test } from 'vitest';
 import userEvent from '@testing-library/user-event';
@@ -16,7 +20,7 @@ const TestComponent = () => {
     const [savedId, setSavedId] = useState<string>('');
     const dispatch = useBridgeParamsDispatch();
     const queueTransaction = useQueueHashportTransaction();
-    const queue = useQueue();
+    const queue = useHashportTransactionQueue();
     const queuedAmount = queue.get(savedId)?.params.amount;
 
     const handleClick = () => {
