@@ -60,7 +60,7 @@ const SliderText = styled(Typography)(({ theme: { palette } }) => ({
 }));
 
 type SliderProps = Omit<MuiSliderProps, 'value'> & {
-    onConfirm: () => void;
+    onConfirm: () => Promise<void>;
     prompt?: string;
     isError?: boolean;
 };
@@ -78,11 +78,10 @@ export const Slider = ({
             setValue(Math.min(100, newValue));
         }
     };
-    // TODO: add a way to reset after finished
-    const handleConfirm = () => {
+
+    const handleConfirm = async () => {
         if (value === 100) {
-            onConfirm();
-            return;
+            await onConfirm();
         }
         setValue(0);
     };

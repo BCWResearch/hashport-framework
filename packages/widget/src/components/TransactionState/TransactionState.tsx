@@ -1,18 +1,30 @@
-import { useBridgeParams, useQueue } from '@hashport/react-client';
+import { useHashportClient } from '@hashport/react-client';
 import { TransactionExplorerLinkAndCopy } from './TransactionExplorerLinkAndCopy';
+import { useEffect, useState } from 'react';
+import { HashportTransactionData } from '@hashport/sdk';
+import { StepDescription } from './StepDescription';
 
-export const TransactionState = ({ queueId }: { queueId?: string }) => {
-    const queue = useQueue();
-    const { amount } = useBridgeParams();
-    // at some point the queueId will disappear
-    // when that happens, we only need to close the collapses
+export const TransactionState = ({ inProgressId }: { inProgressId: string }) => {
+    const hashportClient = useHashportClient();
+    const [txData, setTxData] = useState<HashportTransactionData | undefined>(
+        hashportClient.transactionStore.queue.get(inProgressId),
+    );
 
-    // components to return:
-    // step description w/ spinner (from queue, get current step and map a descriptor to it OR add descriptions to the SDK)
-    // block explorer links (from queue.get(id).state (HashportTransactionState), check if there is hederaDepositTransactionId or evmTransactionHash)
+    useEffect(() => {
+        setTxData(hashportClient.transactionStore.queue.get(inProgressId));
+        const unsubscribe = hashportClient.subscribe(state => {
+            const newData = state.queue.get(inProgressId);
+            setTxData(newData ? { ...newData } : undefined);
+        });
+        return unsubscribe;
+    }, [hashportClient, inProgressId]);
+
     return (
         <>
-            <TransactionExplorerLinkAndCopy txIdOrHash={"0x123123"} />
+            {/* TODO: use proper step description */}
+            <StepDescription description={txData?.steps?.[0].type} />
+            <TransactionExplorerLinkAndCopy txIdOrHash={txData?.state.hederaDepositTransactionId} />
+            <TransactionExplorerLinkAndCopy txIdOrHash={txData?.state.evmTransactionHash} />
         </>
     );
 };

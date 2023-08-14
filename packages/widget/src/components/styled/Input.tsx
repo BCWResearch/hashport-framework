@@ -2,7 +2,7 @@ import InputBase from '@mui/material/InputBase';
 import { styled, alpha } from '@mui/material/styles';
 
 export const Input = styled(InputBase)(({ theme: { palette, shape, spacing, typography } }) => ({
-    borderRadius: shape.borderRadius,
+    borderRadius: `calc(${shape.borderRadius}px - ${spacing(1)})`,
     backgroundColor: alpha(palette.grey[800], 0.4),
     padding: spacing(1.5),
     width: '100%',
