@@ -28,9 +28,9 @@ import { erc20ABI, erc721ABI } from '../../constants/abi';
  * Initializes a client for validating and executing bridging operations on hashport.
  */
 export class HashportClient {
-    protected apiClient: HashportApiClient;
-    protected mirrorNodeClient: MirrorNodeClient;
     protected logger: Logger;
+    apiClient: HashportApiClient;
+    mirrorNodeClient: MirrorNodeClient;
     mode: 'mainnet' | 'testnet';
     evmSigner: EvmSigner;
     hederaSigner: HederaSigner;
