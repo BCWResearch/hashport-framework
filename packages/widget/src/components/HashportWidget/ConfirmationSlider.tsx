@@ -3,6 +3,7 @@ import { Slider } from 'components/styled/Slider';
 import { useState } from 'react';
 import { TransactionState } from '../TransactionState/TransactionState';
 import { Collapse } from 'components/styled/Collapse';
+import { TermsAndPolicy } from './TermsAndPolicy';
 
 export const ConfirmationSlider = () => {
     const queueTransaction = useQueueHashportTransaction();
@@ -34,6 +35,7 @@ export const ConfirmationSlider = () => {
         <div>
             <Collapse in={!inProgressId}>
                 <Slider disabled={isDisabled} onConfirm={handleConfirm} />
+                <TermsAndPolicy />
             </Collapse>
             {/* TODO: retry button */}
             <TransactionState inProgressId={inProgressId} />
