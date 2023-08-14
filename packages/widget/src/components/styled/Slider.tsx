@@ -96,7 +96,7 @@ export const Slider = ({
                 align="center"
                 variant="caption"
                 sx={{
-                    opacity: (100 - value) / 100,
+                    opacity: disabled ? 0.5 : (100 - value) / 100,
                 }}
             >
                 {prompt}
