@@ -351,7 +351,7 @@ export class EvmContractHandler implements _EvmContractHandler {
 
         return {
             result: { evmTransactionHash: hash },
-            confirmations: getBlockConfirmations(this.signer.getChainId()),
+            confirmations: await getBlockConfirmations(this.signer.getChainId()),
         };
     }
 
@@ -379,7 +379,7 @@ export class EvmContractHandler implements _EvmContractHandler {
 
         return {
             result: { evmTransactionHash: hash },
-            confirmations: getBlockConfirmations(this.signer.getChainId()),
+            confirmations: await getBlockConfirmations(this.signer.getChainId()),
         };
     }
 
@@ -406,7 +406,7 @@ export class EvmContractHandler implements _EvmContractHandler {
 
         return {
             result: { evmTransactionHash: hash },
-            confirmations: getBlockConfirmations(this.signer.getChainId()),
+            confirmations: await getBlockConfirmations(this.signer.getChainId()),
         };
     }
 
@@ -514,7 +514,7 @@ export class EvmContractHandler implements _EvmContractHandler {
 
         return {
             result: { evmTransactionHash: hash },
-            confirmations: getBlockConfirmations(this.signer.getChainId()),
+            confirmations: await getBlockConfirmations(this.signer.getChainId()),
         };
     }
 
