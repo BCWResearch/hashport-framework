@@ -47,7 +47,8 @@ let theme = createTheme({
             main: 'rgb(45,132,235)',
             light: 'hsl(213deg 95% 69%)',
             dark: 'hsl(213deg 50% 25% / 0.75)',
-            darker: 'hsl(213deg 98% 7% / 0.75)',
+            // darker: 'hsl(213deg 98% 7% / 0.75)',
+            darker: 'rgb(16, 25, 38)',
         },
         border: {
             main: 'hsl(213deg 82% 55% / 0.25)',

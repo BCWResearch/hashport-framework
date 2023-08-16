@@ -24,7 +24,7 @@ const filterReducer: Reducer<SelectionFilterState, SelectionFilterAction> = (
         case 'updateSearchString': {
             return {
                 ...state,
-                searchString: payload,
+                searchString: payload.toLowerCase(),
             };
         }
         case 'removeFilter':

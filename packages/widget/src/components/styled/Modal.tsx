@@ -17,6 +17,7 @@ const Dialog = styled(MuiDialog)(({ theme: { palette, shape, spacing } }) => ({
         padding: 0,
         backgroundColor: darken(palette.grey[900], 0.4),
         borderRadius: shape.borderRadius,
+        minHeight: '200px',
     },
     '& .selection-list::-webkit-scrollbar': {
         width: spacing(1),

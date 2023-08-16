@@ -6,26 +6,7 @@ import {
 } from '@hashport/react-client';
 import { parseUnits, isHex } from 'viem';
 import { useQuery } from '@tanstack/react-query';
-
-const balanceOfAbi = [
-    {
-        type: 'function',
-        name: 'balanceOf',
-        stateMutability: 'view',
-        inputs: [
-            {
-                name: 'account',
-                type: 'address',
-            },
-        ],
-        outputs: [
-            {
-                name: '',
-                type: 'uint256',
-            },
-        ],
-    },
-] as const;
+import { balanceOfAbi } from 'constants/abi';
 
 export const usePreflightCheck = () => {
     const hashportClient = useHashportClient();
