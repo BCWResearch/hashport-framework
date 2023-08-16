@@ -5,6 +5,7 @@ import {
     useTokenList,
 } from '@hashport/react-client';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { ButtonProps } from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
@@ -25,7 +26,7 @@ const ModalHeader = () => {
     );
 };
 
-export const TargetAssetSelect = () => {
+export const TargetAssetSelect = ({ disabled, ...props }: ButtonProps) => {
     const hashportClient = useHashportClient();
     const dispatch = useBridgeParamsDispatch();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -70,7 +71,8 @@ export const TargetAssetSelect = () => {
                         ? { backgroundColor: alpha(palette.primary.main, 0.2), color: 'white' }
                         : {}
                 }
-                disabled={!sourceAsset}
+                {...props}
+                disabled={!sourceAsset || disabled}
                 onClick={handleOpen}
                 {...icons}
             >
