@@ -7,13 +7,15 @@ import { InProgressHashportIdProvider } from 'contexts/inProgressHashportId';
 import { formatUnits } from 'viem';
 import Stack from '@mui/material/Stack';
 import {
+    HashportClientProviderWithRainbowKit,
+    useHashConnect,
     useHashportClient,
     useHashportTransactionQueue,
     useTokenList,
 } from '@hashport/react-client';
-import { useEffect, useState } from 'react';
+import { ComponentProps, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
-import { HashportTransactionData } from '@hashport/sdk';
+import { HashportTransactionData, createHashPackSigner } from '@hashport/sdk';
 import { Row } from 'components/styled/Row';
 import { Button } from 'components/styled/Button';
 import { TokenIcon } from 'components/TokenSelectionModal/TokenIcon';
@@ -97,28 +99,46 @@ const CheckForPersistedTransaction = ({ children }: { children: React.ReactNode 
     }
 };
 
-const WidgetContainer = ({ children }: { children: React.ReactNode }) => {
-    return (
-        <Container>
-            <InProgressHashportIdProvider>
-                <Stack spacing={2}>
-                    <CheckForPersistedTransaction>{children}</CheckForPersistedTransaction>
-                </Stack>
-            </InProgressHashportIdProvider>
-        </Container>
-    );
-};
+export const HashportWidget = (
+    props: Omit<ComponentProps<typeof HashportClientProviderWithRainbowKit>, 'hederaSigner'>,
+) => {
+    const hcData = useHashConnect();
+    const connect = () => hcData?.hashConnect.connectToLocalWallet();
+    const disconnect = () => hcData?.hashConnect.clearConnectionsAndData();
 
-export const HashportWidget = () => {
     return (
         <ThemeProvider>
-            <WidgetContainer>
-                <div>
-                    <AmountInput />
-                    <ReceivedAmount />
-                </div>
-                <ConfirmationSlider />
-            </WidgetContainer>
+            <Container>
+                <HashportClientProviderWithRainbowKit
+                    {...props}
+                    hederaSigner={
+                        hcData && createHashPackSigner(hcData.hashConnect, hcData.pairingData)
+                    }
+                    renderConnectButton={(children, ConnectButton) => {
+                        return (
+                            <Stack>
+                                <Row mb={1} gap={1.5}>
+                                    <Button onClick={connect}>Connect Hashpack</Button>
+                                    <ConnectButton />
+                                </Row>
+                                {children}
+                            </Stack>
+                        );
+                    }}
+                >
+                    <InProgressHashportIdProvider>
+                        <Stack spacing={2}>
+                            <CheckForPersistedTransaction>
+                                <div>
+                                    <AmountInput />
+                                    <ReceivedAmount />
+                                </div>
+                                <ConfirmationSlider />
+                            </CheckForPersistedTransaction>
+                        </Stack>
+                    </InProgressHashportIdProvider>
+                </HashportClientProviderWithRainbowKit>
+            </Container>
         </ThemeProvider>
     );
 };

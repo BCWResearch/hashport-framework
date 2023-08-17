@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren } from 'react';
+import { ComponentProps, createContext, PropsWithChildren } from 'react';
 // TODO: replace after publishing package
 import { HashportClient } from '@hashport/sdk/lib/clients/hashportClient';
 import { HashportClientConfig } from '@hashport/sdk/lib/types/clients';
@@ -6,6 +6,7 @@ import { BridgeParamsProvider } from './bridgeParams';
 import { useRainbowKitSigner } from 'hooks/useRainbowKitSigner';
 import { RainbowKitBoilerPlate } from './rainbowKitProvider';
 import { HashportApiProvider } from './hashportApi';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export type HashportContextProps = PropsWithChildren<Partial<HashportClientConfig>> & {
     disconnectedAccountsFallback?: React.ReactNode;
@@ -47,16 +48,28 @@ export const HashportClientProvider = ({
     );
 };
 
+type HashportClientWithRainbowKitProviderProps = Omit<HashportContextProps, 'evmSigner'> & {
+    renderConnectButton?: (
+        children: React.ReactNode,
+        RainbowKitConnectButton: typeof ConnectButton,
+    ) => React.ReactNode;
+};
+
 const HashportClientForRainbowKit = ({
     children,
+    renderConnectButton = (children, RainbowKitConnectButton) => {
+        return (
+            <>
+                <RainbowKitConnectButton />
+                {children}
+            </>
+        );
+    },
     hederaSigner,
-    customMirrorNodeCredentials,
-    customMirrorNodeUrl,
-    debug,
-    persistOptions,
     mode = 'mainnet',
     disconnectedAccountsFallback = <p>Please connect signers for both EVM and Hedera networks</p>,
-}: Omit<HashportContextProps, 'evmSigner'>) => {
+    ...rest
+}: HashportClientWithRainbowKitProviderProps) => {
     const evmSigner = useRainbowKitSigner();
     const hashportClient =
         evmSigner &&
@@ -64,28 +77,31 @@ const HashportClientForRainbowKit = ({
         new HashportClient({
             evmSigner,
             hederaSigner,
-            customMirrorNodeCredentials,
-            customMirrorNodeUrl,
-            debug,
             mode,
-            persistOptions,
+            ...rest,
         });
     return (
         <HashportClientContext.Provider value={hashportClient}>
             <BridgeParamsProvider>
-                {hashportClient ? children : disconnectedAccountsFallback}
+                {renderConnectButton(
+                    hashportClient ? children : disconnectedAccountsFallback,
+                    ConnectButton,
+                )}
             </BridgeParamsProvider>
         </HashportClientContext.Provider>
     );
 };
 
-export const HashportClientAndRainbowKitProvider = ({
+export const HashportClientProviderWithRainbowKit = ({
     children,
+    rainbowKitProviderProps = {},
     ...props
-}: Omit<HashportContextProps, 'evmSigner'>) => {
+}: HashportClientWithRainbowKitProviderProps & {
+    rainbowKitProviderProps?: ComponentProps<typeof RainbowKitBoilerPlate>;
+}) => {
     return (
         <HashportApiProvider mode={props.mode}>
-            <RainbowKitBoilerPlate>
+            <RainbowKitBoilerPlate {...rainbowKitProviderProps}>
                 <HashportClientForRainbowKit {...props}>{children}</HashportClientForRainbowKit>
             </RainbowKitBoilerPlate>
         </HashportApiProvider>

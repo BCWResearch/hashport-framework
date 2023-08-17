@@ -1,5 +1,5 @@
 import '@rainbow-me/rainbowkit/styles.css';
-import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { getDefaultWallets, RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import * as wagmiChains from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
@@ -35,7 +35,11 @@ export const RainbowKitBoilerPlate = ({
 
     return (
         <WagmiConfig config={wagmiConfig}>
-            <RainbowKitProvider chains={[...chainsOverride, ...chains]} {...rainbowKitProps}>
+            <RainbowKitProvider
+                theme={darkTheme()}
+                chains={[...chainsOverride, ...chains]}
+                {...rainbowKitProps}
+            >
                 {children}
             </RainbowKitProvider>
         </WagmiConfig>

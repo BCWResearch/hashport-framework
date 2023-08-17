@@ -6,3 +6,4 @@ export * from './useNetworks';
 export * from './useTokenList';
 export * from './useMinAmount';
 export * from './useExplorerUrls';
+export * from './useHashConnect';
