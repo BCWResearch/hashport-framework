@@ -10,6 +10,46 @@ The hashport React Client contains a set of React [contexts](https://react.dev/l
 npm install @hashport/react-client
 ```
 
+&#9888; Note: hashport/react-client is a [React](https://reactjs.org/) library.
+
+### Import
+
+Import the client based on your existing application environment.
+
+If your React app already has an EVM signer (e.g. [RainbowKit](https://www.rainbowkit.com/docs/introduction), [MetaMask](https://www.npmjs.com/package/metamask-react), [ethers](https://docs.ethers.org/v5/)) **AND** a Hedera signer (e.g. [Hashconnect](https://www.npmjs.com/package/hashconnect), [Hashgraph SDK](https://www.npmjs.com/package/@hashgraph/sdk)), please use the [`HashportClientProvider`](https://github.com/BCWResearch/hashport-framework/tree/react-client/init/packages/react-client#hashportclientprovider).
+
+```javascript
+import { HashportClientProvider } from `@hashport/react-client/contexts`;
+```
+
+If your React app **DOES NOT HAVE** an EVM signer but has a Hedera signer, please use the [`HashportClientAndRainbowKitProvider`](https://github.com/BCWResearch/hashport-framework/tree/react-client/init/packages/react-client#hashportclientandrainbowkitprovider).
+
+```javascript
+import { HashportClientAndRainbowKitProvider } from `@hashport/react-client/contexts`;
+```
+
+If your React app **DOES NOT HAVE EITHER SIGNERS**, please integrate a Hedera signer first, such as [Hashconnect](https://www.npmjs.com/package/hashconnect).
+
+### Configure and Wrap Providers
+
+Pass your EVM signer (if necessary) and Hedera signer as props to the provider that imported in the above step. Wrap your application with the configured provider.
+
+```javascript
+const App = () => {
+    return (
+        <HashportClientProvider evmSigner={evmSigner} hederaSigner={hederaSigner}>
+            <YourApp />
+        </HashportClientProvider>
+    );
+};
+```
+
+### Add Functionality
+
+You can start building out the rest of hashport's functionality into your app using the provided [hooks documented below](https://github.com/BCWResearch/hashport-framework/tree/react-client/init/packages/react-client#hooks).
+
+For more details, view the example we have created here.
+
 ## Contexts
 
 ### `BridgeParamsProvider`
@@ -100,7 +140,7 @@ customMirrorNodeCredentials
 
 Credentials to `customMirrorNodeUrl` (the custom Hedera mirror node service). The array indices should contain the following: `["your-x-api-key", "YOUR_API_KEY"]`.
 
-⚠️ If `customMirrorNodeCredentials` is set without a `customMirrorNodeUrl` defined, the `HashportClientProvider` will not work.
+&#9888; If `customMirrorNodeCredentials` is set without a `customMirrorNodeUrl` defined, the `HashportClientProvider` will not work.
 
 Type: `[string, string] | undefined`
 
@@ -138,7 +178,7 @@ Default: `{ persistKey: 'hashportTransactionStore', storage: localStorage }`
 
 ### `HashportClientAndRainbowKitProvider`
 
-`HashportClientAndRainbowKitProvider` relies on the [context](https://react.dev/learn/passing-data-deeply-with-context) feature of React to pass core hashport functionality _and_ a [@rainbow-me/rainbowkit@latest](https://www.rainbowkit.com/docs/introduction) (Ethereum interface) down to other components, so you need to make sure that `HashportClientAndRainbowKitProvider` is a parent of the components you are encapsulating to be able to consume these objects. `HashportClientProvider` also includes `HashportApiProvider` and `BridgeParamsProvider` to help simplify and improve your developer experience.
+`HashportClientAndRainbowKitProvider` relies on the [context](https://react.dev/learn/passing-data-deeply-with-context) feature of React to pass core hashport functionality _and_ [RainbowKit](https://www.rainbowkit.com/docs/introduction) (Ethereum interface) down to other components, so you need to make sure that `HashportClientAndRainbowKitProvider` is a parent of the components you are encapsulating to be able to consume these objects. `HashportClientProvider` also includes `HashportApiProvider` and `BridgeParamsProvider` to help simplify and improve your developer experience.
 
 #### Props
 
@@ -174,7 +214,7 @@ customMirrorNodeCredentials
 
 Credentials to `customMirrorNodeUrl` (the custom Hedera mirror node service). The array indices should contain the following: `["your-x-api-key", "YOUR_API_KEY"]`.
 
-⚠️ If `customMirrorNodeCredentials` is set without a `customMirrorNodeUrl` defined, the `HashportClientProvider` will not work.
+&#9888; If `customMirrorNodeCredentials` is set without a `customMirrorNodeUrl` defined, the `HashportClientProvider` will not work.
 
 Type: `[string, string] | undefined`
 
@@ -230,7 +270,7 @@ chains
 
 An array of chain objects that reference different EVM-compatible chains. By default, hashport-supported chains are included in the array.
 
-⚠️ Chain objects must adhere to the interface described [here](https://wagmi.sh/react/chains#build-your-own).
+&#9888; Chain objects must adhere to the interface described [here](https://wagmi.sh/react/chains#build-your-own).
 
 Type: `RainbowKitChain[]`
 
