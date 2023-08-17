@@ -10,7 +10,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import { styled } from '@mui/material/styles';
 import { useSelectionFilters } from 'hooks/selectionFilters';
 import { TokenIcon } from './TokenIcon';
-import { AssetInfoWithBalance, useTokensWithBalances } from 'hooks/useTokensWithBalances';
+import { AssetInfoWithBalance, useTokensWithBalances } from '@hashport/react-client';
 import Typography from '@mui/material/Typography';
 import { formatUnits } from 'viem';
 

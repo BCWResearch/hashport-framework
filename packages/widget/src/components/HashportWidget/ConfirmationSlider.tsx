@@ -9,17 +9,19 @@ import { TryAgainButton } from './TryAgainButton';
 import { HashportError, HashportTransactionData } from '@hashport/sdk';
 import { StepDescription } from 'components/TransactionState/StepDescription';
 import { AfterPortActions } from './AfterPortActions';
+import { usePreflightCheck } from '@hashport/react-client';
 
 export const ConfirmationSlider = () => {
     const queueTransaction = useQueueHashportTransaction();
     const execute = useExecuteHashportTransaction();
+    const { isValidParams, message } = usePreflightCheck();
     const [isExecuting, setIsExecuting] = useState(false);
     const [inProgressId, setInProgressId] = useInProgressHashportId();
     const [errorMessage, setErrorMessage] = useState('');
     const [confirmationData, setConfirmationData] = useState<HashportTransactionData['state']>();
     // TODO: if isExecuting, don't let them leave page
 
-    const isDisabled = !queueTransaction || isExecuting;
+    const isDisabled = !queueTransaction || isExecuting || !isValidParams;
 
     useEffect(() => {
         // Handles reset in after port actions
@@ -52,7 +54,7 @@ export const ConfirmationSlider = () => {
     return (
         <div>
             <Collapse in={!inProgressId}>
-                <Slider disabled={isDisabled} onConfirm={handleConfirm} />
+                <Slider disabled={isDisabled} onConfirm={handleConfirm} prompt={message} />
                 <TermsAndPolicy />
             </Collapse>
             <Collapse in={Boolean(errorMessage)}>

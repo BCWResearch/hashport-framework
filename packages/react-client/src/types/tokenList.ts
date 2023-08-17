@@ -21,3 +21,5 @@ export type HashportAssets = {
 export type TokenListProps = {
     onSelect?: (token: SelectTokenPayload) => void;
 };
+
+export type AssetInfoWithBalance = AssetInfo & { balance: undefined | bigint };

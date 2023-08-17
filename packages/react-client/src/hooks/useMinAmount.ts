@@ -14,7 +14,7 @@ export const useMinAmount = () => {
                 +sourceNetworkId,
                 sourceAssetId,
             );
-            return minAmount;
+            return BigInt(minAmount);
         },
     });
 };

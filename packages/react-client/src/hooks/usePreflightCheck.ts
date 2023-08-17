@@ -1,30 +1,39 @@
-import {
-    useBridgeParams,
-    useHashportClient,
-    useMinAmount,
-    useTokenList,
-} from '@hashport/react-client';
-import { parseUnits, isHex } from 'viem';
+import { parseUnits, isHex, formatUnits } from 'viem';
 import { useQuery } from '@tanstack/react-query';
 import { balanceOfAbi } from 'constants/abi';
+import { useHashportClient } from './useHashportClient';
+import { useBridgeParams } from './useBridgeParams';
+import { useTokenList } from './useTokenList';
+import { useMinAmount } from './useMinAmount';
 
-export const usePreflightCheck = () => {
+type PreflightStatus =
+    | {
+          isValidParams: true;
+          message?: never;
+      }
+    | {
+          isValidParams: false;
+          message: string;
+      };
+
+export const usePreflightCheck = (): PreflightStatus => {
     const hashportClient = useHashportClient();
     const chainId = hashportClient.evmSigner.getChainId();
     const evmAddress = hashportClient.evmSigner.getAddress();
     const hederaAccount = hashportClient.hederaSigner.accountId;
     const { sourceAssetId, sourceNetworkId, amount } = useBridgeParams();
-    const { data: tokens, isLoading: isLoadingTokens, isError: isErrorTokens } = useTokenList();
+    const { data: tokens } = useTokenList();
     const {
         data: minAmount,
         isLoading: isLoadingMinAmount,
         isError: isErrorMinAmount,
+        error: minAmountError,
     } = useMinAmount();
     const {
-        data: balanceOfSourceAsset,
+        data: sourceAssetBalance,
         isError: isErrorBalance,
         isLoading: isLoadingBalance,
-        error,
+        error: balanceError,
     } = useQuery({
         queryKey: ['balance', sourceAssetId, chainId, evmAddress, hederaAccount],
         queryFn: async () => {
@@ -50,27 +59,31 @@ export const usePreflightCheck = () => {
             }
         },
     });
-    // TODO: make use of useQueries or something
-    if (isLoadingMinAmount || isLoadingMinAmount || isLoadingBalance || isLoadingTokens) {
-        return { isLoading: true, message: undefined, isError: false } as const;
-    } else if (isErrorBalance || isErrorMinAmount || isErrorTokens) {
+
+    if (isLoadingMinAmount || isLoadingBalance) {
+        return {
+            isValidParams: false,
+            message: isLoadingMinAmount ? 'Fetching minimum amounts' : 'Fetching balances',
+        };
+    } else if (balanceError || minAmountError || !tokens || isErrorMinAmount || isErrorBalance) {
+        const error = balanceError ?? minAmountError;
         const message = error instanceof Error ? error.message : 'Failed preflight check';
-        return { isLoading: false, isError: true, message } as const;
+        return { isValidParams: false, message };
     } else {
         const sourceId = `${sourceAssetId}-${+sourceNetworkId}` as const;
-        const sourceAssetDecimals = tokens.fungible.get(sourceId)?.decimals;
-        const minimumAmount = BigInt(minAmount);
-        const formattedAmount = parseUnits(amount ?? '0', sourceAssetDecimals ?? 0);
-        const message =
-            minimumAmount > formattedAmount
-                ? 'Must meet minimum'
-                : formattedAmount > balanceOfSourceAsset
-                ? 'Not enough balance'
-                : undefined;
-        return {
-            isLoading: false,
-            isError: false,
-            message,
-        };
+        const sourceAssetDecimals = tokens.fungible.get(sourceId)?.decimals ?? 0;
+        const formattedAmount = parseUnits(amount ?? '0', sourceAssetDecimals);
+        if (formattedAmount < minAmount) {
+            return {
+                isValidParams: false,
+                message: `Minimum amount is ${formatUnits(minAmount, sourceAssetDecimals)}`,
+            };
+        } else if (sourceAssetBalance < formattedAmount) {
+            return { isValidParams: false, message: 'Not enough balance' };
+        } else {
+            return {
+                isValidParams: true,
+            };
+        }
     }
 };

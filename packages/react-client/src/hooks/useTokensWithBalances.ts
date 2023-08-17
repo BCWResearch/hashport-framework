@@ -1,10 +1,10 @@
-import { AssetInfo, useHashportClient, useTokenList } from '@hashport/react-client';
+import { useHashportClient } from './useHashportClient';
+import { useTokenList } from './useTokenList';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { balanceOfAbi } from 'constants/abi';
 import { useMemo } from 'react';
+import { AssetInfoWithBalance } from 'types/tokenList';
 import { isHex } from 'viem';
-
-export type AssetInfoWithBalance = AssetInfo & { balance: undefined | bigint };
 
 export const useTokensWithBalances = (
     props: Parameters<typeof useTokenList>[0],
