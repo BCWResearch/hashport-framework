@@ -21,6 +21,8 @@ import { Button } from 'components/styled/Button';
 import { TokenIcon } from 'components/TokenSelectionModal/TokenIcon';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { useInProgressHashportId } from 'hooks/inProgressHashportId';
+import { renderWidgetHeader } from './WidgetHeader';
+import { Alert } from 'components/styled/Alert';
 
 const CheckForPersistedTransaction = ({ children }: { children: React.ReactNode }) => {
     const hashportClient = useHashportClient();
@@ -102,29 +104,19 @@ const CheckForPersistedTransaction = ({ children }: { children: React.ReactNode 
 export const HashportWidget = (
     props: Omit<ComponentProps<typeof HashportClientProviderWithRainbowKit>, 'hederaSigner'>,
 ) => {
-    const hcData = useHashConnect();
-    const connect = () => hcData?.hashConnect.connectToLocalWallet();
-    const disconnect = () => hcData?.hashConnect.clearConnectionsAndData();
-
+    const { hashConnect, pairingData } = useHashConnect();
     return (
         <ThemeProvider>
             <Container>
                 <HashportClientProviderWithRainbowKit
                     {...props}
-                    hederaSigner={
-                        hcData && createHashPackSigner(hcData.hashConnect, hcData.pairingData)
+                    hederaSigner={hashConnect && createHashPackSigner(hashConnect, pairingData)}
+                    renderConnectButton={renderWidgetHeader(hashConnect)}
+                    disconnectedAccountsFallback={
+                        <Alert severity="info" variant="outlined">
+                            Please connect both Hedera and EVM accounts to start bridging.
+                        </Alert>
                     }
-                    renderConnectButton={(children, ConnectButton) => {
-                        return (
-                            <Stack>
-                                <Row mb={1} gap={1.5}>
-                                    <Button onClick={connect}>Connect Hashpack</Button>
-                                    <ConnectButton />
-                                </Row>
-                                {children}
-                            </Stack>
-                        );
-                    }}
                 >
                     <InProgressHashportIdProvider>
                         <Stack spacing={2}>

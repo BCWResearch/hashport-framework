@@ -17,7 +17,6 @@ export const useHashConnect = ({ debug = false, mode = 'mainnet' }: UseHashConne
     const [pairingData, setPairingData] = useState<HashConnectTypes.SavedPairingData>();
 
     const handlePairingEvent = (data: MessageTypes.ApprovePairing) => {
-        // console.log('Pairing event: ', data);
         setPairingData(data.pairingData);
     };
 
@@ -39,5 +38,7 @@ export const useHashConnect = ({ debug = false, mode = 'mainnet' }: UseHashConne
         };
     }, [initialize, hashConnect.pairingEvent]);
 
-    return pairingData && { pairingData, hashConnect };
+    return pairingData
+        ? { pairingData, hashConnect }
+        : { pairingData: undefined, hashConnect: undefined };
 };
