@@ -35,8 +35,9 @@ export const usePreflightCheck = (): PreflightStatus => {
         isLoading: isLoadingBalance,
         error: balanceError,
     } = useQuery({
-        queryKey: ['balance', sourceAssetId, chainId, evmAddress, hederaAccount],
+        queryKey: ['balance', sourceAssetId, sourceNetworkId, chainId, evmAddress, hederaAccount],
         queryFn: async () => {
+            // TODO: if nothing is set yet, it should just fail quietly
             if (!sourceAssetId || !sourceNetworkId) throw 'Please select an asset';
             if (isHex(sourceAssetId)) {
                 if (chainId !== +sourceNetworkId) throw 'Wrong EVM network';

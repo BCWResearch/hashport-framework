@@ -23,6 +23,7 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { useInProgressHashportId } from 'hooks/inProgressHashportId';
 import { renderWidgetHeader } from './WidgetHeader';
 import { Alert } from 'components/styled/Alert';
+import { BlockConfirmations } from './BlockConfirmations';
 
 const CheckForPersistedTransaction = ({ children }: { children: React.ReactNode }) => {
     const hashportClient = useHashportClient();
@@ -126,6 +127,7 @@ export const HashportWidget = (
                                     <ReceivedAmount />
                                 </div>
                                 <ConfirmationSlider />
+                                <BlockConfirmations />
                             </CheckForPersistedTransaction>
                         </Stack>
                     </InProgressHashportIdProvider>

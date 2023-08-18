@@ -21,6 +21,7 @@ import {
     mockHederaAccount,
 } from './mockSigners.js';
 import { formatTransactionId } from '../../utils/formatters.js';
+import { blockConfirmations } from '../../constants/blockConfirmations.js';
 
 // Full value from mockData is too large for msw to handle
 export const assets: NetworkAssets[] = [
@@ -71,6 +72,9 @@ const miscHandlers = [
     rest.get(FETCH_TEST_URL, (_, res, ctx) => {
         return res(ctx.status(200), ctx.json('mock_data'));
     }),
+    rest.get('https://cdn.hashport.network/blockConfirmations.json', (_, res, ctx) => {
+        return res(ctx.status(200), ctx.json(blockConfirmations))
+    })
 ];
 
 const mirrorNodeHandlers = [
