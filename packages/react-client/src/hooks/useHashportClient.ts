@@ -53,13 +53,3 @@ export const useQueueHashportTransaction = () => {
     if (!isValidBridgeParams || !tokens || !selectedToken) return;
     return queueHashportTransaction;
 };
-
-export const useExecuteHashportTransaction = () => {
-    const hashportClient = useHashportClient();
-    return useCallback(
-        async (id: string) => {
-            return await hashportClient.execute(id);
-        },
-        [hashportClient],
-    );
-};

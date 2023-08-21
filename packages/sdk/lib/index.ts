@@ -15,7 +15,7 @@ export * from './signers/localEvmSigner.js';
 
 //////////////////////////////////////////////////
 // Adapters
-export * from './adapters';
+export * from './adapters/index.js';
 
 //////////////////////////////////////////////////
 // Types

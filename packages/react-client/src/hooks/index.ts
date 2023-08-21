@@ -10,3 +10,4 @@ export * from './useHashConnect';
 export * from './usePreflightCheck';
 export * from './useTokensWithBalances';
 export * from './useBlockConfirmations';
+export * from './useProcessingTransaction';

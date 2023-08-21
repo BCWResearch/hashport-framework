@@ -1,141 +1,97 @@
-import { HashportTransactionData } from '@hashport/sdk';
-import { useHashportClient, useHashportTransactionQueue } from 'hooks';
-import { Reducer, createContext, useCallback, useReducer } from 'react';
+import { HashportTransactionData, HashportTransactionState } from '@hashport/sdk';
+import { useBridgeParamsDispatch, useHashportClient, useHashportTransactionQueue } from 'hooks';
+import { Reducer, createContext, useCallback, useMemo, useReducer } from 'react';
 
 type ProcessingTransactionState =
-    | {
-          id: string;
-          isProcessing: true;
-          isError: false;
-          error: undefined;
-      }
-    | {
-          // TODO: add confirmation value
-          id: undefined | string;
-          isProcessing: false;
-          isError: false;
-          error: undefined;
-      }
-    | {
-          id: string;
-          isProcessing: false;
-          isError: true;
-          error: unknown;
-      };
-
-// useProcessingTransaction - state from current tx
-// useProcessTransaction - queue, execute, cancel
-// it would need to sit inside ALL the providers
-// dispatches:
-// execute <- should replace the current execute function?
-// confirm completion
-// Handle bridge params resetting on completion? or would that be annoying?
+    | { status: 'idle'; id?: string; confirmation?: undefined; error?: undefined }
+    | { status: 'processing'; id: string; confirmation?: undefined; error?: undefined }
+    | { status: 'error'; id: string; confirmation?: undefined; error: unknown }
+    | { status: 'complete'; id: string; confirmation: HashportTransactionState; error?: undefined };
 
 export const ProcessingTransactionContext = createContext<
-    // TODO: if isProcessing, state should be defined
-    (ProcessingTransactionState & { state?: HashportTransactionData }) | null
+    (ProcessingTransactionState & { currentTransaction?: HashportTransactionData }) | null
 >(null);
 
 type ProcessTransactionDispatchValue = {
     executeTransaction: (id: string) => Promise<void>;
+    confirmCompletion: () => void;
 };
 
 export const ProcessTransactionDispatchContext =
     createContext<ProcessTransactionDispatchValue | null>(null);
 
-type ProcessingTransactionAction =
-    | {
-          type: 'start';
-          payload: { id: string };
-      }
-    | {
-          type: 'complete';
-          payload?: never;
-      }
-    | {
-          type: 'error';
-          payload: { error: unknown; id: string };
-      }
-    | {
-          type: 'reset';
-          payload?: never;
-      }
-    | {
-          type: 'paused';
-          payload?: never;
-      };
+// Creates payloads out of state. "idle" does not have a payload.
+type ProcessingTransactionAction = {
+    [State in ProcessingTransactionState as State['status']]: {
+        type: State['status'];
+    } & (State['status'] extends 'idle'
+        ? { payload?: never }
+        : {
+              payload: {
+                  [P in keyof Omit<State, 'status'>]: State[P] extends undefined ? never : State[P];
+              };
+          });
+}[ProcessingTransactionState['status']];
 
 const processingTransactionReducer: Reducer<
     ProcessingTransactionState,
     ProcessingTransactionAction
-> = (state, { type, payload }) => {
+> = ({ id }, { type, payload }) => {
     switch (type) {
-        case 'start': {
-            return {
-                id: payload.id,
-                isProcessing: true,
-                isError: false,
-                error: undefined,
-            };
+        case 'idle': {
+            return { status: 'idle', id };
+        }
+        case 'processing': {
+            const { id } = payload;
+            return { status: 'processing', id };
         }
         case 'complete': {
-            return { id: undefined, isProcessing: false, isError: false, error: undefined };
-        }
-        case 'reset': {
-            return {
-                id: undefined,
-                isProcessing: false,
-                isError: false,
-                error: undefined,
-            };
+            const { confirmation, id } = payload;
+            return { status: 'complete', id, confirmation };
         }
         case 'error': {
-            return {
-                isProcessing: false,
-                isError: true,
-                error: payload.error,
-                id: payload.id,
-            };
-        }
-        case 'paused': {
-            return {
-                ...state,
-                isProcessing: false,
-            };
+            const { error, id } = payload;
+            return { status: 'error', id, error };
         }
     }
 };
 
 export const ProcessingTransactionProvider = ({ children }: { children: React.ReactNode }) => {
     const hashportClient = useHashportClient();
-    const [state, dispatch] = useReducer(processingTransactionReducer, {
-        id: undefined,
-        isProcessing: false,
-        isError: false,
-        error: undefined,
-    });
+    const { resetBridgeParams } = useBridgeParamsDispatch();
+    const [state, dispatch] = useReducer(processingTransactionReducer, { status: 'idle' });
     const transactionQueue = useHashportTransactionQueue();
     const currentTransaction = transactionQueue.get(state.id ?? '');
 
     const executeTransaction = useCallback(
         async (id: string) => {
             try {
-                dispatch({ type: 'start', payload: { id } });
+                dispatch({ type: 'processing', payload: { id } });
                 const confirmation = await hashportClient.execute(id);
-                // TODO: save confirmation
+                dispatch({ type: 'complete', payload: { confirmation, id } });
             } catch (error) {
                 console.error(error);
                 dispatch({ type: 'error', payload: { id, error } });
-            } finally {
-                dispatch({ type: 'paused' });
             }
         },
         [hashportClient],
     );
 
+    const confirmCompletion = useCallback(() => {
+        if (state.status !== 'processing') {
+            dispatch({ type: 'idle' });
+            resetBridgeParams();
+        }
+    }, [state, resetBridgeParams]);
+
+    const dispatchValue = useMemo(
+        () => ({ executeTransaction, confirmCompletion }),
+        [executeTransaction, confirmCompletion],
+    );
+
     return (
-        <ProcessingTransactionContext.Provider value={{ ...state, state: currentTransaction }}>
-            <ProcessTransactionDispatchContext.Provider value={{ executeTransaction }}>
+        <ProcessingTransactionContext.Provider value={{ ...state, currentTransaction }}>
+            <ProcessTransactionDispatchContext.Provider value={dispatchValue}>
                 {children}
             </ProcessTransactionDispatchContext.Provider>
         </ProcessingTransactionContext.Provider>

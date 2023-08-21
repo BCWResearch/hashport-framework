@@ -7,6 +7,7 @@ import { useRainbowKitSigner } from 'hooks/useRainbowKitSigner';
 import { RainbowKitBoilerPlate } from './rainbowKitProvider';
 import { HashportApiProvider } from './hashportApi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { ProcessingTransactionProvider } from './processingTransaction';
 
 export type HashportContextProps = PropsWithChildren<Partial<HashportClientConfig>> & {
     disconnectedAccountsFallback?: React.ReactNode;
@@ -41,7 +42,9 @@ export const HashportClientProvider = ({
         <HashportApiProvider mode={mode}>
             <HashportClientContext.Provider value={hashportClient}>
                 <BridgeParamsProvider>
-                    {hashportClient ? children : disconnectedAccountsFallback}
+                    <ProcessingTransactionProvider>
+                        {hashportClient ? children : disconnectedAccountsFallback}
+                    </ProcessingTransactionProvider>
                 </BridgeParamsProvider>
             </HashportClientContext.Provider>
         </HashportApiProvider>
