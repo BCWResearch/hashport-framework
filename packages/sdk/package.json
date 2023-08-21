@@ -13,7 +13,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run clean && tsc --project tsconfig.build.json",
+    "build": "npm run clean && tsc --project tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "test:e2e": "ts-node ./lib/test/e2e.ts"
   },
   "keywords": [

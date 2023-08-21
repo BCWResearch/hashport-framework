@@ -1,9 +1,9 @@
 import { v4 as randomUUID } from 'uuid';
 import { createStore } from 'zustand';
 import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
-import { BridgeParams, BridgeStep } from '../../../types/api/bridge';
-import { HashportTransactionData } from '../../../types/state';
-import { HashportError } from '../../../utils/error.js';
+import { BridgeParams, BridgeStep } from 'types/api/bridge';
+import { HashportTransactionData } from 'types/state';
+import { HashportError } from 'utils/error.js';
 
 type State = { queue: Map<string, HashportTransactionData> };
 

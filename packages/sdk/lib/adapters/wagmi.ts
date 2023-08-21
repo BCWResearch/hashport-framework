@@ -1,5 +1,5 @@
 import { PublicClient, WalletClient } from 'wagmi';
-import { Arguments, EvmSigner } from '../types/signers';
+import { Arguments, EvmSigner } from 'types/signers';
 
 export const createWagmiSigner = (
     publicClient: PublicClient,

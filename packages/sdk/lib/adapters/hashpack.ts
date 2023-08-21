@@ -1,5 +1,5 @@
 import { Transaction } from '@hashgraph/sdk';
-import { HederaSigner } from '../types/signers';
+import { HederaSigner } from 'types/signers';
 import type { HashConnect, HashConnectTypes } from 'hashconnect';
 
 export const createHashPackSigner = (

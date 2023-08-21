@@ -1,15 +1,15 @@
-import { CondensedAsset, NetworkAssets } from '../../types/api/assets';
-import { BridgeParams, BridgeStep, BridgeValidation } from '../../types/api/bridge';
-import { NonFungibleTokenFee } from '../../types/api/fees';
+import { CondensedAsset, NetworkAssets } from 'types/api/assets';
+import { BridgeParams, BridgeStep, BridgeValidation } from 'types/api/bridge';
+import { NonFungibleTokenFee } from 'types/api/fees';
 import {
     NetworkReserveAmounts,
     Network,
     AssetReserveAmounts,
     AssetMinAmount,
     NetworkMinAmounts,
-} from '../../types/api/networks';
-import { PaginatedTransfers, TransferParams } from '../../types/api/transfers';
-import { Fetcher } from '../../utils/fetch.js';
+} from 'types/api/networks';
+import { PaginatedTransfers, TransferParams } from 'types/api/transfers';
+import { Fetcher } from 'utils/fetch.js';
 
 export class HashportApiClient {
     private baseUrl: string;

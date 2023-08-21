@@ -5,8 +5,8 @@ import {
     TokenRelationshipResponse,
     TransactionsQueryParams,
     TransactionsResponse,
-} from '../../types/mirrorNode';
-import { Fetcher } from '../../utils/fetch.js';
+} from 'types/mirrorNode';
+import { Fetcher } from 'utils/fetch.js';
 
 /**
  * A simple wrapper around the Hedera Mirror Node REST API.
@@ -102,7 +102,7 @@ export class MirrorNodeClient {
         return new Fetcher<TokenRelationshipResponse, { ['token.id']: string }, boolean>(url, {
             params: { ['token.id']: tokenId },
             headers: this.headers,
-            responseTransformer: (data) => data.tokens.length > 0
+            responseTransformer: data => data.tokens.length > 0,
         });
     }
 
