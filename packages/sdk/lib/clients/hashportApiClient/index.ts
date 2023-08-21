@@ -9,7 +9,7 @@ import {
     NetworkMinAmounts,
 } from '../../types/api/networks';
 import { PaginatedTransfers, TransferParams } from '../../types/api/transfers';
-import { Fetcher } from '../../utils/fetch';
+import { Fetcher } from '../../utils/fetch.js';
 
 export class HashportApiClient {
     private baseUrl: string;

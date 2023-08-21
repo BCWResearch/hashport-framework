@@ -1,8 +1,7 @@
-import { AccountId } from '@hashgraph/sdk';
-import type { TransactionId } from '@hashgraph/sdk';
+import { AccountId, type TransactionId } from '@hashgraph/sdk';
 import { AbiFunction } from 'abitype';
 import { AbiItem, TransactionReceipt, isHex, toBytes, toHex } from 'viem';
-import { HashportError } from './error';
+import { HashportError } from './error.js';
 
 export function formatTransactionId(id: TransactionId | string) {
     if (typeof id === 'string') {

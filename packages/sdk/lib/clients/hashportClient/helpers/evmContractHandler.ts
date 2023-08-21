@@ -1,20 +1,20 @@
 import { AbiFunction } from 'abitype';
+import { erc20ABI, erc721ABI } from '../../../constants/abi.js';
+import { getBlockConfirmations } from '../../../constants/blockConfirmations.js';
+import { burnPermitTypes as types } from '../../../constants/permitTypes.js';
+import { MAX_UINT_256 } from '../../../constants/units.js';
 import { EvmBridgeStep } from '../../../types/api/bridge';
-import { erc20ABI, erc721ABI } from '../../../constants/abi';
-import { burnPermitTypes as types } from '../../../constants/permitTypes';
-import { MAX_UINT_256 } from '../../../constants/units';
+import { BurnSignature, EvmSigner } from '../../../types/signers/evmSigner';
 import { HashportTransactionState, HashportTransactionData } from '../../../types/state';
-import { HashportError } from '../../../utils/error';
-import { getBlockConfirmations } from '../../../constants/blockConfirmations';
+import { assertHexString } from '../../../utils/assert.js';
+import { HashportError } from '../../../utils/error.js';
 import {
     formatBridgeSignatures,
     hederaAccountToBytes,
     parsePartialFunctionAbi,
     splitSignature,
     transactionIdToBytes,
-} from '../../../utils/formatters';
-import { assertHexString } from '../../../utils/assert';
-import { BurnSignature, EvmSigner } from '../../../types/signers/evmSigner';
+} from '../../../utils/formatters.js';
 
 const METHODS = [
     'approve',

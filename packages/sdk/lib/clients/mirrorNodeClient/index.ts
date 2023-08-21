@@ -6,7 +6,7 @@ import {
     TransactionsQueryParams,
     TransactionsResponse,
 } from '../../types/mirrorNode';
-import { Fetcher } from '../../utils/fetch';
+import { Fetcher } from '../../utils/fetch.js';
 
 /**
  * A simple wrapper around the Hedera Mirror Node REST API.

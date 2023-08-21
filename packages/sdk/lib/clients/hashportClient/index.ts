@@ -1,28 +1,28 @@
+import type { TransferTransaction } from '@hashgraph/sdk';
+import { isHex } from 'viem';
+import { EvmContractHandler } from './helpers/evmContractHandler.js';
+import { createHashportStore } from './helpers/hashportTransactionStore.js';
+import { HederaTxFactory } from './helpers/hederaTxFactory.js';
+import { HashportApiClient } from '../hashportApiClient/index.js';
+import { MirrorNodeClient } from '../mirrorNodeClient/index.js';
+import { erc20ABI, erc721ABI } from '../../constants/abi.js';
+import { HashportTransactionData, HashportTransactionState } from '../../types/state';
 import {
     BridgeParams,
     EvmBridgeStep,
     HederaBridgeStep,
     PollBridgeStep,
 } from '../../types/api/bridge';
-import { HashportApiClient } from '../hashportApiClient';
-import { Fetcher } from '../../utils/fetch';
-import { HederaTxFactory } from './helpers/hederaTxFactory';
-import type { TransferTransaction } from '@hashgraph/sdk';
-import { createHashportStore } from './helpers/hashportTransactionStore';
-import { HashportTransactionData, HashportTransactionState } from '../../types/state';
-import { EvmContractHandler } from './helpers/evmContractHandler';
-import { MirrorNodeClient } from '../mirrorNodeClient';
-import { ValidatorPollResponse } from '../../types/validator';
-import { isHex } from 'viem';
-import { HashportError } from '../../utils/error';
-import { Logger } from '../../utils/logger';
-import { sleep } from '../../utils/async';
-import { formatPollingId, formatTransactionId, formatUrl } from '../../utils/formatters';
-import { assertHederaTokenId, assertHexString } from '../../utils/assert';
+import { HashportClientConfig } from '../../types/clients';
 import { EvmSigner } from '../../types/signers/evmSigner';
 import { HederaSigner } from '../../types/signers/hederaSigner';
-import { HashportClientConfig } from '../../types/clients';
-import { erc20ABI, erc721ABI } from '../../constants/abi';
+import { ValidatorPollResponse } from '../../types/validator';
+import { assertHederaTokenId, assertHexString } from '../../utils/assert.js';
+import { sleep } from '../../utils/async.js';
+import { HashportError } from '../../utils/error.js';
+import { Fetcher } from '../../utils/fetch.js';
+import { formatPollingId, formatTransactionId, formatUrl } from '../../utils/formatters.js';
+import { Logger } from '../../utils/logger.js';
 
 /**
  * Initializes a client for validating and executing bridging operations on hashport.

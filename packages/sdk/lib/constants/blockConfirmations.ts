@@ -1,4 +1,4 @@
-import { Fetcher } from '../utils/fetch';
+import { Fetcher } from '../utils/fetch.js';
 
 export const blockConfirmations: Record<number, number> = {
     // TESTNET

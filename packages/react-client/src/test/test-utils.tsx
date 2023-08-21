@@ -3,6 +3,7 @@ import { mockEvmSigner, mockHederaSigner } from '@hashport/sdk/lib/test/mocks/mo
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RenderOptions, render, renderHook } from '@testing-library/react';
 import { HashportClientProvider } from 'contexts';
+import { ProcessingTransactionProvider } from 'contexts/processingTransaction';
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
     const queryClient = new QueryClient({
@@ -14,7 +15,9 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
     });
     return (
         <HashportClientProvider evmSigner={mockEvmSigner} hederaSigner={mockHederaSigner}>
-            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+            <ProcessingTransactionProvider>
+                <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+            </ProcessingTransactionProvider>
         </HashportClientProvider>
     );
 };

@@ -1,13 +1,11 @@
 import { ComponentProps, createContext, PropsWithChildren } from 'react';
-// TODO: replace after publishing package
-import { HashportClient } from '@hashport/sdk/lib/clients/hashportClient';
-import { HashportClientConfig } from '@hashport/sdk/lib/types/clients';
+import { HashportClient } from '@hashport/sdk';
+import { HashportClientConfig } from '@hashport/sdk';
 import { BridgeParamsProvider } from './bridgeParams';
 import { useRainbowKitSigner } from 'hooks/useRainbowKitSigner';
 import { RainbowKitBoilerPlate } from './rainbowKitProvider';
 import { HashportApiProvider } from './hashportApi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { ProcessingTransactionProvider } from './processingTransaction';
 
 export type HashportContextProps = PropsWithChildren<Partial<HashportClientConfig>> & {
     disconnectedAccountsFallback?: React.ReactNode;
@@ -42,9 +40,7 @@ export const HashportClientProvider = ({
         <HashportApiProvider mode={mode}>
             <HashportClientContext.Provider value={hashportClient}>
                 <BridgeParamsProvider>
-                    <ProcessingTransactionProvider>
-                        {hashportClient ? children : disconnectedAccountsFallback}
-                    </ProcessingTransactionProvider>
+                    {hashportClient ? children : disconnectedAccountsFallback}
                 </BridgeParamsProvider>
             </HashportClientContext.Provider>
         </HashportApiProvider>
