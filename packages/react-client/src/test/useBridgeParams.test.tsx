@@ -1,8 +1,7 @@
 import { useBridgeParams, useBridgeParamsDispatch } from 'hooks/useBridgeParams';
 import { describe, expect, test } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { render, screen, waitFor } from '@testing-library/react';
-import { BridgeParamsProvider } from 'contexts/bridgeParams';
+import { render, screen, waitFor } from './test-utils';
 
 const AMOUNT_INPUT_ID = 'AMOUNT_INPUT_ID';
 const AmountInput = () => {
@@ -41,11 +40,7 @@ const NoSelectedTokenAmountInput = () => {
 describe('useBridgeParams', () => {
     test('should accept only 1 decimal character, and correct decimal places', async () => {
         const user = userEvent.setup();
-        render(
-            <BridgeParamsProvider>
-                <AmountInput />
-            </BridgeParamsProvider>,
-        );
+        render(<AmountInput />);
         const inputElement: HTMLInputElement = await screen.findByTestId(AMOUNT_INPUT_ID);
 
         await waitFor(() => user.type(inputElement, '100'));
@@ -81,13 +76,10 @@ describe('useBridgeParams', () => {
         await waitFor(() => user.type(inputElement, '0.000000000'));
         expect(inputElement.value).toBe('0.00000000');
     });
+
     test('should allow a max of 6 decimals if token not selected', async () => {
         const user = userEvent.setup();
-        render(
-            <BridgeParamsProvider>
-                <NoSelectedTokenAmountInput />
-            </BridgeParamsProvider>,
-        );
+        render(<NoSelectedTokenAmountInput />);
         const inputElement: HTMLInputElement = await screen.findByTestId(NO_SELECTED_TOKEN_AMOUNT);
         await waitFor(() => user.type(inputElement, '1.1234567'));
         expect(inputElement.value).toBe('1.123456');

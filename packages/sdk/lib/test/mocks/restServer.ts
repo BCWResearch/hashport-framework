@@ -73,8 +73,39 @@ const miscHandlers = [
         return res(ctx.status(200), ctx.json('mock_data'));
     }),
     rest.get('https://cdn.hashport.network/blockConfirmations.json', (_, res, ctx) => {
-        return res(ctx.status(200), ctx.json(blockConfirmations))
-    })
+        return res(ctx.status(200), ctx.json(blockConfirmations));
+    }),
+    rest.get('https://cdn.hashport.network/explorers.json', (_, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json({
+                '1': 'https://etherscan.io/',
+                '10': 'https://explorer.optimism.io/',
+                '25': 'https://cronoscan.com/',
+                '56': 'https://bscscan.com/',
+                '97': 'https://testnet.bscscan.com/',
+                '137': 'https://polygonscan.com/',
+                '250': 'https://ftmscan.com/',
+                '295': 'https://hashscan.io/mainnet/',
+                '296': 'https://hashscan.io/testnet/',
+                '338': 'https://testnet.cronoscan.com/',
+                '420': 'https://goerli-optimism.etherscan.io/',
+                '1284': 'https://moonscan.io/',
+                '1287': 'https://moonbase.moonscan.io/',
+                '4002': 'https://testnet.ftmscan.com/',
+                '42161': 'https://arbiscan.io/',
+                '43113': 'https://testnet.snowtrace.io/',
+                '43114': 'https://snowtrace.io/',
+                '80001': 'https://mumbai.polygonscan.com/',
+                '8453': 'https://base.blockscout.com/',
+                '84531': 'https://goerli.basescan.org/',
+                '421613': 'https://goerli.arbiscan.io/',
+                '11155111': 'https://sepolia.etherscan.io/',
+                '1313161554': 'https://explorer.aurora.dev/',
+                '1313161555': 'https://explorer.testnet.aurora.dev/',
+            }),
+        );
+    }),
 ];
 
 const mirrorNodeHandlers = [
@@ -229,6 +260,12 @@ const hashportApiHandlers = [
                 return res.networkError(`No mock data exists for ${assetId}`);
             }
             return res(ctx.json(asset));
+        },
+    ),
+    rest.get(
+        'https://mainnet.api.hashport.network/api/v1/networks/:networkId/assets/:assetId/min-amount',
+        (_, res, ctx) => {
+            return res(ctx.json({ minAmount: '10000000000' }));
         },
     ),
 ];
