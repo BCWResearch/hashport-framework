@@ -1,5 +1,4 @@
-// TODO: replace after publishing package
-import { HashportApiClient } from '@hashport/sdk/lib/clients/hashportApiClient';
+import { HashportApiClient } from '@hashport/sdk';
 import { createContext, useMemo } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -9,7 +8,7 @@ export const HashportApiContext = createContext<HashportApiClient | null>(null);
 
 export const HashportApiProvider = ({
     children,
-    mode = "mainnet",
+    mode = 'mainnet',
 }: {
     children: React.ReactNode;
     mode?: 'mainnet' | 'testnet';

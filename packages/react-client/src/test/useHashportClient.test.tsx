@@ -40,7 +40,6 @@ const TestComponent = () => {
 };
 
 describe('useHashportClient', () => {
-    // TODO: test client mock tx execution
     test('should fail', async () => {
         const user = userEvent.setup();
         render(<TestComponent />);

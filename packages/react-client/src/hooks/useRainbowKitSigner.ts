@@ -1,5 +1,4 @@
-import { createWagmiSigner } from '@hashport/sdk/lib/adapters/wagmi';
-import { EvmSigner } from '@hashport/sdk/lib/types';
+import { createWagmiSigner, EvmSigner } from '@hashport/sdk';
 import { usePublicClient, useWalletClient } from 'wagmi';
 
 export const useRainbowKitSigner = (): EvmSigner | undefined => {

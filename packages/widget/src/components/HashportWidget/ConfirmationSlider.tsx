@@ -66,5 +66,3 @@ export const ConfirmationSlider = () => {
         </div>
     );
 };
-
-// TODO: recreate the block confirms progress?
