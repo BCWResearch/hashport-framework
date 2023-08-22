@@ -1,15 +1,20 @@
-import { useBridgeParams, useBridgeParamsDispatch, useTokenList } from '@hashport/react-client';
+import {
+    useBridgeParams,
+    useBridgeParamsDispatch,
+    useProcessingTransaction,
+    useTokenList,
+} from '@hashport/react-client';
 import { Input } from 'components/styled/Input';
 import { ChangeEventHandler } from 'react';
 import { SourceAssetSelect } from './SourceAssetSelect';
 import { Collapse } from 'components/styled/Collapse';
-import { useInProgressHashportId } from 'hooks/inProgressHashportId';
 
 export const AmountInput = () => {
     const dispatch = useBridgeParamsDispatch();
     const { data: tokens } = useTokenList();
-    const [inProgressId] = useInProgressHashportId();
     const { amount, sourceAssetId, sourceNetworkId, targetNetworkId } = useBridgeParams();
+    const { status } = useProcessingTransaction();
+    const isIdle = status === 'idle';
 
     const sourceId = `${sourceAssetId}-${+sourceNetworkId}` as const;
     const sourceAsset = sourceId && tokens?.fungible.get(sourceId);
@@ -26,10 +31,7 @@ export const AmountInput = () => {
     };
 
     return (
-        <Collapse
-            in={!inProgressId}
-            sx={({ spacing }) => ({ marginBottom: spacing(!inProgressId ? 2 : 0) })}
-        >
+        <Collapse in={isIdle} sx={({ spacing }) => ({ marginBottom: spacing(isIdle ? 2 : 0) })}>
             <Input
                 disabled={!sourceAssetId}
                 placeholder="0.00000000"

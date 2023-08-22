@@ -1,8 +1,7 @@
-import { useInProgressHashportId } from 'hooks/inProgressHashportId';
 import {
     useBlockConfirmations,
     useHashportClient,
-    useHashportTransactionQueue,
+    useProcessingTransaction,
 } from '@hashport/react-client';
 import { useBlockNumber, useWaitForTransaction } from 'wagmi';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -16,17 +15,15 @@ import InfoIcon from '@mui/icons-material/InfoOutlined';
 export const BlockConfirmations = () => {
     const { evmSigner } = useHashportClient();
     const chainId = evmSigner.getChainId();
-    const [inProgressId] = useInProgressHashportId();
-    const queue = useHashportTransactionQueue();
-    const txInProgress = queue.get(inProgressId);
+    const { currentTransaction } = useProcessingTransaction();
     const { data: blockConfirmations = 5 } = useBlockConfirmations(chainId);
     const { data: txReceipt } = useWaitForTransaction({
-        hash: txInProgress?.state.evmTransactionHash,
+        hash: currentTransaction?.state.evmTransactionHash,
     });
     const { data: currentBlock } = useBlockNumber({ watch: true });
 
     const isMissingData = Boolean(!txReceipt || !blockConfirmations || !currentBlock);
-    const isOpen = isHex(txInProgress?.params.sourceAssetId) && !isMissingData;
+    const isOpen = isHex(currentTransaction?.params.sourceAssetId) && !isMissingData;
 
     const progress = currentBlock && txReceipt ? currentBlock - txReceipt.blockNumber : 0n;
     const blockConfirmsBn = BigInt(blockConfirmations);

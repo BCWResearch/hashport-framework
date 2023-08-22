@@ -1,68 +1,52 @@
-import { useExecuteHashportTransaction, useQueueHashportTransaction } from '@hashport/react-client';
+import {
+    useProcessingTransaction,
+    useProcessingTransactionDispatch,
+    useQueueHashportTransaction,
+} from '@hashport/react-client';
 import { Slider } from 'components/styled/Slider';
-import { useEffect, useState } from 'react';
 import { TransactionState } from '../TransactionState/TransactionState';
 import { Collapse } from 'components/styled/Collapse';
 import { TermsAndPolicy } from './TermsAndPolicy';
-import { useInProgressHashportId } from 'hooks/inProgressHashportId';
 import { TryAgainButton } from './TryAgainButton';
-import { HashportError, HashportTransactionData } from '@hashport/sdk';
 import { StepDescription } from 'components/TransactionState/StepDescription';
 import { AfterPortActions } from './AfterPortActions';
 import { usePreflightCheck } from '@hashport/react-client';
 
 export const ConfirmationSlider = () => {
     const queueTransaction = useQueueHashportTransaction();
-    const execute = useExecuteHashportTransaction();
+    const { status, id } = useProcessingTransaction();
+    const { executeTransaction } = useProcessingTransactionDispatch();
     const { isValidParams, message } = usePreflightCheck();
-    const [isExecuting, setIsExecuting] = useState(false);
-    const [inProgressId, setInProgressId] = useInProgressHashportId();
-    const [errorMessage, setErrorMessage] = useState('');
-    const [confirmationData, setConfirmationData] = useState<HashportTransactionData['state']>();
     // TODO: if isExecuting, don't let them leave page
 
-    const isDisabled = !queueTransaction || isExecuting || !isValidParams;
-
-    useEffect(() => {
-        // Handles reset in after port actions
-        setConfirmationData(prev => (inProgressId ? prev : undefined));
-    }, [inProgressId]);
+    const isDisabled = !queueTransaction || status !== 'idle' || !isValidParams;
 
     const handleConfirm = async () => {
         if (!queueTransaction) return;
         try {
-            setErrorMessage('');
-            setIsExecuting(true);
-            let id: string;
-            if (inProgressId) {
-                id = inProgressId;
+            if (!id) {
+                const queuedId = await queueTransaction();
+                await executeTransaction(queuedId);
             } else {
-                id = await queueTransaction();
-                setInProgressId(id);
+                await executeTransaction(id);
             }
-            const confirmation = await execute(id);
-            setConfirmationData(confirmation);
         } catch (e) {
-            setErrorMessage(
-                e instanceof HashportError ? e.message : 'Something went wrong. Please try again',
-            );
-        } finally {
-            setIsExecuting(false);
+            console.error(e);
         }
     };
 
     return (
         <div>
-            <Collapse in={!inProgressId}>
+            <Collapse in={status === 'idle'}>
                 <Slider disabled={isDisabled} onConfirm={handleConfirm} prompt={message} />
                 <TermsAndPolicy />
             </Collapse>
-            <Collapse in={Boolean(errorMessage)}>
+            <Collapse in={status === 'error'}>
                 <TryAgainButton onClick={handleConfirm} />
             </Collapse>
-            {!errorMessage && <StepDescription />}
+            <StepDescription />
             <TransactionState />
-            <AfterPortActions confirmationData={confirmationData} />
+            <AfterPortActions />
         </div>
     );
 };

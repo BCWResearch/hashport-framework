@@ -3,14 +3,15 @@ import { ThemeProvider } from 'theme';
 import { Container } from 'components/styled/Container';
 import { ReceivedAmount } from './ReceivedAmount';
 import { ConfirmationSlider } from './ConfirmationSlider';
-import { InProgressHashportIdProvider } from 'contexts/inProgressHashportId';
 import { formatUnits } from 'viem';
 import Stack from '@mui/material/Stack';
 import {
     HashportClientProviderWithRainbowKit,
+    ProcessingTransactionProvider,
     useHashConnect,
     useHashportClient,
     useHashportTransactionQueue,
+    useProcessingTransactionDispatch,
     useTokenList,
 } from '@hashport/react-client';
 import { ComponentProps, useEffect, useState } from 'react';
@@ -20,16 +21,15 @@ import { Row } from 'components/styled/Row';
 import { Button } from 'components/styled/Button';
 import { TokenIcon } from 'components/TokenSelectionModal/TokenIcon';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import { useInProgressHashportId } from 'hooks/inProgressHashportId';
 import { renderWidgetHeader } from './WidgetHeader';
 import { Alert } from 'components/styled/Alert';
 import { BlockConfirmations } from './BlockConfirmations';
 
 const CheckForPersistedTransaction = ({ children }: { children: React.ReactNode }) => {
     const hashportClient = useHashportClient();
+    const { executeTransaction } = useProcessingTransactionDispatch();
     const { data: tokens, isError, isLoading } = useTokenList();
     const transactionQueue = useHashportTransactionQueue();
-    const setInProgressId = useInProgressHashportId()[1];
     const [persistedTx, setPersistedTx] = useState<[string, HashportTransactionData]>();
 
     const handleCancel = () => {
@@ -40,9 +40,7 @@ const CheckForPersistedTransaction = ({ children }: { children: React.ReactNode 
 
     const handleResume = async () => {
         if (!persistedTx) return;
-        hashportClient.execute(persistedTx[0]);
-        // TODO: double check unintended side effects
-        setInProgressId(persistedTx[0]);
+        executeTransaction(persistedTx[0]);
         // TODO: set bridge params with the ones from persistedTx[1]
         setPersistedTx(undefined);
     };
@@ -119,7 +117,7 @@ export const HashportWidget = (
                         </Alert>
                     }
                 >
-                    <InProgressHashportIdProvider>
+                    <ProcessingTransactionProvider>
                         <Stack spacing={2}>
                             <CheckForPersistedTransaction>
                                 <div>
@@ -130,7 +128,7 @@ export const HashportWidget = (
                                 <BlockConfirmations />
                             </CheckForPersistedTransaction>
                         </Stack>
-                    </InProgressHashportIdProvider>
+                    </ProcessingTransactionProvider>
                 </HashportClientProviderWithRainbowKit>
             </Container>
         </ThemeProvider>

@@ -1,12 +1,11 @@
-import { useBridgeParams } from '@hashport/react-client';
+import { useBridgeParams, useProcessingTransaction } from '@hashport/react-client';
 import { Input } from 'components/styled/Input';
 import { TargetAssetSelect } from './TargetAssetSelect';
 import { parseEther, formatEther } from 'viem';
-import { useInProgressHashportId } from 'hooks/inProgressHashportId';
 
 export const ReceivedAmount = () => {
     const { amount } = useBridgeParams();
-    const [inProgressId] = useInProgressHashportId();
+    const { status } = useProcessingTransaction();
 
     const parsed = amount ? parseEther(amount) : undefined;
     const adjustedBn = parsed && (parsed / 1000n) * 995n;
@@ -18,7 +17,7 @@ export const ReceivedAmount = () => {
             disabled
             value={adjustedAmount || ''}
             placeholder="0.00000000"
-            endAdornment={<TargetAssetSelect disabled={!!inProgressId} />}
+            endAdornment={<TargetAssetSelect disabled={status !== 'idle'} />}
         />
     );
 };
