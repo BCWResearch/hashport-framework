@@ -42,7 +42,7 @@ export const ConfirmationSlider = () => {
                 <TermsAndPolicy />
             </Collapse>
             <Collapse in={status === 'error'}>
-                <TryAgainButton onClick={handleConfirm} />
+                <TryAgainButton />
             </Collapse>
             <StepDescription />
             <TransactionState />

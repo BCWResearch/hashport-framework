@@ -1,26 +1,51 @@
 import { useProcessingTransaction, useProcessingTransactionDispatch } from '@hashport/react-client';
-import MuiButton, { ButtonProps } from '@mui/material/Button';
+import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { styled } from '@mui/material/styles';
 import { useRef } from 'react';
+import { Row } from 'components/styled/Row';
 
-const Button = styled(MuiButton)(({ theme: { spacing, palette } }) => ({}));
-
-export const TryAgainButton = (props: ButtonProps) => {
-    // TODO: add error message and click handler. Then remove props.
+export const TryAgainButton = () => {
     const { executeTransaction, confirmCompletion } = useProcessingTransactionDispatch();
     const { error, id } = useProcessingTransaction();
-    const message = error instanceof Error ? error.message : '';
-    const errorMessageRef = useRef(message);
-    if (message) errorMessageRef.current = message;
+    const errorMessageRef = useRef('');
+    if (error) {
+        errorMessageRef.current =
+            typeof error === 'string'
+                ? error
+                : error instanceof Error
+                ? error.message
+                : 'Something went wrong';
+    }
+
+    const handleTryAgain = () => {
+        console.log('trying again!');
+        if (id) executeTransaction(id);
+    };
+
+    const handleCancel = () => {
+        confirmCompletion();
+    };
 
     return (
         <Stack spacing={1}>
-            <Typography textAlign="center" color="white" variant="body1">Test</Typography>
-            <Button {...props} fullWidth color="error">
-                Try Again
-            </Button>
+            <Typography textAlign="center" color="white" variant="body1">
+                {errorMessageRef.current}
+            </Typography>
+            <Row gap={2}>
+                <Button fullWidth color="error" onClick={handleTryAgain}>
+                    Try Again
+                </Button>
+                <Button
+                    fullWidth
+                    color="error"
+                    size="small"
+                    variant="outlined"
+                    onClick={handleCancel}
+                >
+                    Cancel
+                </Button>
+            </Row>
         </Stack>
     );
 };
