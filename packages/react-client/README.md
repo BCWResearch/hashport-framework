@@ -176,6 +176,20 @@ Default: `{ persistKey: 'hashportTransactionStore', storage: localStorage }`
 
 ---
 
+### `ProcessingTransactionProvider`
+
+`ProcessingTransactionProvider` relies on the [context](https://react.dev/learn/passing-data-deeply-with-context) feature of React to pass the state of the current processing transaction to other components. This provider depends on an instance of the `HashportClient`, so if you want to use the related hooks, be sure that `ProcessingTransactionProvider` is a child of the `HashportClientProvider`.
+
+#### Props
+
+```
+children
+```
+
+The content of the component.
+
+---
+
 ### `HashportClientAndRainbowKitProvider`
 
 `HashportClientAndRainbowKitProvider` relies on the [context](https://react.dev/learn/passing-data-deeply-with-context) feature of React to pass core hashport functionality _and_ [RainbowKit](https://www.rainbowkit.com/docs/introduction) (Ethereum interface) down to other components, so you need to make sure that `HashportClientAndRainbowKitProvider` is a parent of the components you are encapsulating to be able to consume these objects. `HashportClientProvider` also includes `HashportApiProvider` and `BridgeParamsProvider` to help simplify and improve your developer experience.
@@ -282,4 +296,181 @@ Props of the [RainbowKit](https://www.rainbowkit.com/docs/introduction) componen
 
 ## Hooks
 
-###
+This library comes with a number of conveniences hooks that help set up, execute, and monitor a hashport bridging operation.
+
+### Hashport Transaction Set Up Hooks
+
+The typical flow for setting up a transaction is as follows:
+
+-   Choose the bridging parameters
+-   Submit those parameters to the Hashport API to receive a list of steps
+-   Execute those steps with a Hedera and EVM signer
+
+To simplify this process, you can use the following hooks:
+
+#### [useBridgeParams](./src/hooks/useBridgeParams.ts)
+
+Call this hook to get the current bridge parameter state. You can view the definition for this object [here](../sdk/lib/types/api/bridge.ts).
+
+#### [useBridgeParamsDispatch](./src/hooks/useBridgeParams.ts)
+
+Call this hook to access a number of dispatch functions that will help you set the bridge parameters state.
+
+> _Note:_ When setting the `amount` to be bridged, it's important to take the token's decimal into account. While EVM based tokens can have up to 18 decimal places, Hedera tokens can only have up to 8. The `setAmount` dispatch function will default to allowing a maximum of 6 decimals being input. If a token has been selected, it will allow up to 8. When the bridge params are submitted to the api, it is recommended to use the `useQueueHashportTransaction` because it converts the decimal amount to the [wei](https://ethereum.org/gl/developers/docs/intro-to-ether/#denominations) or [tinybar](https://docs.hedera.com/hedera/sdks-and-apis/sdks/hbars#hbar-units) amount that is understood by the api.
+
+#### [useTokenList](./src/hooks/useTokenList.ts)
+
+This hook returns a [React Query result object](https://tanstack.com/query/latest/docs/react/guides/queries) where the data is an object that holds all supported assets on hashport, both fungible and nonfungible. Assets are stored as a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) of the token's id to its respective [AssetInfo](./src/types/tokenList.ts).
+
+This hooks also accepts an optional `onSelect` function that is run when the `handleSelect` function of an asset is called. It is recommended to use this hook with `useBridgeParamsDispatch` to allow a user to select a token.
+
+##### Example Usage
+
+```tsx
+const TokenList = () => {
+    const {setSourceAsset} = useBridgeParamsDispatch();
+    const {data: tokens, isError, isLoading} = useTokenList({
+        onSelect(token) {
+            setSourceAsset(token);
+        }
+    })
+    if (isLoading) {
+        return <p>Loading...</p>;
+    } else if (isError) {
+        return <p>Error!</p>
+    } else {
+        return (
+            {Array.from(tokens.fungible.values()).map(({handleSelect, symbol, id, chainId}) => (
+                <button key={`${id}-${chainId}`} onClick={handleSelect}>{symbol}</button>
+            ))}
+        )
+    }
+}
+```
+
+#### [useQueueHashportTransaction](./src/hooks/useHashportClient.ts)
+
+This hook depends on the state provided by the [`BridgeParamsProvider`](#bridgeparamsprovider). If all the proper bridge parameters have been set by the user, this hook will return a function that:
+
+-   Converts the decimal amount to the respective [wei](https://ethereum.org/gl/developers/docs/intro-to-ether/#denominations) or [tinybar](https://docs.hedera.com/hedera/sdks-and-apis/sdks/hbars#hbar-units) token amount
+-   Submits the params to the api to receive steps
+
+> _Note:_ Be sure to add error handling to this function as it will throw an error any of the parameters are set incorrectly.
+
+If the function is successful, it will return a unique `id` that you can pass to the `execute` function on the `hashportClient` or the `executeTransaxtion` dispatch function from the [`useProcessingTransactionDispatch`](#useprocessingtransactiondispatch) hook.
+
+#### [useMinAmount](./src/hooks/useMinAmount.ts)
+
+Hashport imposes a minimum amount in order to initiate a bridging operation. If a set of bridge parameters does not meet this minimum, the api will not return the steps required to perform the transaction. However, to give the user a better experience, it's good to display the minimum porting amount.
+
+This hook depends on the state provided by the [`BridgeParamsProvider`](#bridgeparamsprovider). It reads the `sourceAssetId` and `sourceNetworkId` of the bridge parameters, fetches the minimum bridging amount, and returns it as a [BigInt](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt). If you want to display this number in its decimal form, you can get the `decimals` of the token from the [`useTokenList`](#usetokenlist) hook and use a function like viem's [`formatUnits`](https://viem.sh/docs/utilities/formatUnits.html) to convert it to a readable string.
+
+##### Example Usage
+
+```tsx
+import { formatUnits } from 'viem';
+
+const MinimumAmountDisplay = () => {
+    const { data: minAmount, isLoading, isError } = useMinAmount();
+    const { sourceAssetId, sourceNetworkId } = useBridgeParams();
+    const { data: tokens } = useTokenList();
+    const selectedToken = tokens.fungible.get(`${sourceAssetId}-${sourceNetworkId}`);
+
+    if (isLoading || !selectedToken) {
+        return <p>Loading minimum amounts...</p>;
+    } else if (isError) {
+        return <p>Failed to get minimum amounts!</p>;
+    } else if (minAmount === undefined) {
+        return <p>Please select a token</p>;
+    } else {
+        return <p>Minimum bridging amount: {formatUnits(minAmount, selectedToken.decimals)}</p>;
+    }
+};
+```
+
+#### [usePreflightCheck](./src/hooks/usePreflightCheck.ts)
+
+This hook is helpful for displaying the state of their bridging parameters and whether or not they can properly execute the transaction. It checks the following:
+
+-   Whether or not the user has enough balance to complete the transaction
+-   Whether or not the user meets the minimum amounts
+
+It returns an object with an `isValidParams` boolean and a `message` in the event that `isValidParams` is `false`.
+
+### Hashport Transaction Execution Hooks
+
+Once you have set up the proper bridge parameters, all that's left is to actually execute the transaction. The recommended way is to use the dispatch functions provided by the `useProcessingTransactionDispatch` hook. These functions update state that is useful for displaying the current state of a submitted transaction.
+
+#### [useProcessingTransactionDispatch](./src/hooks/useProcessingTransaction.ts)
+
+This hook returns a `executeTransaction` callback to be used with the `useQueueHashportTransaction` hook. It also returns a `confirmCompletion` callback that resets state after completion. This is helpful for cleaning up bridge parameter state.
+
+#### Example Usage
+
+```tsx
+const ExecuteButton = () => {
+    const { executeTransaction } = useProcessingTransactionDispatch();
+    const queueTransaction = useQueueHashportTransaction();
+
+    const handleExecute = async () => {
+        try {
+            if (!queueTransaction) throw 'Set bridge parameters first';
+            const id = await queueTransaction();
+            const confirmation = await executeTransaction();
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    return <button onClick={handleExecute}>Execute</button>;
+};
+```
+
+#### [useHashportClient](./src/hooks/useHashportClient.ts)
+
+If you prefer a more manual approach, you can also use this hook. It returns an instance of the [`hashportClient`](../sdk/lib/clients/hashportClient/index.ts) from the `@hashport/sdk`. It depends on the [`HashportClientProvider](#hashportclientprovider) so be sure to call it within that. The best way to use the client for transaction execution is in conjunction with the [`useQueueHashportTransaction`](#usequeuehashporttransaction) hook.
+
+> _Note:_ Be sure to add error handling to this function in case there are network issues or if the user rejects an interaction.
+
+##### Example Usage
+
+```tsx
+const ExecuteButton = () => {
+    const hashportClient = useHashportClient();
+    const queueTransaction = useQueueHashportTransaction();
+    const [id, setId] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const handleExecute = async () => {
+        try {
+            if (!queueTransaction) {
+                setErrorMessage('Set bridge parameters first');
+            }
+            setErrorMessage('');
+            let tempId = id;
+            if (!tempId) {
+                tempId = await queueTransaction();
+                setId(tempId);
+            }
+            const confirmation = await hashportClient.execute(tempId);
+            console.log('Completed transaction: ', confirmation);
+        } catch (error) {
+            console.error(error);
+            setErrorMessage(error.message);
+        }
+    };
+
+    return (
+        <div>
+            {errorMessage ? <p>{errorMessage}</p> : null}
+            <button onClick={handleExecute} disabled={!queueTransaction}>
+                Execute
+            </button>
+        </div>
+    );
+};
+```
+
+### Hashport Transaction Monitoring Hooks
+
+TODO: useBlockConfirmations, useProcessingTransaction
