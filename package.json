@@ -14,6 +14,7 @@
     "test:e2e": "npm run test:e2e --workspaces --if-present"
   },
   "dependencies": {
+    "@changesets/cli": "^2.26.2",
     "@hashgraph/sdk": "^2.31.0",
     "hashconnect": "^0.2.4",
     "react": "^18.2.0",
