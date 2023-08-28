@@ -1,4 +1,5 @@
 import {
+    useBridgeParams,
     useProcessingTransaction,
     useProcessingTransactionDispatch,
     useQueueHashportTransaction,
@@ -11,12 +12,21 @@ import { TryAgainButton } from './TryAgainButton';
 import { StepDescription } from 'components/TransactionState/StepDescription';
 import { AfterPortActions } from './AfterPortActions';
 import { usePreflightCheck } from '@hashport/react-client';
+import { NetworkSwitchButton } from './NetworkSwitchButton';
+import { useChainId } from 'wagmi';
 
 export const ConfirmationSlider = () => {
     const queueTransaction = useQueueHashportTransaction();
     const { status, id } = useProcessingTransaction();
     const { executeTransaction } = useProcessingTransactionDispatch();
     const { isValidParams, message } = usePreflightCheck();
+    const chainId = useChainId();
+    const { sourceNetworkId, targetNetworkId } = useBridgeParams();
+    const isWrongNetwork =
+        sourceNetworkId &&
+        targetNetworkId &&
+        +sourceNetworkId !== chainId &&
+        +targetNetworkId !== chainId;
     // TODO: if isExecuting, don't let them leave page
 
     const isDisabled = !queueTransaction || status !== 'idle' || !isValidParams;
@@ -38,7 +48,11 @@ export const ConfirmationSlider = () => {
     return (
         <div>
             <Collapse in={status === 'idle'}>
-                <Slider disabled={isDisabled} onConfirm={handleConfirm} prompt={message} />
+                {isWrongNetwork ? (
+                    <NetworkSwitchButton />
+                ) : (
+                    <Slider disabled={isDisabled} onConfirm={handleConfirm} prompt={message} />
+                )}
                 <TermsAndPolicy />
             </Collapse>
             <Collapse in={status === 'error'}>

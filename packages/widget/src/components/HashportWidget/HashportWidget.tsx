@@ -22,8 +22,8 @@ import { Button } from 'components/styled/Button';
 import { TokenIcon } from 'components/TokenSelectionModal/TokenIcon';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { renderWidgetHeader } from './WidgetHeader';
-import { Alert } from 'components/styled/Alert';
 import { BlockConfirmations } from './BlockConfirmations';
+import { DisconnectedAccountsFallback } from './DisconnectedAccountsFallback';
 
 const CheckForPersistedTransaction = ({ children }: { children: React.ReactNode }) => {
     const hashportClient = useHashportClient();
@@ -111,11 +111,7 @@ export const HashportWidget = (
                     {...props}
                     hederaSigner={hashConnect && createHashPackSigner(hashConnect, pairingData)}
                     renderConnectButton={renderWidgetHeader(hashConnect)}
-                    disconnectedAccountsFallback={
-                        <Alert severity="info" variant="outlined">
-                            Please connect both Hedera and EVM accounts to start bridging.
-                        </Alert>
-                    }
+                    disconnectedAccountsFallback={<DisconnectedAccountsFallback />}
                 >
                     <ProcessingTransactionProvider>
                         <Stack spacing={2}>
