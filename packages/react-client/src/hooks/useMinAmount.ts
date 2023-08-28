@@ -14,7 +14,7 @@ export const useMinAmount = () => {
                 +sourceNetworkId,
                 sourceAssetId,
             );
-            return BigInt(minAmount);
+            return BigInt(minAmount) + BigInt(minAmount) / 10n;
         },
     });
 };

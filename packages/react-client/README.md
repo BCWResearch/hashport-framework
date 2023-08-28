@@ -316,7 +316,7 @@ Call this hook to get the current bridge parameter state. You can view the defin
 
 Call this hook to access a number of dispatch functions that will help you set the bridge parameters state.
 
-> _Note:_ When setting the `amount` to be bridged, it's important to take the token's decimal into account. While EVM based tokens can have up to 18 decimal places, Hedera tokens can only have up to 8. The `setAmount` dispatch function will default to allowing a maximum of 6 decimals being input. If a token has been selected, it will allow up to 8. When the bridge params are submitted to the api, it is recommended to use the `useQueueHashportTransaction` because it converts the decimal amount to the [wei](https://ethereum.org/gl/developers/docs/intro-to-ether/#denominations) or [tinybar](https://docs.hedera.com/hedera/sdks-and-apis/sdks/hbars#hbar-units) amount that is understood by the api.
+&#9888; Note: When setting the `amount` to be bridged, it's important to take the token's decimal into account. While EVM based tokens can have up to 18 decimal places, Hedera tokens can only have up to 8. The `setAmount` dispatch function will default to allowing a maximum of 6 decimals being input. If a token has been selected, it will allow up to 8. When the bridge params are submitted to the api, it is recommended to use the `useQueueHashportTransaction` because it converts the decimal amount to the [wei](https://ethereum.org/gl/developers/docs/intro-to-ether/#denominations) or [tinybar](https://docs.hedera.com/hedera/sdks-and-apis/sdks/hbars#hbar-units) amount that is understood by the api.
 
 #### [useTokenList](./src/hooks/useTokenList.ts)
 
@@ -355,13 +355,15 @@ This hook depends on the state provided by the [`BridgeParamsProvider`](#bridgep
 -   Converts the decimal amount to the respective [wei](https://ethereum.org/gl/developers/docs/intro-to-ether/#denominations) or [tinybar](https://docs.hedera.com/hedera/sdks-and-apis/sdks/hbars#hbar-units) token amount
 -   Submits the params to the api to receive steps
 
-> _Note:_ Be sure to add error handling to this function as it will throw an error any of the parameters are set incorrectly.
+&#9888; Note: Be sure to add error handling to this function as it will throw an error any of the parameters are set incorrectly.
 
 If the function is successful, it will return a unique `id` that you can pass to the `execute` function on the `hashportClient` or the `executeTransaxtion` dispatch function from the [`useProcessingTransactionDispatch`](#useprocessingtransactiondispatch) hook.
 
 #### [useMinAmount](./src/hooks/useMinAmount.ts)
 
 Hashport imposes a minimum amount in order to initiate a bridging operation. If a set of bridge parameters does not meet this minimum, the api will not return the steps required to perform the transaction. However, to give the user a better experience, it's good to display the minimum porting amount.
+
+&#9888; Note: This hook adds a 10% buffer to the minimum amount. It's important to understand that the minimums are dynamic. If the prices change before a transaction reaches the validators, there is a chance that the transaction may fall below the minimum, which would result in a stuck transaction. As such, adding a buffer of an extra 10% help mitigate that risk.
 
 This hook depends on the state provided by the [`BridgeParamsProvider`](#bridgeparamsprovider). It reads the `sourceAssetId` and `sourceNetworkId` of the bridge parameters, fetches the minimum bridging amount, and returns it as a [BigInt](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt). If you want to display this number in its decimal form, you can get the `decimals` of the token from the [`useTokenList`](#usetokenlist) hook and use a function like viem's [`formatUnits`](https://viem.sh/docs/utilities/formatUnits.html) to convert it to a readable string.
 
@@ -430,7 +432,7 @@ const ExecuteButton = () => {
 
 If you prefer a more manual approach, you can also use this hook. It returns an instance of the [`hashportClient`](../sdk/lib/clients/hashportClient/index.ts) from the `@hashport/sdk`. It depends on the [`HashportClientProvider](#hashportclientprovider) so be sure to call it within that. The best way to use the client for transaction execution is in conjunction with the [`useQueueHashportTransaction`](#usequeuehashporttransaction) hook.
 
-> _Note:_ Be sure to add error handling to this function in case there are network issues or if the user rejects an interaction.
+&#9888; Note: Be sure to add error handling to this function in case there are network issues or if the user rejects an interaction.
 
 ##### Example Usage
 
