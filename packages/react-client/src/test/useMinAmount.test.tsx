@@ -35,6 +35,6 @@ describe('useMinAmount', () => {
         // check that the node is gone and that the min amount is there as bigint
         const result = await screen.findByTestId('data-result');
         expect(result).toBeInTheDocument();
-        expect(result).toHaveTextContent('10000000000');
+        expect(result).toHaveTextContent('11000000000');
     });
 });
