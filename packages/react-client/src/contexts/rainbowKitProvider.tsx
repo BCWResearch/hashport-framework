@@ -10,8 +10,12 @@ import { useNetworks } from 'hooks/useNetworks';
 export const RainbowKitBoilerPlate = ({
     children,
     chains: chainsOverride = [],
+    appName = 'My RainbowKit App',
+    projectId = '4a67d9054f92bb354025bb53fca49943',
     ...rainbowKitProps
-}: PropsWithChildren<Partial<RainbowKitProviderProps>>) => {
+}: PropsWithChildren<
+    Partial<RainbowKitProviderProps & { appName: string; projectId: string }>
+>) => {
     const { data: networks } = useNetworks();
     const hashportChains = (networks ?? [])
         .sort((a, b) => a.name.localeCompare(b.name))
@@ -23,8 +27,8 @@ export const RainbowKitBoilerPlate = ({
         [publicProvider()],
     );
     const { connectors } = getDefaultWallets({
-        appName: 'My RainbowKit App',
-        projectId: `4a67d9054f92bb354025bb53fca49943`,
+        appName,
+        projectId,
         chains: hashportChains,
     });
     const wagmiConfig = createConfig({
