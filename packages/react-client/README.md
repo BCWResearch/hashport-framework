@@ -579,18 +579,44 @@ There are a number of steps that must be completed in order to transfer assets a
 
 Returns a [`ProcessingTransactionState`](./src/contexts/processingTransaction.tsx) object. Statuses can be `'idle'`, `'processing'`, `'complete'`, or `'error'`. It also returns the `id` of the current transaction as well as the `currentTransaction` data related to that `id`.
 
+Use this with the `getStepDescription` function to get a brief description of the current step the user is on.
+
 ##### Usage
 
-<!-- TODO: -->
+```tsx
+const ProcessingTransaction = () => {
+    const { status, id, confirmation, error, currentTransaction } = useProcessingTransaction();
+
+    if (status === 'idle') {
+        return <p>Choose tokens to start bridging!</p>;
+    } else if (status === 'processing' && currentTransaction.steps) {
+        return <p>{getStepDescription(currentTransaction.steps[0])}</p>;
+    } else if (stats === 'complete') {
+        return <p>Complete: {confirmation.confirmationTransactionHashOrId}</p>;
+    } else {
+        return <p>Error: {error}</p>;
+    }
+};
+```
 
 #### [useBlockConfirmations](./src/hooks/useBlockConfirmations.ts)
 
-<!-- TODO: -->
+To ensure the safety of a user's transaction, the validators wait for a designated number of block confirmations before validating the transactions. This hook can be used to give users an update to the number of confirmations that must pass before their transaction can be completed. Returns a [React Query result object](https://tanstack.com/query/latest/docs/react/guides/queries) where the data is the number of block confirmations for the given chainId.
 
 ##### Usage
 
-<!-- TODO: -->
+```tsx
+const BlockConfirmations = () => {
+    const { evmSigner } = useHashportClient();
+    const chainId = evmSigner.getChainId();
+    const { data: blockConfirmations, isLoading, isError } = useBlockConfirmations(chainId);
 
-<!-- TODO: -->
-
-useQueue
+    if (isLoading) {
+        return <p>Loading...</p>;
+    } else if (isError) {
+        return <p>Error!</p>;
+    } else {
+        return <p>Block confirmations: {blockConfirmations.toString()}</p>;
+    }
+};
+```
