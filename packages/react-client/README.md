@@ -1,6 +1,6 @@
 # hashport React Client
 
-The hashport React Client contains a set of React [contexts](https://react.dev/learn/passing-data-deeply-with-context) and [hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) that allows you to add hashport's bridging functionality to your React application. This package is meant for those who want to integrate the functionality into their native user interface. If you want a styled plug-and-play solution, please take a look at the Widget [here](../widget/README.d).
+The hashport React Client contains a set of React [contexts](https://react.dev/learn/passing-data-deeply-with-context) and [hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) that allow you to add hashport's bridging functionality to your React application. This package is meant for those who want to integrate the functionality into their native user interface. If you want a styled plug-and-play solution, please take a look at the Widget [here](../widget/README.d).
 
 ## Quick Start
 
@@ -28,7 +28,7 @@ If your React app **DOES NOT HAVE** an EVM signer but has a Hedera signer, pleas
 import { HashportClientAndRainbowKitProvider } from `@hashport/react-client/contexts`;
 ```
 
-If your React app **DOES NOT HAVE EITHER SIGNERS**, please integrate a Hedera signer first, such as [Hashconnect](https://www.npmjs.com/package/hashconnect).
+If your React app **DOES NOT HAVE EITHER SIGNER**, please integrate a Hedera signer first, such as [Hashconnect](https://www.npmjs.com/package/hashconnect).
 
 ### Configure and Wrap Providers
 
@@ -70,7 +70,7 @@ Type: `React.ReactNode`
 
 ### `HashportApiProvider`
 
-`HashportApiProvider` relies on the [context](https://react.dev/learn/passing-data-deeply-with-context) feature of React to pass the hashport API and core network objects down to other components, so you need to make sure that `HashportApiProvider` is a parent of the components you are encapsulating to be able to consume these objects. `HashportApiProvider` also initializes `QueryClientProvider` from [@tanstack/react-query](https://tanstack.com/query/v3/docs/react/overview) to help simply data-fetching.
+`HashportApiProvider` relies on the [context](https://react.dev/learn/passing-data-deeply-with-context) feature of React to pass the hashport API and core network objects down to other components, so you need to make sure that `HashportApiProvider` is a parent of the components you are encapsulating to be able to consume these objects. `HashportApiProvider` also initializes `QueryClientProvider` from [@tanstack/react-query](https://tanstack.com/query/v3/docs/react/overview) to help simplify data fetching.
 
 #### Props
 
@@ -178,7 +178,7 @@ Default: `{ persistKey: 'hashportTransactionStore', storage: localStorage }`
 disconnectedAccountsFallback
 ```
 
-A fallback React node to be displayed if either the EVM Signer or the Hedera Signer have become disconnected.
+A fallback React node to be displayed if either the EVM Signer or the Hedera Signer has become disconnected.
 
 Type: `{ disconnectedAccountsFallback?: React.ReactNode }`
 
@@ -276,7 +276,7 @@ Default: `{ persistKey: 'hashportTransactionStore', storage: localStorage }`
 
 ### `RainbowKitBoilerPlate`
 
-`RainbowKitBoilerPlate` relies on the [context](https://react.dev/learn/passing-data-deeply-with-context) feature of React to initialize and pass down Ethereum interfaces to other components, so you need to make sure that `RainbowKitBoilerPlate` is a parent of the components you are encapsulating to be able to consume these interfaces. A configured [`WagmiConfig`](https://wagmi.sh/react/WagmiConfig#configuration) and [`RainbowKitProvider`](https://www.rainbowkit.com/docs/installation#wrap-providers) is provided to help simplify and improve your developer experience.
+`RainbowKitBoilerPlate` relies on the [context](https://react.dev/learn/passing-data-deeply-with-context) feature of React to initialize and pass down Ethereum interfaces to other components, so you need to make sure that `RainbowKitBoilerPlate` is a parent of the components you are encapsulating to be able to consume these interfaces. A configured [`WagmiConfig`](https://wagmi.sh/react/WagmiConfig#configuration) and [`RainbowKitProvider`](https://www.rainbowkit.com/docs/installation#wrap-providers) are provided to help simplify and improve your developer experience.
 
 #### Props
 
@@ -306,13 +306,13 @@ Props of the [RainbowKit](https://www.rainbowkit.com/docs/introduction) componen
 
 ## Hooks
 
-This packages comes with a number of convenience hooks that help perform a hashport bridging transaction. The recommended usage is to set bridging parameters with [`useBridgeParamsDispatch`](#usebridgeparamsdispatch), queue up the transaction with [`useQueueHashportTransaction`](#usequeuehashporttransaction), execute the transaction with [`useProcessingTransactionDispatch`](#useprocessingtransactiondispatch), and monitor the status with [`useProcessingTransaction`](#useprocessingtransaction). The hooks can be broken down into the following categories:
+This package comes with a number of convenience hooks that help perform a hashport bridging transaction. The recommended usage is to set bridging parameters with [`useBridgeParamsDispatch`](#usebridgeparamsdispatch), queue up the transaction with [`useQueueHashportTransaction`](#usequeuehashporttransaction), execute the transaction with [`useProcessingTransactionDispatch`](#useprocessingtransactiondispatch), and monitor the status with [`useProcessingTransaction`](#useprocessingtransaction). The hooks can be broken down into the following categories:
 
-1. [Transaction Set Up Hooks](#transaction-set-up-hooks)
+1. [Transaction Set-Up Hooks](#transaction-set-up-hooks)
 1. [Transaction Execution Hooks](#transaction-execution-hooks)
 1. [Status Monitoring Hooks](#)
 
-### Transaction Set Up Hooks
+### Transaction Set-Up Hooks
 
 To set up a transaction, a user must define an amount, a recipient, a source asset, and a target asset. These parameters are then sent to the hashport API to obtain a list of steps that need to be executed in order to complete the transaction.
 
@@ -331,7 +331,7 @@ const BridgeParamsDisplay = () => {
         <div>
             <p>Bridging Amount: {amount}</p>
             <p>Source Chain id: {sourceNetworkId}</p>
-            <p>Source Asset for brigding: {sourceAssetId}</p>
+            <p>Source Asset for bridging: {sourceAssetId}</p>
             <p>Target Chain id: {targetNetworkId}</p>
             <p>Receiving account: {recipient}</p>
         </div>
@@ -378,11 +378,11 @@ const SourceTokenSelection = () => {
 
 #### [useTokenList](./src/hooks/useTokenList.ts)
 
-Returns a [React Query result object](https://tanstack.com/query/latest/docs/react/guides/queries) where the data is an object that holds all supported assets on hashport, both fungible and nonfungible. Assets are stored as a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) of the token's unique id to its respective [AssetInfo](./src/types/tokenList.ts).
+Returns a [React Query result object](https://tanstack.com/query/latest/docs/react/guides/queries) where the data is an object that holds all supported assets on hashport, both fungible and nonfungible. Assets are stored as a [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) of the token's unique ID to its respective [AssetInfo](./src/types/tokenList.ts).
 
 &#9888; Note: The token's unique id takes the following format: `${tokenIdOrAddress}-${chainId}`.
 
-This hooks also accepts an optional `onSelect` function that is run when the `handleSelect` function of an asset is called. It is recommended to use this hook with `useBridgeParamsDispatch` to allow a user to select a token.
+This hook also accepts an optional `onSelect` function that is run when the `handleSelect` function of an asset is called. It is recommended to use this hook with `useBridgeParamsDispatch` to allow a user to select a token.
 
 ##### Usage
 
@@ -445,9 +445,9 @@ const QueueTransaction = () => {
 
 #### [useMinAmount](./src/hooks/useMinAmount.ts)
 
-Hashport imposes a minimum amount in order to initiate a bridging operation. If a set of bridge parameters does not meet this minimum, the api will not return the steps required to perform the transaction. However, to give the user a better experience, it's good to display the minimum porting amount.
+Hashport imposes a minimum amount in order to initiate a bridging operation. If a set of bridge parameters does not meet this minimum, the API will not return the steps required to perform the transaction. However, to give the user a better experience, it's good to display the minimum porting amount.
 
-&#9888; Note: This hook adds a 10% buffer to the minimum amount. It's important to understand that the minimums are dynamic. If the prices change before a transaction reaches the validators, there is a chance that the transaction may fall below the minimum, which would result in a stuck transaction. As such, adding a buffer of an extra 10% help mitigate that risk.
+&#9888; Note: This hook adds a 10% buffer to the minimum amount. It's important to understand that the minimums are dynamic. If the prices change before a transaction reaches the validators, there is a chance that the transaction may fall below the minimum, which would result in a stuck transaction. As such, adding a buffer of an extra 10% helps mitigate that risk.
 
 This hook depends on the state provided by the [`BridgeParamsProvider`](#bridgeparamsprovider). It reads the `sourceAssetId` and `sourceNetworkId` of the bridge parameters, fetches the minimum bridging amount, and returns it as a [BigInt](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt). If you want to display this number in its decimal form, you can get the `decimals` of the token from the [`useTokenList`](#usetokenlist) hook and use a function like viem's [`formatUnits`](https://viem.sh/docs/utilities/formatUnits.html) to convert it to a readable string.
 
@@ -499,11 +499,11 @@ const PreflightCheckMessage = () => {
 
 ### Transaction Execution Hooks
 
-Once you have set up the proper bridge parameters and queued the transaction, all that's left to do is execute the transaction. The recommended way is to use the `executeTransaction` callback provided by the [`useProcessingTransactionDispatch`](#useprocessingtransactiondispatch) hook. These functions update state that is useful for displaying the current state of a submitted transaction.
+Once you have set up the proper bridge parameters and queued the transaction, all that's left to do is execute the transaction. The recommended way is to use the `executeTransaction` callback provided by the [`useProcessingTransactionDispatch`](#useprocessingtransactiondispatch) hook. These functions are useful for displaying the current state of a submitted transaction.
 
 #### [useProcessingTransactionDispatch](./src/hooks/useProcessingTransaction.ts)
 
-This hook returns a `executeTransaction` callback to be used with the [`useQueueHashportTransaction`](#usequeuehashporttransaction) hook. It also returns a `confirmCompletion` callback which is is helpful for cleaning up bridge parameter state.
+This hook returns an `executeTransaction` callback to be used with the [`useQueueHashportTransaction`](#usequeuehashporttransaction) hook. It also returns a `confirmCompletion` callback which is helpful for cleaning up `bridgeParams` state.
 
 #### Usage
 
@@ -573,7 +573,7 @@ const ExecuteButton = () => {
 
 ### Status Monitoring Hooks
 
-There are a number of steps that must be completed in order to transfer assets across the hashport bridge. These steps may involve hedera transacitons, EVM transactions, waiting for block confirmations, etc. To help keep the user updated on the progress of their transaction, you can use the following hooks.
+There are a number of steps that must be completed in order to transfer assets across the hashport bridge. These steps may involve hedera transactions, EVM transactions, waiting for block confirmations, etc. To help keep the user updated on the progress of their transaction, you can use the following hooks.
 
 #### [useProcessingTransaction](./src/hooks/useProcessingTransaction.ts)
 
@@ -601,7 +601,7 @@ const ProcessingTransaction = () => {
 
 #### [useBlockConfirmations](./src/hooks/useBlockConfirmations.ts)
 
-To ensure the safety of a user's transaction, the validators wait for a designated number of block confirmations before validating the transactions. This hook can be used to give users an update to the number of confirmations that must pass before their transaction can be completed. Returns a [React Query result object](https://tanstack.com/query/latest/docs/react/guides/queries) where the data is the number of block confirmations for the given chainId.
+To ensure the safety of a user's transaction, the validators wait for a designated number of block confirmations before validating the transactions. This hook can be used to give users an update on the number of confirmations that must pass before their transaction can be completed. Returns a [React Query result object](https://tanstack.com/query/latest/docs/react/guides/queries) where the data is the number of block confirmations for the given chainId.
 
 ##### Usage
 
