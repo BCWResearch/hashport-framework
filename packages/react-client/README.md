@@ -1,3 +1,7 @@
+<p align="center">
+    <a href="https://www.hashport.network/"><img width="300px" src="https://hashport.network/wp-content/uploads/hashport-logo-dark.svg" alt="hashport"></a>
+</p>
+
 # hashport React Client
 
 The hashport React Client contains a set of React [contexts](https://react.dev/learn/passing-data-deeply-with-context) and [hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) that allow you to add hashport's bridging functionality to your React application. This package is meant for those who want to integrate the functionality into their native user interface. If you want a styled plug-and-play solution, please take a look at the Widget [here](../widget/README.md).

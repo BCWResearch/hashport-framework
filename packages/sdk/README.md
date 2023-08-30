@@ -1,3 +1,7 @@
+<p align="center">
+    <a href="https://www.hashport.network/"><img width="300px" src="https://hashport.network/wp-content/uploads/hashport-logo-dark.svg" alt="hashport"></a>
+</p>
+
 # hashport SDK
 
 The hashport SDK is the easiest way to add hashport bridging functionality to your application. Supports both fungible and nonfungible transactions. Check out which tokens are supported [here](https://www.hashport.network/token-list/).
