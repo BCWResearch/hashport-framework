@@ -1,16 +1,30 @@
 # hashport React Client
 
-The hashport React Client contains a set of React [contexts](https://react.dev/learn/passing-data-deeply-with-context) and [hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) that allow you to add hashport's bridging functionality to your React application. This package is meant for those who want to integrate the functionality into their native user interface. If you want a styled plug-and-play solution, please take a look at the Widget [here](../widget/README.d).
+The hashport React Client contains a set of React [contexts](https://react.dev/learn/passing-data-deeply-with-context) and [hooks](https://react.dev/learn/reusing-logic-with-custom-hooks) that allow you to add hashport's bridging functionality to your React application. This package is meant for those who want to integrate the functionality into their native user interface. If you want a styled plug-and-play solution, please take a look at the Widget [here](../widget/README.md).
+
+## Documentation
+
+1. [Quick Start](#quick-start)
+1. [Contexts](#contexts)
+1. [Hooks](#hooks)
+1. [Development Environment](#development-environment)
+1. [Troubleshooting](#troubleshooting)
 
 ## Quick Start
 
 ### Installation
-
+Install the `@hashport/react-client` package and its dependency [`@hashgraph/sdk`](https://www.npmjs.com/package/@hashgraph/sdk). Optionally install [`@rainbow-me/rainbowkit`](https://www.rainbowkit.com/docs/installation) and [`wagmi`](https://wagmi.sh/) if you plan to develop with [`RainbowKit`](https://www.rainbowkit.com/docs/installation), or [`hashconnect`](https://www.npmjs.com/package/hashconnect) if you plan to develop with [`HashPack`](https://www.hashpack.app/).
 ```bash
-npm install @hashport/react-client
+npm install @hashport/react-client @hashgraph/sdk
+
+# If using RainbowKit
+npm install @hashport/react-client @hashgraph/sdk @rainbow-me/rainbowkit wagmi
+
+# If using HashPack
+npm install @hashport/react-client @hashgraph/sdk hashconnect
 ```
 
-&#9888; Note: hashport/react-client is a [React](https://reactjs.org/) library.
+&#9888; Note: `@hashport/react-client` is a [React](https://reactjs.org/) library.
 
 ### Import
 
@@ -620,3 +634,24 @@ const BlockConfirmations = () => {
     }
 };
 ```
+
+## Development Environment
+
+To set up your development environment, you will need the following:
+
+-   Hedera Testnet account (create a new account [here](https://portal.hedera.com/register)). Testnet accounts are topped off with 10,000 testnet HBAR every 24 hours.
+-   EVM Testnet account (a list of supported testnet chains can be found [here](https://testnet.api.hashport.network/swagger/index.html#/networks), with [Sepolia](https://sepolia.dev/) being the most recommended).
+-   EVM Testnet faucet funds for [gas fees](https://ethereum.org/en/developers/docs/gas/#what-is-gas). You can get Sepolia ETH from [Alchemy's faucet](https://sepoliafaucet.com/).
+-   Sufficient balance for each test token _(Visit the [swagger documentation](https://testnet.api.hashport.network/swagger/index.html#/assets) to see what tokens are supported. Then visit the respective blockchain explorer and interact with the contract to mint some tokens to your testnet account(s).)_
+
+&#9888; Note: The Hedera Testnet resets every quarter, which erases all previous data and tokens. You'll need to update the Hedera Testnet tokens each time there is a reset. Learn more [here](https://docs.hedera.com/hedera/networks/testnet#test-network-resets).
+
+After you have set up your testnet accounts, you can initialize the `hashportClient` by connecting your wallets or using the [`hederaSdkSigner`](../sdk/lib/signers/hederaSdkSigner.ts) and [`localEvmSigner`](../sdk/lib/signers/localEvmSigner.ts) provided by the [`@hashport/sdk`](../sdk/README.md). Be sure to set the `mode` on the client to `"testnet"`!
+
+## Troubleshooting
+
+### Polyfills
+
+Libraries like Hashconnect and RainbowKit rely on a few node-specific packages. Refer to [RainbowKit's documentation](https://www.rainbowkit.com/docs/installation#additional-build-tooling-setup) to learn about whether or not you need to include polyfills and how to do so.
+
+###

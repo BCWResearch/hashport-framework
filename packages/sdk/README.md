@@ -5,9 +5,16 @@ The hashport SDK is the easiest way to add hashport bridging functionality to yo
 ## Quick Start
 
 ### Installation
-
+Install the SDK and its peer dependencies, [`@hashgraph/sdk`](https://www.npmjs.com/package/@hashgraph/sdk) and [`viem`](https://viem.sh/). Optionally install [`wagmi`](https://wagmi.sh/) and [`hashconnect`](https://www.npmjs.com/package/hashconnect) if you plan to develop with [`RainbowKit`](https://www.rainbowkit.com/docs/installation) and [`HashPack`](https://www.hashpack.app/), respectively.
 ```bash
-npm install @hashport/sdk
+npm install @hashport/sdk @hashgraph/sdk viem
+
+# If using RainbowKit
+npm install @hashport/sdk @hashgraph/sdk viem wagmi
+
+# If using HashPack
+npm install @hashport/sdk @hashgraph/sdk viem hashconnect
+
 ```
 
 ### Initialization
@@ -150,11 +157,12 @@ To test the functionality of the SDK on testnet, duplicate the `.env.example` fi
 
 _Requirements:_
 
--   Hedera Testnet account (create a new account [here](https://portal.hedera.com/register))
--   EVM Testnet account (a list of supported testnet chains can be found [here](<(https://testnet.api.hashport.network/swagger/index.html#/networks)>), with [Sepolia](https://sepolia.dev/) being the most recommended)
+-   Hedera Testnet account (create a new account [here](https://portal.hedera.com/register)). Testnet accounts are topped off with 10,000 testnet HBAR every 24 hours.
+-   EVM Testnet account (a list of supported testnet chains can be found [here](https://testnet.api.hashport.network/swagger/index.html#/networks), with [Sepolia](https://sepolia.dev/) being the most recommended).
+- EVM Testnet faucet funds for [gas fees](https://ethereum.org/en/developers/docs/gas/#what-is-gas). You can get Sepolia ETH from [Alchemy's faucet](https://sepoliafaucet.com/).
 -   Sufficient balance for each test token _(Visit the [swagger documentation](https://testnet.api.hashport.network/swagger/index.html#/assets) to see what tokens are supported. Then visit the respective blockchain explorer and interact with the contract to mint some tokens to your testnet account(s).)_
 
-> Note: The Hedera Testnet resets every quarter, which erases all previous data and tokens. You'll need to update the Hedera Testnet tokens each time there is a reset.
+> Note: The Hedera Testnet resets every quarter, which erases all previous data and tokens. You'll need to update the Hedera Testnet tokens each time there is a reset. Learn more [here](https://docs.hedera.com/hedera/networks/testnet#test-network-resets).
 
 If you have the proper balance, run the following command:
 
