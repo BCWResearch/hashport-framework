@@ -1,0 +1,44 @@
+{
+  "name": "@hashport/widget",
+  "version": "0.0.0",
+  "description": "React widget for hashport bridge",
+  "main": "index.js",
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@hashport/react-client": "^0.0.0",
+    "@mui/base": "^5.0.0-beta.10",
+    "@mui/icons-material": "^5.14.3",
+    "@mui/material": "^5.14.3",
+    "@rainbow-me/rainbowkit": "^1.0.8",
+    "boring-avatars": "^1.10.1",
+    "react-window": "^1.8.9",
+    "viem": "^1.6.0",
+    "wagmi": "^1.3.10"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.18",
+    "@types/react-dom": "^18.2.7",
+    "@types/react-window": "^1.8.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BCWResearch/hashport-framework.git"
+  },
+  "keywords": [
+    "hashport",
+    "bridge",
+    "crypto",
+    "hedera",
+    "ethereum"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BCWResearch/hashport-framework/issues"
+  },
+  "homepage": "https://github.com/BCWResearch/hashport-framework#readme"
+}

@@ -1,40 +1,41 @@
+import type { TransferTransaction } from '@hashgraph/sdk';
+import { isHex } from 'viem';
+import { EvmContractHandler } from './helpers/evmContractHandler.js';
+import { createHashportStore } from './helpers/hashportTransactionStore.js';
+import { HederaTxFactory } from './helpers/hederaTxFactory.js';
+import { HashportApiClient } from 'clients/hashportApiClient/index.js';
+import { MirrorNodeClient } from 'clients/mirrorNodeClient/index.js';
+import { erc20ABI, erc721ABI } from 'constants/abi.js';
+import { HashportTransactionData, HashportTransactionState } from 'types/state';
 import {
     BridgeParams,
     EvmBridgeStep,
     HederaBridgeStep,
     PollBridgeStep,
-} from '../../types/api/bridge';
-import { HashportApiClient } from '../hashportApiClient';
-import { Fetcher } from '../../utils/fetch';
-import { HederaTxFactory } from './helpers/hederaTxFactory';
-import type { TransferTransaction } from '@hashgraph/sdk';
-import { createHashportStore } from './helpers/hashportTransactionStore';
-import { HashportTransactionData, HashportTransactionState } from '../../types/state';
-import { EvmContractHandler } from './helpers/evmContractHandler';
-import { MirrorNodeClient } from '../mirrorNodeClient';
-import { ValidatorPollResponse } from '../../types/validator';
-import { isHex } from 'viem';
-import { HashportError } from '../../utils/error';
-import { Logger } from '../../utils/logger';
-import { sleep } from '../../utils/async';
-import { formatPollingId, formatTransactionId, formatUrl } from '../../utils/formatters';
-import { assertHederaTokenId, assertHexString } from '../../utils/assert';
-import { EvmSigner } from '../../types/signers/evmSigner';
-import { HederaSigner } from '../../types/signers/hederaSigner';
-import { HashportClientConfig } from '../../types/clients';
-import { erc20ABI, erc721ABI } from '../../constants/abi';
+} from 'types/api/bridge';
+import { HashportClientConfig } from 'types/clients';
+import { EvmSigner } from 'types/signers/evmSigner';
+import { HederaSigner } from 'types/signers/hederaSigner';
+import { ValidatorPollResponse } from 'types/validator';
+import { assertHederaTokenId, assertHexString } from 'utils/assert.js';
+import { sleep } from 'utils/async.js';
+import { HashportError } from 'utils/error.js';
+import { Fetcher } from 'utils/fetch.js';
+import { formatPollingId, formatTransactionId, formatUrl } from 'utils/formatters.js';
+import { Logger } from 'utils/logger.js';
 
 /**
  * Initializes a client for validating and executing bridging operations on hashport.
  */
 export class HashportClient {
-    protected apiClient: HashportApiClient;
-    protected evmSigner: EvmSigner;
-    protected hederaSigner: HederaSigner;
-    protected mirrorNodeClient: MirrorNodeClient;
+    protected logger: Logger;
+    apiClient: HashportApiClient;
+    mirrorNodeClient: MirrorNodeClient;
+    mode: 'mainnet' | 'testnet';
+    evmSigner: EvmSigner;
+    hederaSigner: HederaSigner;
     transactionStore: ReturnType<ReturnType<typeof createHashportStore>['getState']>;
     subscribe: ReturnType<typeof createHashportStore>['subscribe'];
-    logger: Logger;
 
     constructor({
         evmSigner,
@@ -47,6 +48,7 @@ export class HashportClient {
     }: HashportClientConfig) {
         this.evmSigner = evmSigner;
         this.hederaSigner = hederaSigner;
+        this.mode = mode;
         this.apiClient = new HashportApiClient(mode);
         const store = createHashportStore(persistOptions);
         this.transactionStore = store.getState();

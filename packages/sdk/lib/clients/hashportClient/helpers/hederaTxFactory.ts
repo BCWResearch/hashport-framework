@@ -7,7 +7,7 @@ import {
     AccountAllowanceApproveTransaction,
 } from '@hashgraph/sdk';
 import Long from 'long';
-import { FeeTransfer } from '../../../types/api/bridge';
+import { FeeTransfer } from 'types/api/bridge';
 
 export class HederaTxFactory {
     accountId: string;

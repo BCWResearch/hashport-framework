@@ -12,7 +12,7 @@ import {
 import { ValidatorPollResponse } from '../../types/validator/index.js';
 import { BridgeStep, BridgeValidation } from '../../types/api/bridge.js';
 import { bridgeSteps, bridgeValidateValid } from '../mockData/api/bridge.js';
-import { CondensedAsset } from '../../types/api/assets.js';
+import { CondensedAsset, NetworkAssets } from '../../types/api/assets.js';
 import { networksNetworkIdAssets } from '../mockData/api/networks.js';
 import { BRIDGE_PAYOUT_CONFIRMATION, FETCH_TEST_URL } from './constants.js';
 import {
@@ -21,10 +21,90 @@ import {
     mockHederaAccount,
 } from './mockSigners.js';
 import { formatTransactionId } from '../../utils/formatters.js';
+import { blockConfirmations } from '../../constants/blockConfirmations.js';
+
+// Full value from mockData is too large for msw to handle
+export const assets: NetworkAssets[] = [
+    {
+        network: {
+            id: 1,
+            name: 'Ethereum',
+        },
+        assets: {
+            '0x14ab470682Bc045336B1df6262d538cB6c35eA2A': {
+                id: '0x14ab470682Bc045336B1df6262d538cB6c35eA2A',
+                name: 'HBAR[eth]',
+                symbol: 'HBAR[eth]',
+                isNative: false,
+                decimals: 8,
+                icon: 'https://cdn.hashport.network/HBAR.svg',
+            },
+        },
+    },
+    {
+        network: {
+            id: 295,
+            name: 'Hedera',
+        },
+        assets: {
+            HBAR: {
+                id: 'HBAR',
+                name: 'HBAR',
+                symbol: 'HBAR',
+                isNative: true,
+                decimals: 8,
+                bridgeableNetworks: {
+                    '1': {
+                        network: {
+                            id: 1,
+                            name: 'Ethereum',
+                        },
+                        wrappedAsset: '0x14ab470682Bc045336B1df6262d538cB6c35eA2A',
+                    },
+                },
+                icon: 'https://cdn.hashport.network/HBAR.svg',
+            },
+        },
+    },
+];
 
 const miscHandlers = [
     rest.get(FETCH_TEST_URL, (_, res, ctx) => {
-        return res(ctx.status(200), ctx.json(''));
+        return res(ctx.status(200), ctx.json('mock_data'));
+    }),
+    rest.get('https://cdn.hashport.network/blockConfirmations.json', (_, res, ctx) => {
+        return res(ctx.status(200), ctx.json(blockConfirmations));
+    }),
+    rest.get('https://cdn.hashport.network/explorers.json', (_, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json({
+                '1': 'https://etherscan.io/',
+                '10': 'https://explorer.optimism.io/',
+                '25': 'https://cronoscan.com/',
+                '56': 'https://bscscan.com/',
+                '97': 'https://testnet.bscscan.com/',
+                '137': 'https://polygonscan.com/',
+                '250': 'https://ftmscan.com/',
+                '295': 'https://hashscan.io/mainnet/',
+                '296': 'https://hashscan.io/testnet/',
+                '338': 'https://testnet.cronoscan.com/',
+                '420': 'https://goerli-optimism.etherscan.io/',
+                '1284': 'https://moonscan.io/',
+                '1287': 'https://moonbase.moonscan.io/',
+                '4002': 'https://testnet.ftmscan.com/',
+                '42161': 'https://arbiscan.io/',
+                '43113': 'https://testnet.snowtrace.io/',
+                '43114': 'https://snowtrace.io/',
+                '80001': 'https://mumbai.polygonscan.com/',
+                '8453': 'https://base.blockscout.com/',
+                '84531': 'https://goerli.basescan.org/',
+                '421613': 'https://goerli.arbiscan.io/',
+                '11155111': 'https://sepolia.etherscan.io/',
+                '1313161554': 'https://explorer.aurora.dev/',
+                '1313161555': 'https://explorer.testnet.aurora.dev/',
+            }),
+        );
     }),
 ];
 
@@ -138,6 +218,12 @@ const validatorHandlers = [
 ];
 
 const hashportApiHandlers = [
+    rest.get<DefaultBodyType, never, NetworkAssets[]>(
+        'https://mainnet.api.hashport.network/api/v1/assets',
+        (_, res, ctx) => {
+            return res(ctx.status(200), ctx.json(assets));
+        },
+    ),
     rest.get<DefaultBodyType, never, BridgeValidation>(
         'https://mainnet.api.hashport.network/api/v1/bridge/validate',
         (_, res, ctx) => res(ctx.json(bridgeValidateValid)),
@@ -174,6 +260,12 @@ const hashportApiHandlers = [
                 return res.networkError(`No mock data exists for ${assetId}`);
             }
             return res(ctx.json(asset));
+        },
+    ),
+    rest.get(
+        'https://mainnet.api.hashport.network/api/v1/networks/:networkId/assets/:assetId/min-amount',
+        (_, res, ctx) => {
+            return res(ctx.json({ minAmount: '10000000000' }));
         },
     ),
 ];

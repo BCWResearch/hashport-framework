@@ -5,7 +5,7 @@ import {
     TransferTransaction,
     AccountAllowanceApproveTransaction,
 } from '@hashgraph/sdk';
-import { HederaSigner } from '../types/signers/hederaSigner';
+import { HederaSigner } from 'types/signers/hederaSigner';
 
 export class HederaSdkSigner implements HederaSigner {
     accountId: string;

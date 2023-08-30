@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "npm run build --workspaces --if-present",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "release": "npm run build && changeset publish",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
@@ -14,6 +15,9 @@
     "test:e2e": "npm run test:e2e --workspaces --if-present"
   },
   "dependencies": {
+    "@changesets/cli": "^2.26.2",
+    "@hashgraph/sdk": "^2.31.0",
+    "hashconnect": "^0.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "zustand": "^4.3.8"
@@ -26,22 +30,28 @@
     "@storybook/react": "^7.0.7",
     "@storybook/react-vite": "^7.0.7",
     "@storybook/testing-library": "^0.0.14-next.2",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.4.3",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
     "@vitejs/plugin-react": "^4.0.0",
+    "esbuild-plugin-polyfill-node": "^0.3.0",
     "eslint": "^8.38.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
     "eslint-plugin-storybook": "^0.6.11",
+    "jsdom": "^22.1.0",
     "msw": "^1.2.2",
     "nodemon": "^2.0.22",
     "prettier": "2.8.8",
     "prop-types": "^15.8.1",
     "storybook": "^7.0.7",
     "ts-node": "^10.9.1",
+    "tsc-alias": "^1.8.7",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.4",
     "vite": "^4.3.2",
@@ -49,6 +59,8 @@
     "vitest": "^0.30.1"
   },
   "workspaces": [
-    "packages/sdk"
+    "packages/sdk",
+    "packages/react-client",
+    "packages/widget"
   ]
 }
