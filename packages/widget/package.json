@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "React widget for hashport bridge",
   "main": "index.js",
+  "private": false,
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
