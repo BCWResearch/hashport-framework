@@ -1,12 +1,12 @@
 {
   "name": "@hashport/widget",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "React widget for hashport bridge",
   "main": "index.js",
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@hashport/react-client": "^0.0.0",
+    "@hashport/react-client": "^0.0.1",
     "@mui/base": "^5.0.0-beta.10",
     "@mui/icons-material": "^5.14.3",
     "@mui/material": "^5.14.3",
