@@ -1,6 +1,6 @@
 {
   "name": "@hashport/react-client",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "React Context for hashport bridging operations",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -12,7 +12,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@hashport/sdk": "^0.0.0",
+    "@hashport/sdk": "^0.0.1",
     "@tanstack/react-query": "^4.29.25",
     "viem": "^1.4.2"
   },
