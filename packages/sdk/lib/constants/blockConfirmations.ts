@@ -1,3 +1,5 @@
+import { Fetcher } from 'utils/fetch.js';
+
 export const blockConfirmations: Record<number, number> = {
     // TESTNET
     11155111: 6, // Ethereum
@@ -23,7 +25,15 @@ export const blockConfirmations: Record<number, number> = {
     1313161554: 5, // Aurora
 } as const;
 
-export const getBlockConfirmations = (chainId: number) => {
+export const getBlockConfirmations = async (chainId: number) => {
     const DEFAULT = 5;
-    return blockConfirmations[chainId] ?? DEFAULT;
+    let confirmations = blockConfirmations;
+    try {
+        confirmations = await new Fetcher<Record<number, number>>(
+            'https://cdn.hashport.network/blockConfirmations.json',
+        );
+    } catch (error) {
+        confirmations = blockConfirmations;
+    }
+    return confirmations[chainId] ?? DEFAULT;
 };

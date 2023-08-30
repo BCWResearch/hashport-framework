@@ -13,7 +13,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run clean && tsc --project tsconfig.build.json",
+    "build": "npm run clean && tsc --project tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "test:e2e": "ts-node ./lib/test/e2e.ts"
   },
   "keywords": [
@@ -25,11 +25,28 @@
   "license": "MIT",
   "dependencies": {
     "cross-fetch": "^3.1.5",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "zustand": "^4.4.1"
   },
   "peerDependencies": {
     "@hashgraph/sdk": "^2.24.2",
-    "viem": "^1.0.7"
+    "hashconnect": "^0.2.4",
+    "viem": "^1.x",
+    "wagmi": "^1.3.9"
+  },
+  "peerDependenciesMeta": {
+    "@hashgraph/sdk": {
+      "optional": false
+    },
+    "hashconnect": {
+      "optional": true
+    },
+    "wagmi": {
+      "optional": true
+    },
+    "viem": {
+      "optional": false
+    }
   },
   "devDependencies": {
     "@types/uuid": "^9.0.2",

@@ -1,15 +1,15 @@
-import { CondensedAsset, NetworkAssets } from '../../types/api/assets';
-import { BridgeParams, BridgeStep, BridgeValidation } from '../../types/api/bridge';
-import { NonFungibleTokenFee } from '../../types/api/fees';
+import { CondensedAsset, NetworkAssets } from 'types/api/assets';
+import { BridgeParams, BridgeStep, BridgeValidation } from 'types/api/bridge';
+import { NonFungibleTokenFee } from 'types/api/fees';
 import {
     NetworkReserveAmounts,
     Network,
     AssetReserveAmounts,
     AssetMinAmount,
     NetworkMinAmounts,
-} from '../../types/api/networks';
-import { PaginatedTransfers, TransferParams } from '../../types/api/transfers';
-import { Fetcher } from '../../utils/fetch';
+} from 'types/api/networks';
+import { PaginatedTransfers, TransferParams } from 'types/api/transfers';
+import { Fetcher } from 'utils/fetch.js';
 
 export class HashportApiClient {
     private baseUrl: string;
@@ -55,6 +55,12 @@ export class HashportApiClient {
                 this.baseUrl + `/networks/${networkId}/assets/${assetId}/amounts`,
             );
         }
+    }
+    /**
+     * Returns a mapping of supported chain id to block explorer url.
+     */
+    explorers(): Fetcher<Record<number, string>> {
+        return new Fetcher<Record<number, string>>('https://cdn.hashport.network/explorers.json');
     }
     /**
      * Validates a bridging operation, returning a error if any of the
@@ -124,7 +130,7 @@ export class HashportApiClient {
      * token, according to its decimals.
      */
     minAmounts(): Fetcher<NetworkMinAmounts>;
-    minAmounts(networkId: number, assetId: string): Fetcher<NetworkMinAmounts>;
+    minAmounts(networkId: number, assetId: string): Fetcher<AssetMinAmount>;
     minAmounts(networkId?: number, assetId?: string) {
         if (networkId === undefined && assetId === undefined) {
             return new Fetcher<NetworkMinAmounts>(this.configUrl + '/min-amounts');

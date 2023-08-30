@@ -1,7 +1,7 @@
 import { NetworkAssets } from '../../../types/api/assets.js';
 import { NetworkReserveAmounts } from '../../../types/api/networks.js';
 
-const assets: NetworkAssets[] = [
+export const assets: NetworkAssets[] = [
     {
         network: {
             id: 42161,

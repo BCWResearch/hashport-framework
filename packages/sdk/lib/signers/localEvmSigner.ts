@@ -1,6 +1,6 @@
 import { Chain, createPublicClient, createWalletClient, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { Arguments, BurnSignature, EvmSigner } from '../types/signers/evmSigner';
+import { Arguments, BurnSignature, EvmSigner } from 'types/signers/evmSigner';
 
 export function createLocalEvmSigner(chain: Chain, rpcUrl: string, privateKey: string): EvmSigner {
     const publicClient = createPublicClient({

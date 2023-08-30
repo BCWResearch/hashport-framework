@@ -1,0 +1,14 @@
+{
+    "Hedera": {
+        "checkAssociation": "Checking token association",
+        "associating": "Associating token",
+        "deposit": "Sending to hashport portal. Please confirm in {hederaWallet}"
+    },
+    "poll": {
+        "verify": "Verifying transaction",
+        "confirm": "Confirming transfer"
+    },
+    "evm": {
+        "send": "Sending {functionName} transaction. Please confirm in {evmWallet}"
+    }
+}
