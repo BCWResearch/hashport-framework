@@ -13,8 +13,6 @@
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc --project tsconfig.build.json && tsc-alias -p tsconfig.build.json"
   },
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "@hashport/sdk": "^0.0.1",
     "@tanstack/react-query": "^4.29.25",
@@ -44,5 +42,22 @@
     "hashconnect": {
       "optional": true
     }
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BCWResearch/hashport-framework.git"
+  },
+  "keywords": [
+    "hashport",
+    "bridge",
+    "crypto",
+    "hedera",
+    "ethereum"
+  ],
+  "author": "John D",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BCWResearch/hashport-framework/issues"
+  },
+  "homepage": "https://github.com/BCWResearch/hashport-framework#readme"
 }
