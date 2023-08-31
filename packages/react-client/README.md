@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://www.hashport.network/"><img width="300px" src="https://hashport.network/wp-content/uploads/hashport-logo-dark.svg" alt="hashport"></a>
+    <a href="https://www.hashport.network/"><img style="filter: drop-shadow(-2px 1px 2px rgba(0,0,0,0.75));" width="300px" src="https://hashport.network/wp-content/uploads/hashport-logo-dark.svg" alt="hashport"></a>
 </p>
 
 # hashport React Client
@@ -17,7 +17,9 @@ The hashport React Client contains a set of React [contexts](https://react.dev/l
 ## Quick Start
 
 ### Installation
+
 Install the `@hashport/react-client` package and its dependency [`@hashgraph/sdk`](https://www.npmjs.com/package/@hashgraph/sdk). Optionally install [`@rainbow-me/rainbowkit`](https://www.rainbowkit.com/docs/installation) and [`wagmi`](https://wagmi.sh/) if you plan to develop with [`RainbowKit`](https://www.rainbowkit.com/docs/installation), or [`hashconnect`](https://www.npmjs.com/package/hashconnect) if you plan to develop with [`HashPack`](https://www.hashpack.app/).
+
 ```bash
 npm install @hashport/react-client @hashgraph/sdk
 
@@ -424,6 +426,63 @@ const TokenList = () => {
         )
     }
 }
+```
+
+#### [useSelectedTokens](./src/hooks/useSelectedTokens.tsx)
+
+This is simply a convenience hook wrapped around [`useTokenList`](#usetokenlist) and [`useBridgeParams`](#usebridgeparams). It removes some of the boiler plate needed to display the selected source and target tokens if they have been set in the `bridgeParams`.
+
+##### Usage
+
+```tsx
+const SelectedTokens = () => {
+    const { sourceAsset, targetAsset } = useSelectedTokens();
+
+    return (
+        <div>
+            <p>{sourceAsset ? `Selected Asset: ${sourceAsset.symbol}` : 'Select a token!'}</p>
+            <p>
+                {targetAsset
+                    ? `Target Asset: ${targetAsset.symbol}`
+                    : 'Where do you want to bridge to?'}
+            </p>
+        </div>
+    );
+};
+```
+
+#### [useTargetTokens](./src/hooks/useTargetTokens.tsx)
+
+This is another convenience hook. If a source asset has been set, it will return an array of all the possible tokens you can bridge to. Returns `undefined` if no source asset has been set.
+
+&#9888; Note: An additional `assetId` property is added to each token to uniquely identify the token. This is helpful when providing a `key` for React when mapping out the tokens.
+
+##### Usage
+
+```tsx
+const TargetTokens = () => {
+    const targetTokens = useTargetTokens();
+    const { setTargetAsset } = useBridgeParamsDispatch();
+
+    return (
+        <div>
+            {targetTokens ? (
+                <>
+                    <p>Where would you like to bridge your asset?</p>
+                    {targetTokens.map(token => {
+                        return (
+                            <button key={token.assetId} onClick={() => setTargetAsset(token)}>
+                                {token.symbol}
+                            </button>
+                        );
+                    })}
+                </>
+            ) : (
+                <p>Choose a token to get started</p>
+            )}
+        </div>
+    );
+};
 ```
 
 #### [useQueueHashportTransaction](./src/hooks/useHashportClient.ts)
