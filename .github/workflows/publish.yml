@@ -1,13 +1,16 @@
 name: Publish
 on:
     push:
-        branches:
-            - 'main'
+        branches: [main]
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
+    call-test-workflow:
+        uses: ./.github/workflows/pull-request-CI.yml
+
     publish:
+        needs: call-test-workflow
         runs-on: ubuntu-latest
 
         steps:
@@ -17,17 +20,11 @@ jobs:
             - name: Setup Node
               uses: actions/setup-node@v3
               with:
-                  node-version: 16
+                  node-version: 16.x
                   cache: 'npm'
-            
+
             - name: Install Dependencies
               run: npm ci
-
-            - name: Build
-              run: npm run build
-
-            - name: Run tests
-              run: npm run test
 
             - name: Create Release Pull Request or Publish to npm
               id: changesets
