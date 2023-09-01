@@ -1,5 +1,11 @@
 # @hashport/react-client
 
+## 0.0.2
+
+### Patch Changes
+
+-   b599750: Added selector hooks, updated peerDeps
+
 ## 0.0.1
 
 ### Patch Changes
