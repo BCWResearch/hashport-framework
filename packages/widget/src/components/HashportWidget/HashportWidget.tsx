@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import {
     HashportClientProviderWithRainbowKit,
     ProcessingTransactionProvider,
+    useBridgeParamsDispatch,
     useHashConnect,
     useHashportClient,
     useHashportTransactionQueue,
@@ -28,6 +29,7 @@ import { DisconnectedAccountsFallback } from './DisconnectedAccountsFallback';
 const CheckForPersistedTransaction = ({ children }: { children: React.ReactNode }) => {
     const hashportClient = useHashportClient();
     const { executeTransaction } = useProcessingTransactionDispatch();
+    const { setAmount } = useBridgeParamsDispatch();
     const { data: tokens, isError, isLoading } = useTokenList();
     const transactionQueue = useHashportTransactionQueue();
     const [persistedTx, setPersistedTx] = useState<[string, HashportTransactionData]>();
@@ -38,10 +40,10 @@ const CheckForPersistedTransaction = ({ children }: { children: React.ReactNode 
         setPersistedTx(undefined);
     };
 
-    const handleResume = async () => {
+    const handleResume = (amountParams: Parameters<typeof setAmount>[0]) => async () => {
         if (!persistedTx) return;
+        setAmount(amountParams);
         executeTransaction(persistedTx[0]);
-        // TODO: set bridge params with the ones from persistedTx[1]
         setPersistedTx(undefined);
     };
 
@@ -56,7 +58,7 @@ const CheckForPersistedTransaction = ({ children }: { children: React.ReactNode 
     // TODO: refactor and add beter styles
     if (persistedTx) {
         if (isError || isLoading) return 'Loading...';
-        const [id, { params }] = persistedTx;
+        const { params } = persistedTx[1];
         const { sourceAssetId, sourceNetworkId, targetNetworkId, amount } = params;
         const sourceAsset = tokens.fungible.get(`${sourceAssetId}-${+sourceNetworkId}`);
         const formattedAmount =
@@ -86,10 +88,17 @@ const CheckForPersistedTransaction = ({ children }: { children: React.ReactNode 
                     Would you like to resume this transaction?
                 </Typography>
                 <Row width="100%" spacing={2}>
-                    <Button onClick={handleResume} sx={{ flexGrow: 1 }}>
+                    <Button
+                        onClick={handleResume({
+                            amount: formattedAmount,
+                            sourceAssetDecimals: sourceAsset?.decimals,
+                            targetAssetDecimals: targetAsset?.decimals,
+                        })}
+                        sx={{ flexGrow: 1 }}
+                    >
                         Continue
                     </Button>
-                    <Button onClick={handleCancel} sx={{ flexGrow: 1 }}>
+                    <Button variant="outlined" onClick={handleCancel} sx={{ flexGrow: 1 }}>
                         Cancel
                     </Button>
                 </Row>
