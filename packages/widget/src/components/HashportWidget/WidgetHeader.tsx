@@ -1,11 +1,14 @@
 import { HashportClientProviderWithRainbowKit, useHashConnect } from '@hashport/react-client';
 import Stack from '@mui/material/Stack';
 import { Row } from 'components/styled/Row';
-import { ComponentProps } from 'react';
+import { ComponentProps, MouseEvent, useState } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { AccountButton } from './AccountButton';
 import { NetworkSwitch } from './NetworkSwitch';
 import { alpha } from '@mui/material/styles';
+import Popover from '@mui/material/Popover';
+import { Button } from 'components/styled/Button';
+import PowerOffIcon from '@mui/icons-material/PowerOff';
 
 const customEvmConnectButton: ComponentProps<typeof ConnectButton.Custom>['children'] = ({
     openConnectModal,
@@ -27,12 +30,24 @@ const customEvmConnectButton: ComponentProps<typeof ConnectButton.Custom>['child
 };
 
 export const renderWidgetHeader: (
-    // TODO: maybe have hashconnect be optional? handle rendering only the evm network stuff
     hashConnect: ReturnType<typeof useHashConnect>['hashConnect'],
 ) => ComponentProps<typeof HashportClientProviderWithRainbowKit>['renderConnectButton'] =
     hashConnect => (children, ConnectButton) => {
-        const connect = () => hashConnect?.connectToLocalWallet();
+        const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
         const hederaId = hashConnect?.hcData.pairingData[0]?.accountIds[0];
+        const topic = hashConnect?.hcData.pairingData[0]?.topic ?? '';
+
+        const disconnect = async () => {
+            hashConnect?.disconnect(topic);
+            handleClose();
+        };
+
+        const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+            hederaId ? setAnchorEl(e.currentTarget) : hashConnect?.connectToLocalWallet();
+        };
+
+        const handleClose = () => setAnchorEl(null);
+
         return (
             <Stack>
                 <Row
@@ -46,10 +61,24 @@ export const renderWidgetHeader: (
                     gap={1.5}
                 >
                     <ConnectButton.Custom>{customEvmConnectButton}</ConnectButton.Custom>
-                    {/* TODO: add popover that gives the option to disconnect */}
-                    <AccountButton account={hederaId} onClick={connect}>
-                        {hederaId ?? 'Connect Hashpack'}
+                    <AccountButton account={hederaId} onClick={handleClick}>
+                        {hederaId ?? 'Connect HashPack'}
                     </AccountButton>
+                    <Popover
+                        open={!!anchorEl}
+                        anchorEl={anchorEl}
+                        onClose={handleClose}
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                    >
+                        <Button
+                            sx={{ margin: 2 }}
+                            color="error"
+                            endIcon={<PowerOffIcon />}
+                            onClick={disconnect}
+                        >
+                            Disconnect HashPack
+                        </Button>
+                    </Popover>
                 </Row>
                 {children}
             </Stack>

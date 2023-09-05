@@ -1,4 +1,5 @@
 import { HashConnect, HashConnectTypes, MessageTypes } from 'hashconnect';
+import { HashConnectConnectionState } from 'hashconnect/dist/esm/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const APP_CONFIG = {
@@ -15,30 +16,34 @@ type UseHashConnectProps = {
 export const useHashConnect = ({ debug = false, mode = 'mainnet' }: UseHashConnectProps = {}) => {
     const hashConnect = useMemo(() => new HashConnect(debug), [debug]);
     const [pairingData, setPairingData] = useState<HashConnectTypes.SavedPairingData>();
+    const [status, setStatus] = useState<HashConnectConnectionState>();
 
     const handlePairingEvent = (data: MessageTypes.ApprovePairing) => {
         setPairingData(data.pairingData);
     };
 
+    const handleStatusChange = (data: HashConnectConnectionState) => {
+        setStatus(data);
+    };
+
     const initialize = useCallback(async () => {
         try {
             hashConnect.pairingEvent.on(handlePairingEvent);
+            hashConnect.connectionStatusChangeEvent.on(handleStatusChange);
             const initData = await hashConnect.init(APP_CONFIG, mode);
             if (initData.savedPairings.length) setPairingData(initData.savedPairings[0]);
         } catch (error) {
-            // TODO: remove log
-            console.log(error);
+            debug && console.log(error);
         }
-    }, [hashConnect, mode]);
+    }, [hashConnect, mode, debug]);
 
     useEffect(() => {
         initialize();
         return () => {
+            hashConnect.connectionStatusChangeEvent.off(handleStatusChange);
             hashConnect.pairingEvent.off(handlePairingEvent);
         };
-    }, [initialize, hashConnect.pairingEvent]);
+    }, [initialize, hashConnect.pairingEvent, hashConnect.connectionStatusChangeEvent]);
 
-    return pairingData
-        ? { pairingData, hashConnect }
-        : { pairingData: undefined, hashConnect: undefined };
+    return { pairingData, hashConnect, status };
 };

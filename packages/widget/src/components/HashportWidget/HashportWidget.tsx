@@ -118,7 +118,9 @@ export const HashportWidget = (
             <Container>
                 <HashportClientProviderWithRainbowKit
                     {...props}
-                    hederaSigner={hashConnect && createHashPackSigner(hashConnect, pairingData)}
+                    hederaSigner={
+                        hashConnect && pairingData && createHashPackSigner(hashConnect, pairingData)
+                    }
                     renderConnectButton={renderWidgetHeader(hashConnect)}
                     disconnectedAccountsFallback={<DisconnectedAccountsFallback />}
                 >
