@@ -109,7 +109,7 @@ const CheckForPersistedTransaction = ({ children }: { children: React.ReactNode 
     }
 };
 
-export const HashportWidget = (
+const HashportWidget = (
     props: Omit<ComponentProps<typeof HashportClientProviderWithRainbowKit>, 'hederaSigner'>,
 ) => {
     const { hashConnect, pairingData } = useHashConnect();
@@ -141,3 +141,5 @@ export const HashportWidget = (
         </ThemeProvider>
     );
 };
+
+export default HashportWidget;

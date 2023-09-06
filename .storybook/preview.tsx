@@ -32,13 +32,12 @@ const HashconnectMessageForwarding = ({ children }: { children: React.ReactNode 
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
     const { hashConnect, pairingData } = useHashConnect();
+    const hederaSigner =
+        hashConnect && pairingData && createHashPackSigner(hashConnect, pairingData);
     return (
         <div style={{ padding: '2em', backgroundColor: 'rgb(25,25,35)' }}>
             <ThemeProvider>
-                <HashportClientProviderWithRainbowKit
-                    mode="testnet"
-                    hederaSigner={hashConnect && createHashPackSigner(hashConnect, pairingData)}
-                >
+                <HashportClientProviderWithRainbowKit mode="testnet" hederaSigner={hederaSigner}>
                     <ProcessingTransactionProvider>{children}</ProcessingTransactionProvider>
                 </HashportClientProviderWithRainbowKit>
             </ThemeProvider>
@@ -49,7 +48,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 const preview: Preview = {
     decorators: [
         (story, ctx) => {
-            return ctx.componentId === 'hashport-widget' ? (
+            return ctx.componentId.includes('hashport-widget') ? (
                 story()
             ) : (
                 <Providers>{story()}</Providers>

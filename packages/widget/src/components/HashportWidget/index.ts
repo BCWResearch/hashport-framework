@@ -1,1 +1,1 @@
-export { HashportWidget } from './HashportWidget';
+export * as HashportWidget from './HashportWidget';
