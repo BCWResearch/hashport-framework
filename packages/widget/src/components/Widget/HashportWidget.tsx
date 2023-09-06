@@ -1,7 +1,7 @@
-import { AmountInput } from './AmountInput';
+import { AmountInput } from '../Inputs/AmountInput';
 import { ThemeProvider } from 'theme';
 import { Container } from 'components/styled/Container';
-import { ReceivedAmount } from './ReceivedAmount';
+import { ReceivedAmount } from '../Inputs/ReceivedAmount';
 import { ConfirmationSlider } from './ConfirmationSlider';
 import Stack from '@mui/material/Stack';
 import {
@@ -11,8 +11,8 @@ import {
     createHashPackSigner,
 } from '@hashport/react-client';
 import { ComponentProps } from 'react';
-import { renderWidgetHeader } from './WidgetHeader';
-import { BlockConfirmations } from './BlockConfirmations';
+import { renderWidgetHeader } from '../Header/WidgetHeader';
+import { BlockConfirmations } from '../TransactionState/BlockConfirmations';
 import { DisconnectedAccountsFallback } from './DisconnectedAccountsFallback';
 import { PersistedTxCheck } from './PersistedTxCheck';
 

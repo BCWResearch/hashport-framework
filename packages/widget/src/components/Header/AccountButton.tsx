@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import { ButtonProps } from '@mui/material/Button';
 import Avatar from 'boring-avatars';
 
-export const StyledButton = styled(Button)(
+const StyledButton = styled(Button)(
     ({ theme: { palette, breakpoints, spacing }, variant }) => ({
         fontFamily: ['Inter', '-apple-system', 'Segoe UI', 'Helvetica', 'sans-serif', 'monospace'],
         color: 'white',

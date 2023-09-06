@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { HashportWidgetLoaderButton } from '../packages/widget/src/components/HashportWidget/HashportWidgetLoaderButton';
+import { HashportWidgetLoaderButton } from '@hashport/widget';
 
 const meta = {
     title: 'Hashport Widget Loader Button',

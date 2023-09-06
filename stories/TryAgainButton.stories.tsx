@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { TryAgainButton } from '../packages/widget/src/components/HashportWidget/TryAgainButton';
+import { TryAgainButton } from '@hashport/widget';
 
 const meta = {
     title: 'Try Again Button',

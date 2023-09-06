@@ -1,8 +1,8 @@
 import { ComponentProps, MouseEvent, Suspense, lazy, useState } from 'react';
 import type HashportWidget from './HashportWidget';
-import Dialog from '@mui/material/Dialog';
-// TODO: lazy load dialog
+
 const Widget = lazy(() => import('./HashportWidget'));
+const Dialog = lazy(() => import('@mui/material/Dialog'));
 
 type HashportWidgetLoaderButtonProps = {
     widgetProps?: ComponentProps<typeof HashportWidget>;
@@ -34,18 +34,20 @@ export const HashportWidgetLoaderButton = ({
             <button {...props} onClick={handleClick}>
                 {label}
             </button>
-            <Dialog
-                keepMounted
-                open={open}
-                PaperProps={{ sx: { borderRadius: 4 } }}
-                onClose={handleClose}
-            >
-                {open && (
-                    <Suspense fallback={suspenseFallback}>
-                        <Widget {...widgetProps} />
-                    </Suspense>
-                )}
-            </Dialog>
+            <Suspense fallback={null}>
+                <Dialog
+                    keepMounted
+                    open={open}
+                    PaperProps={{ sx: { borderRadius: 4 } }}
+                    onClose={handleClose}
+                >
+                    {open && (
+                        <Suspense fallback={suspenseFallback}>
+                            <Widget {...widgetProps} />
+                        </Suspense>
+                    )}
+                </Dialog>
+            </Suspense>
         </>
     );
 };
