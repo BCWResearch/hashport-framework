@@ -8,9 +8,9 @@ import {
     HashportClientProviderWithRainbowKit,
     ProcessingTransactionProvider,
     useHashConnect,
+    createHashPackSigner,
 } from '@hashport/react-client';
 import { ComponentProps } from 'react';
-import { createHashPackSigner } from '@hashport/sdk';
 import { renderWidgetHeader } from './WidgetHeader';
 import { BlockConfirmations } from './BlockConfirmations';
 import { DisconnectedAccountsFallback } from './DisconnectedAccountsFallback';

@@ -1,5 +1,10 @@
+<style>
+    .hashport {
+        filter: drop-shadow(-2px 1px 2px rgba(0,0,0,0.75));
+    }
+</style>
 <p align="center">
-    <a href="https://www.hashport.network/"><img style="filter: drop-shadow(-2px 1px 2px rgba(0,0,0,0.75));" width="300px" src="https://hashport.network/wp-content/uploads/hashport-logo-dark.svg" alt="hashport"></a>
+    <a href="https://www.hashport.network/"><img class="hashport" width="300px" src="https://hashport.network/wp-content/uploads/hashport-logo-dark.svg" alt="hashport"></a>
 </p>
 
 # hashport React Client
@@ -330,7 +335,8 @@ This package comes with a number of convenience hooks that help perform a hashpo
 
 1. [Transaction Set-Up Hooks](#transaction-set-up-hooks)
 1. [Transaction Execution Hooks](#transaction-execution-hooks)
-1. [Status Monitoring Hooks](#)
+1. [Status Monitoring Hooks](#status-monitoring-hooks)
+1. [Account Connection Hooks](#account-connection-hooks)
 
 ### Transaction Set-Up Hooks
 
@@ -698,6 +704,31 @@ const BlockConfirmations = () => {
 };
 ```
 
+### Account Connection Hooks
+
+Hooks in this section help with connecting wallets for EVM and Hedera accounts.
+
+#### [useHashConnect](./src/hooks/useHashConnect.ts)
+
+This is a simple wrapper around the [`hashconnect`](https://www.npmjs.com/package/hashconnect) package. Because it creates a new instance of `hashconnect` with each call, it is recommended that this hook only be used to instantiate the `hashportClient`. If you need to use it throughout the application, place it in a context to maintain referential equality.
+
+##### Usage
+
+```tsx
+const HashportProvider = ({ children }: { children: React.ReactNode }) => {
+    const { hashConnect, pairingData, status } = useHashConnect();
+    const hederaSigner =
+        hashConnect && pairingData && createHashPackSigner(hashconnect, pairingData);
+
+    return (
+        <HashportClientProviderWithRainbowKit hederaSigner={hederaSigner}>
+            <p>Hashpack Connection Status: {status}</p>
+            {children}
+        </HashportClientProviderWithRainbowKit>
+    );
+};
+```
+
 ## Development Environment
 
 To set up your development environment, you will need the following:
@@ -716,5 +747,3 @@ After you have set up your testnet accounts, you can initialize the `hashportCli
 ### Polyfills
 
 Libraries like Hashconnect and RainbowKit rely on a few node-specific packages. Refer to [RainbowKit's documentation](https://www.rainbowkit.com/docs/installation#additional-build-tooling-setup) to learn about whether or not you need to include polyfills and how to do so.
-
-###

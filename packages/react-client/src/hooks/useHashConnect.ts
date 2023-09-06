@@ -24,6 +24,7 @@ export const useHashConnect = ({ debug = false, mode = 'mainnet' }: UseHashConne
 
     const handleStatusChange = (data: HashConnectConnectionState) => {
         setStatus(data);
+        if (data === 'Disconnected') setPairingData(undefined);
     };
 
     const initialize = useCallback(async () => {
