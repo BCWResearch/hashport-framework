@@ -22,7 +22,13 @@ export const TryAgainButton = () => {
     const hashportClient = useHashportClient();
     const { executeTransaction, confirmCompletion } = useProcessingTransactionDispatch();
     const { error, id, currentTransaction } = useProcessingTransaction();
+    const currentTransactionRef = useRef(currentTransaction);
     const errorMessageRef = useRef('');
+
+    if (currentTransaction) {
+        currentTransactionRef.current = currentTransaction;
+    }
+
     if (error) {
         errorMessageRef.current =
             typeof error === 'string'
@@ -53,7 +59,7 @@ export const TryAgainButton = () => {
                 <Button
                     fullWidth
                     download={`hashport-${Date.now()}.csv`}
-                    href={toCSV(currentTransaction?.state ?? {})}
+                    href={toCSV(currentTransactionRef.current?.state ?? {})}
                     color="error"
                     size="small"
                     variant="outlined"

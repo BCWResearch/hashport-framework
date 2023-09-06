@@ -18,6 +18,9 @@ const bridgeParamsReducer: React.Reducer<BridgeParams, BridgeParamsAction> = (
     { type, payload },
 ) => {
     switch (type) {
+        case 'setBridgeParams': {
+            return payload;
+        }
         case 'setAmount': {
             const { amount, sourceAssetDecimals, targetAssetDecimals } = payload;
             const { tokenId: _, ...prevState } = state;
@@ -90,6 +93,7 @@ export const BridgeParamsProvider = ({ children }: { children: ReactNode }) => {
             setAmount: payload => dispatch({ type: 'setAmount', payload }),
             setRecipient: payload => dispatch({ type: 'setRecipient', payload }),
             setTokenId: payload => dispatch({ type: 'setTokenId', payload }),
+            setBridgeParams: payload => dispatch({ type: 'setBridgeParams', payload }),
         }),
         [dispatch],
     );

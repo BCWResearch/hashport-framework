@@ -2,7 +2,7 @@ import {
     useBridgeParams,
     useBridgeParamsDispatch,
     useHashportClient,
-    useTokenList,
+    useSelectedTokens,
 } from '@hashport/react-client';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { ButtonProps } from '@mui/material/Button';
@@ -29,16 +29,9 @@ const ModalHeader = () => {
 export const TargetAssetSelect = ({ disabled, ...props }: ButtonProps) => {
     const hashportClient = useHashportClient();
     const dispatch = useBridgeParamsDispatch();
+    const { targetAsset, sourceAsset } = useSelectedTokens();
+    const { targetNetworkId } = useBridgeParams();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { data: tokens } = useTokenList();
-
-    const { sourceAssetId, sourceNetworkId, targetNetworkId } = useBridgeParams();
-    const source = { id: sourceAssetId, chain: sourceNetworkId };
-    const sourceId = source.id && source.chain ? (`${source.id}-${+source.chain}` as const) : null;
-    const sourceAsset = sourceId && tokens?.fungible.get(sourceId);
-    const bridgeable = sourceAsset ? sourceAsset?.bridgeableAssets : null;
-    const targetId = bridgeable?.find(({ chainId }) => chainId === +targetNetworkId)?.assetId;
-    const targetAsset = targetId && tokens?.fungible.get(targetId);
 
     useEffect(() => {
         if (!targetNetworkId) {
