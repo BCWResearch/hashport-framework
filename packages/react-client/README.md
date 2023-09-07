@@ -16,6 +16,7 @@ The hashport React Client contains a set of React [contexts](https://react.dev/l
 1. [Quick Start](#quick-start)
 1. [Contexts](#contexts)
 1. [Hooks](#hooks)
+1. [Examples] (#examples)
 1. [Development Environment](#development-environment)
 1. [Troubleshooting](#troubleshooting)
 
@@ -729,6 +730,10 @@ const HashportProvider = ({ children }: { children: React.ReactNode }) => {
 };
 ```
 
+## Examples
+
+A full example of `@hashport/react-client` in use is available in the [`examples`](./examples/vite-example/) directory. We currently only have an example that uses Vite. If you have an example you would like to contribute, consider making a PR!
+
 ## Development Environment
 
 To set up your development environment, you will need the following:
@@ -746,4 +751,4 @@ After you have set up your testnet accounts, you can initialize the `hashportCli
 
 ### Polyfills
 
-Libraries like Hashconnect and RainbowKit rely on a few node-specific packages. Refer to [RainbowKit's documentation](https://www.rainbowkit.com/docs/installation#additional-build-tooling-setup) to learn about whether or not you need to include polyfills and how to do so.
+Libraries like Hashconnect and RainbowKit rely on a few node-specific packages. Refer to [RainbowKit's documentation](https://www.rainbowkit.com/docs/installation#additional-build-tooling-setup) to learn about whether or not you need to include polyfills and how to do so. You can also refer to the [Vite example](./examples/vite-example/) in the [`examples`] directory for a minimal example.
