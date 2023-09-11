@@ -1,7 +1,7 @@
 {
     "Hedera": {
         "checkAssociation": "Checking token association",
-        "associating": "Associating token",
+        "associating": "Associating token. Please confirm in {hederaWallet}",
         "deposit": "Sending to hashport portal. Please confirm in {hederaWallet}"
     },
     "poll": {

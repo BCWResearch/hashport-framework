@@ -665,6 +665,8 @@ Returns a [`ProcessingTransactionState`](./src/contexts/processingTransaction.ts
 
 Use this with the `getStepDescription` function to get a brief description of the current step the user is on.
 
+&#9888; Note: You can use the `tokenAssociationStatus` property on the transaction state to pass a boolean as a second argument to `getStepDescription`. This will help prompt the user to accept a token association request in their wallet if needed.
+
 ##### Usage
 
 ```tsx
@@ -674,6 +676,7 @@ const ProcessingTransaction = () => {
     if (status === 'idle') {
         return <p>Choose tokens to start bridging!</p>;
     } else if (status === 'processing' && currentTransaction.steps) {
+        const isAssociating = currentTransaction.state.tokenAssociationStatus === 'ASSOCIATING';
         return <p>{getStepDescription(currentTransaction.steps[0])}</p>;
     } else if (stats === 'complete') {
         return <p>Complete: {confirmation.confirmationTransactionHashOrId}</p>;
