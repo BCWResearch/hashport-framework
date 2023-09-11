@@ -47,7 +47,8 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run clean && tsc && tsc-alias"
+    "build": "npm run clean && tsc && tsc-alias",
+    "build:watch": "tsc && (concurrently \"tsc -w\" \"tsc-alias -w\")"
   },
   "repository": {
     "type": "git",
