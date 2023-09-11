@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { useRef } from 'react';
 import { Row } from 'components/styled/Row';
+import { TransactionExecutionError, UserRejectedRequestError } from 'viem';
 
 const toCSV = (input: object) => {
     const headers = Object.keys(input).join(',');
@@ -16,6 +17,17 @@ const toCSV = (input: object) => {
         .join(',');
     const csvData = new Blob([[headers, values].join('\n')], { type: 'text/csv' });
     return URL.createObjectURL(csvData);
+};
+
+const getErrorMessage = (e: unknown) => {
+    if (typeof e === 'string') return e;
+    else if (e instanceof Error) {
+        return e instanceof UserRejectedRequestError || e instanceof TransactionExecutionError
+            ? 'Please try again and accept the prompt in your wallet.'
+            : e.message;
+    } else {
+        return 'Something went wrong';
+    }
 };
 
 export const TryAgainButton = () => {
@@ -30,12 +42,7 @@ export const TryAgainButton = () => {
     }
 
     if (error) {
-        errorMessageRef.current =
-            typeof error === 'string'
-                ? error
-                : error instanceof Error
-                ? error.message
-                : 'Something went wrong';
+        errorMessageRef.current = getErrorMessage(error);
     }
 
     const handleTryAgain = () => {
