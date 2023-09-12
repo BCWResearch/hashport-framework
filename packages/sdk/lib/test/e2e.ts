@@ -1,5 +1,5 @@
 import { HederaSdkSigner } from '../signers/hederaSdkSigner.js';
-import { HashportClient } from '../clients/hashportClient/index.js';
+import { HashportClient } from '@hashport/sdk';
 import { createLocalEvmSigner } from '../signers/localEvmSigner.js';
 import { sepolia } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
@@ -44,12 +44,14 @@ const METHODS = ['mint', 'burn', 'lock', 'unlock', 'mintERC721', 'burnERC721'] a
 
 type HashportMethods = (typeof METHODS)[number];
 
+const getPaddedAmount = (amount: string) => (BigInt(amount) + BigInt(amount) / 20n).toString();
+
 const params: Record<HashportMethods, BridgeParams> = {
     mint: {
         sourceNetworkId: process.env.HEDERA_CHAIN_ID,
         sourceAssetId: process.env.NATIVE_HEDERA_ASSET,
         targetNetworkId: process.env.EVM_CHAIN_ID,
-        amount: process.env.NATIVE_HEDERA_PORT_AMOUNT,
+        amount: getPaddedAmount(process.env.NATIVE_HEDERA_PORT_AMOUNT),
         recipient: evmAccount,
     },
     burn: {
@@ -63,7 +65,7 @@ const params: Record<HashportMethods, BridgeParams> = {
         sourceNetworkId: process.env.EVM_CHAIN_ID,
         sourceAssetId: process.env.NATIVE_EVM_ASSET,
         targetNetworkId: process.env.HEDERA_CHAIN_ID,
-        amount: process.env.NATIVE_EVM_PORT_AMOUNT,
+        amount: getPaddedAmount(process.env.NATIVE_EVM_PORT_AMOUNT),
         recipient: hederaAccountId,
     },
     unlock: {
