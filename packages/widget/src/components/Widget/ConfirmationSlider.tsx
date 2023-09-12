@@ -27,7 +27,6 @@ export const ConfirmationSlider = () => {
         targetNetworkId &&
         +sourceNetworkId !== chainId &&
         +targetNetworkId !== chainId;
-    // TODO: if isExecuting, don't let them leave page
 
     const isDisabled = !queueTransaction || status !== 'idle' || !isValidParams;
 

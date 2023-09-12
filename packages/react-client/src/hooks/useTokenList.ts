@@ -2,6 +2,7 @@ import { NetworkAssets } from '@hashport/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { useHashportApiClient } from './useHashportApiClient';
 import { AssetId, AssetInfo, HashportAssets, TokenListProps } from 'types';
+import { useMemo } from 'react';
 
 export const formatAssets = (networkAssets: NetworkAssets[]): HashportAssets => {
     const partialFungibles = new Map<AssetId, Partial<AssetInfo>>();
@@ -62,21 +63,25 @@ export const useTokenList = ({ onSelect }: TokenListProps = {}) => {
 
     return {
         ...queryInfo,
-        data: queryInfo.data
-            ? {
-                  fungible: new Map(
-                      Array.from(queryInfo.data.fungible).map(([id, assetInfo]) => [
-                          id,
-                          { ...assetInfo, handleSelect: () => onSelect?.(assetInfo) },
-                      ]),
-                  ),
-                  nonfungible: new Map(
-                      Array.from(queryInfo.data.nonfungible).map(([id, assetInfo]) => [
-                          id,
-                          { ...assetInfo, handleSelect: () => onSelect?.(assetInfo) },
-                      ]),
-                  ),
-              }
-            : undefined,
+        data: useMemo(
+            () =>
+                queryInfo.data
+                    ? {
+                          fungible: new Map(
+                              Array.from(queryInfo.data.fungible).map(([id, assetInfo]) => [
+                                  id,
+                                  { ...assetInfo, handleSelect: () => onSelect?.(assetInfo) },
+                              ]),
+                          ),
+                          nonfungible: new Map(
+                              Array.from(queryInfo.data.nonfungible).map(([id, assetInfo]) => [
+                                  id,
+                                  { ...assetInfo, handleSelect: () => onSelect?.(assetInfo) },
+                              ]),
+                          ),
+                      }
+                    : undefined,
+            [onSelect, queryInfo.data],
+        ),
     } as typeof queryInfo;
 };

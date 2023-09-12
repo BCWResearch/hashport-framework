@@ -46,6 +46,6 @@ export { TryAgainButton } from './components/TransactionState/TryAgainButton';
 export { default as HashportWidget } from './components/Widget/HashportWidget';
 export { ConfirmationSlider } from './components/Widget/ConfirmationSlider';
 export { DisconnectedAccountsFallback } from './components/Widget/DisconnectedAccountsFallback';
-export { HashportWidgetLoaderButton } from './components/Widget/HashportWidgetLoaderButton';
+export { LazyHashportWidget } from './components/Widget/LazyHashportWidget';
 export { PersistedTxCheck } from './components/Widget/PersistedTxCheck';
 export { TermsAndPolicy } from './components/Widget/TermsAndPolicy';

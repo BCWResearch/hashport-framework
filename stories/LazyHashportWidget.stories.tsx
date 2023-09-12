@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { HashportWidgetLoaderButton } from '@hashport/widget';
+import { LazyHashportWidget } from '@hashport/widget';
 
 const meta = {
-    title: 'Hashport Widget Loader Button',
-    component: HashportWidgetLoaderButton,
+    title: 'Lazy Hashport Widget',
+    component: LazyHashportWidget,
     tags: ['autodocs'],
-} satisfies Meta<typeof HashportWidgetLoaderButton>;
+} satisfies Meta<typeof LazyHashportWidget>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
