@@ -37,4 +37,4 @@ const MyApp = () => {
 
 ## Lazy Loading
 
-The hashport widget comes with a number of large packages. Because of this, using the `HashportWidget` directly can impact the load time of an application. To help alleviate this problem `@hashport/widget` provides the [HashportWidgetLoaderButton](./src/components/Widget/HashportWidgetLoaderButton.tsx). This component uses lazy loading and React [Suspense](https://react.dev/reference/react/Suspense) to load the widget only when a user requests it. Learn more about code splitting in React [here](https://react.dev/reference/react/lazy#suspense-for-code-splitting).
+The hashport widget comes with a number of large packages. Because of this, using the `HashportWidget` directly can impact the load time of an application. To help alleviate this problem `@hashport/widget` provides the [LazyHashportWidget](./src/components/Widget/LazyHashportWidget.tsx). This component uses lazy loading and React [Suspense](https://react.dev/reference/react/Suspense) to load the widget only when a user requests it. Learn more about code splitting in React [here](https://react.dev/reference/react/lazy#suspense-for-code-splitting).
