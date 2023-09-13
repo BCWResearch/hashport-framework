@@ -31,13 +31,27 @@ const METHODS = [
 
 type ContractMethod = (typeof METHODS)[number];
 
-type ContractInteractionResult =
-    | {
-          confirmations: number;
-          result: Required<Pick<HashportTransactionState, 'evmTransactionHash'>> &
-              HashportTransactionState;
-      }
-    | { confirmations?: undefined; result: HashportTransactionState };
+type ContractResultStateKeys =
+    | 'evmTransactionHash'
+    | 'evmApprovalAmount'
+    | 'nftPaymentToken'
+    | 'nftFeeAmount'
+    | 'erc20ApprovalTransactionHash'
+    | 'erc721ApprovalTransactionHash'
+    | 'confirmationTransactionHashOrId';
+
+type ContractInteractionResult = {
+    result: {
+        [Key in ContractResultStateKeys]: Key extends
+            | 'erc20ApprovalTransactionHash'
+            | 'erc721ApprovalTransactionHash'
+            | 'confirmationTransactionHashOrId'
+            | 'evmTransactionHash'
+            ? { hash: `0x${string}`; key: Key; value?: undefined }
+            : { hash?: undefined; key: Key; value: Required<HashportTransactionState>[Key] };
+    }[ContractResultStateKeys];
+    confirmations?: number;
+};
 
 type _EvmContractHandler = Record<ContractMethod, () => Promise<ContractInteractionResult>>;
 
@@ -136,7 +150,7 @@ export class EvmContractHandler implements _EvmContractHandler {
                 { functionName: 'allowance', args: [owner, spender] },
             ]);
             if (allowance >= amount) {
-                return { result: { evmApprovalAmount: allowance.toString() } };
+                return { result: { key: 'evmApprovalAmount', value: allowance.toString() } };
             }
             let approvedAmount = MAX_UINT_256;
             hash = await targetContract
@@ -153,8 +167,9 @@ export class EvmContractHandler implements _EvmContractHandler {
                 });
         }
 
-        const receipt = await this.signer.waitForTransaction(hash);
-        return { result: { erc20ApprovalTransactionHash: receipt.transactionHash } };
+        return {
+            result: { key: 'erc20ApprovalTransactionHash', hash },
+        };
     }
 
     /**
@@ -182,8 +197,7 @@ export class EvmContractHandler implements _EvmContractHandler {
             });
         }
 
-        const receipt = await this.signer.waitForTransaction(hash);
-        return { result: { erc721ApprovalTransactionHash: receipt.transactionHash } };
+        return { result: { key: 'erc721ApprovalTransactionHash', hash } };
     }
 
     /**
@@ -259,8 +273,9 @@ export class EvmContractHandler implements _EvmContractHandler {
             });
         }
 
-        const receipt = await this.signer.waitForTransaction(hash);
-        return { result: { confirmationTransactionHashOrId: receipt.transactionHash } };
+        return {
+            result: { key: 'confirmationTransactionHashOrId', hash },
+        };
     }
 
     /**
@@ -309,8 +324,9 @@ export class EvmContractHandler implements _EvmContractHandler {
             });
         }
 
-        const receipt = await this.signer.waitForTransaction(hash);
-        return { result: { confirmationTransactionHashOrId: receipt.transactionHash } };
+        return {
+            result: { key: 'confirmationTransactionHashOrId', hash },
+        };
     }
 
     /**
@@ -350,7 +366,7 @@ export class EvmContractHandler implements _EvmContractHandler {
         }
 
         return {
-            result: { evmTransactionHash: hash },
+            result: { key: 'evmTransactionHash', hash },
             confirmations: await getBlockConfirmations(this.signer.getChainId()),
         };
     }
@@ -378,7 +394,7 @@ export class EvmContractHandler implements _EvmContractHandler {
         }
 
         return {
-            result: { evmTransactionHash: hash },
+            result: { key: 'evmTransactionHash', hash },
             confirmations: await getBlockConfirmations(this.signer.getChainId()),
         };
     }
@@ -405,7 +421,7 @@ export class EvmContractHandler implements _EvmContractHandler {
         }
 
         return {
-            result: { evmTransactionHash: hash },
+            result: { key: 'evmTransactionHash', hash },
             confirmations: await getBlockConfirmations(this.signer.getChainId()),
         };
     }
@@ -466,8 +482,7 @@ export class EvmContractHandler implements _EvmContractHandler {
             });
         }
 
-        const receipt = await this.signer.waitForTransaction(hash);
-        return { result: { confirmationTransactionHashOrId: receipt.transactionHash } };
+        return { result: { key: 'confirmationTransactionHashOrId', hash } };
     }
 
     /**
@@ -513,7 +528,7 @@ export class EvmContractHandler implements _EvmContractHandler {
         }
 
         return {
-            result: { evmTransactionHash: hash },
+            result: { key: 'evmTransactionHash', hash },
             confirmations: await getBlockConfirmations(this.signer.getChainId()),
         };
     }
@@ -529,7 +544,7 @@ export class EvmContractHandler implements _EvmContractHandler {
         const [nftPaymentToken] = await routerContract.read<[`0x${string}`]>([
             { functionName: 'erc721Payment', args: [wrappedERC721Address] },
         ]);
-        return { result: { nftPaymentToken } };
+        return { result: { key: 'nftPaymentToken', value: nftPaymentToken } };
     }
 
     /**
@@ -543,7 +558,7 @@ export class EvmContractHandler implements _EvmContractHandler {
         const [nftFeeAmount] = await routerContract.read<[bigint]>([
             { functionName: 'erc721Fee', args: [wrappedERC721Address] },
         ]);
-        return { result: { nftFeeAmount: nftFeeAmount.toString() } };
+        return { result: { key: 'nftFeeAmount', value: nftFeeAmount.toString() } };
     }
 
     /**

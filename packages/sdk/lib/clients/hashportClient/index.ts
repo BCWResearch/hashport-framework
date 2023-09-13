@@ -374,21 +374,22 @@ export class HashportClient {
         }
         const contractHandler = new EvmContractHandler(this.evmSigner, step, transactionData);
         const { result, confirmations } = await contractHandler.execute();
-        if (confirmations !== undefined) {
-            const { evmTransactionHash } = result;
-            this.transactionStore.updateTransactionState(id, { evmTransactionHash });
-            const receipt = await this.evmSigner.waitForTransaction(
-                evmTransactionHash,
-                confirmations,
-            );
-            const routerContractAddress = assertHexString(step.target);
-            const pollingId = formatPollingId(receipt, routerContractAddress);
-            return {
-                evmTransactionHash: evmTransactionHash,
-                validatorPollingId: pollingId,
-            };
+        const { key, value, hash } = result;
+        if (hash) {
+            this.transactionStore.updateTransactionState(id, { [key]: hash });
+            const receipt = await this.evmSigner.waitForTransaction(hash, confirmations);
+            if (confirmations) {
+                const routerContractAddress = assertHexString(step.target);
+                const pollingId = formatPollingId(receipt, routerContractAddress);
+                return {
+                    [key]: receipt.transactionHash,
+                    validatorPollingId: pollingId,
+                };
+            } else {
+                return { [key]: receipt.transactionHash };
+            }
         } else {
-            return { ...result };
+            return { [key]: value };
         }
     }
 
