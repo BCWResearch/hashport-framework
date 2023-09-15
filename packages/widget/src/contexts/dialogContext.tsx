@@ -18,7 +18,13 @@ export const Dialog = ({ open, handleClose, children }: DialogProps) => {
     };
 
     return (
-        <MuiDialog keepMounted open={open} PaperComponent={Box} onClose={handleCloseRequest}>
+        <MuiDialog
+            PaperProps={{ style: { overflow: 'visible' } }}
+            keepMounted
+            open={open}
+            PaperComponent={Box}
+            onClose={handleCloseRequest}
+        >
             <DialogContext.Provider value={setCanClose}>{children}</DialogContext.Provider>
         </MuiDialog>
     );
