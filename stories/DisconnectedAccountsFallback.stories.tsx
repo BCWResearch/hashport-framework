@@ -1,7 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { DisconnectedAccountsFallback } from '../packages/widget/src/components/HashportWidget/DisconnectedAccountsFallback';
-import { Container } from '../packages/widget/src/components/styled/Container';
+import { DisconnectedAccountsFallback, Container } from '@hashport/widget';
 
 const meta = {
     title: 'Disconnected Accounts Fallback',

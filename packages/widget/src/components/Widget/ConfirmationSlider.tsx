@@ -8,11 +8,11 @@ import { Slider } from 'components/styled/Slider';
 import { TransactionState } from '../TransactionState/TransactionState';
 import { Collapse } from 'components/styled/Collapse';
 import { TermsAndPolicy } from './TermsAndPolicy';
-import { TryAgainButton } from './TryAgainButton';
+import { TryAgainButton } from '../TransactionState/TryAgainButton';
 import { StepDescription } from 'components/TransactionState/StepDescription';
-import { AfterPortActions } from './AfterPortActions';
+import { AfterPortActions } from '../TransactionState/AfterPortActions';
 import { usePreflightCheck } from '@hashport/react-client';
-import { NetworkSwitchButton } from './NetworkSwitchButton';
+import { NetworkSwitchButton } from '../Header/NetworkSwitchButton';
 import { useChainId } from 'wagmi';
 
 export const ConfirmationSlider = () => {
@@ -27,7 +27,6 @@ export const ConfirmationSlider = () => {
         targetNetworkId &&
         +sourceNetworkId !== chainId &&
         +targetNetworkId !== chainId;
-    // TODO: if isExecuting, don't let them leave page
 
     const isDisabled = !queueTransaction || status !== 'idle' || !isValidParams;
 

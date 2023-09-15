@@ -1,17 +1,18 @@
 import { useHashportClient } from './useHashportClient';
 import { useTokenList } from './useTokenList';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { balanceOfAbi } from 'constants/abi';
 import { useMemo } from 'react';
 import { AssetInfoWithBalance } from 'types/tokenList';
 import { isHex } from 'viem';
+import { useContractReads } from 'wagmi';
 
 export const useTokensWithBalances = (
     props: Parameters<typeof useTokenList>[0],
 ):
     | { isLoading: true; isError: false; tokens: undefined }
-    | { isLoading: false; isError: true; tokens: undefined }
-    | { isLoading: false; isError: false; tokens: (AssetInfoWithBalance | undefined)[] } => {
+    | { isLoading: false; isError: true; tokens: undefined | AssetInfoWithBalance[] }
+    | { isLoading: false; isError: false; tokens: AssetInfoWithBalance[] } => {
     const { evmSigner, hederaSigner, mirrorNodeClient } = useHashportClient();
     const hederaId = hederaSigner.accountId;
     const evmAddress = evmSigner.getAddress();
@@ -19,6 +20,22 @@ export const useTokensWithBalances = (
 
     const { data: tokens, isError, isLoading } = useTokenList(props);
     const tokenList = useMemo(() => tokens && Array.from(tokens?.fungible.values()), [tokens]);
+    const evmTokens = tokenList?.filter(({ id, chainId: chain }) => chain === chainId && isHex(id));
+    const { data: evmBalances } = useContractReads({
+        enabled: !!tokenList,
+        allowFailure: true,
+        contracts: tokenList
+            ?.filter(({ id, chainId: chain }) => chain === chainId && isHex(id))
+            .map(({ id }) => ({
+                address: id as `0x${string}`,
+                abi: balanceOfAbi,
+                functionName: 'balanceOf',
+                args: [evmAddress],
+            })),
+    });
+    const evmBalanceMap = new Map(
+        (evmTokens ?? []).map(({ id }, i) => [id, evmBalances?.[i].result as bigint | undefined]),
+    );
 
     const { data: hederaBalances } = useQuery({
         staleTime: 15000,
@@ -36,46 +53,21 @@ export const useTokensWithBalances = (
         },
     });
 
-    const results = useQueries({
-        queries: (tokenList ?? []).map(token => ({
-            queryKey: [
-                'token-balance',
-                token.id,
-                token.chainId,
-                hederaBalances?.get(token.id),
-                chainId,
-                evmAddress,
-            ],
-            queryFn: async (): Promise<AssetInfoWithBalance> => {
-                if (token.chainId !== 295 && token.chainId !== 296 && token.chainId !== chainId) {
-                    return { ...token, balance: undefined };
-                }
-                try {
-                    if (isHex(token.id)) {
-                        const contract = evmSigner.getContract(balanceOfAbi, token.id);
-                        const [balance] = await contract.read<[bigint]>([
-                            {
-                                functionName: 'balanceOf',
-                                args: [evmAddress],
-                            },
-                        ]);
-                        return { ...token, balance };
-                    } else {
-                        const balance = BigInt(hederaBalances?.get(token.id) ?? 0);
-                        return { ...token, balance };
-                    }
-                } catch (error) {
-                    return { ...token, balance: undefined };
-                }
-            },
-        })),
+    const results: AssetInfoWithBalance[] | undefined = tokenList?.map(token => {
+        const { id } = token;
+        if (isHex(id)) {
+            return { ...token, balance: evmBalanceMap?.get(id) };
+        } else {
+            const balance = BigInt(hederaBalances?.get(token.id) ?? 0);
+            return { ...token, balance };
+        }
     });
 
     if (isLoading) {
         return { isLoading, isError, tokens: undefined };
-    } else if (isError) {
-        return { isLoading, isError, tokens: undefined };
+    } else if (isError || !results) {
+        return { isLoading, isError: true, tokens: undefined };
     } else {
-        return { isLoading, isError, tokens: results.map(result => result.data) };
+        return { isLoading, isError, tokens: results };
     }
 };

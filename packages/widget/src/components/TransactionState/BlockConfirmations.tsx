@@ -18,6 +18,7 @@ export const BlockConfirmations = () => {
     const { currentTransaction } = useProcessingTransaction();
     const { data: blockConfirmations = 5 } = useBlockConfirmations(chainId);
     const { data: txReceipt } = useWaitForTransaction({
+        confirmations: 0,
         hash: currentTransaction?.state.evmTransactionHash,
     });
     const { data: currentBlock } = useBlockNumber({ watch: true });
@@ -61,7 +62,7 @@ export const BlockConfirmations = () => {
             <LinearProgress
                 sx={({ spacing }) => ({ borderRadius: spacing(1) })}
                 variant="determinate"
-                value={parseInt(progressValue.toString())}
+                value={Math.min(parseInt(progressValue.toString()), 100)}
             />
         </Collapse>
     );

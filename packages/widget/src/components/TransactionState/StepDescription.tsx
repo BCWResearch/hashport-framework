@@ -9,11 +9,12 @@ export const StepDescription = () => {
     const { currentTransaction, status } = useProcessingTransaction();
     const descriptionRef = useRef('');
     const currentStep = currentTransaction?.steps[0];
-    const description = currentStep && getStepDescription(currentStep);
+    const isAssociating = currentTransaction?.state.tokenAssociationStatus === 'ASSOCIATING';
+    const description = currentStep && getStepDescription(currentStep, isAssociating);
     if (description) descriptionRef.current = description;
 
     return (
-        <Collapse in={status === "processing" && !!description}>
+        <Collapse in={status === 'processing' && !!description}>
             <Row alignItems="center">
                 <CircularProgress size={20} thickness={6} />
                 <Typography flexGrow={1} textAlign="center" color="white" variant="body1">

@@ -1,3 +1,4 @@
+import { BridgeParams } from '@hashport/sdk';
 import { AssetInfo } from 'types';
 
 export type SelectTokenPayload = Pick<
@@ -21,7 +22,8 @@ export type BridgeParamsAction =
           };
       }
     | { type: 'setTokenId'; payload: { tokenId: string } }
-    | { type: 'setRecipient'; payload: string };
+    | { type: 'setRecipient'; payload: string }
+    | { type: 'setBridgeParams'; payload: BridgeParams };
 
 export type BridgeParamsDispatch = {
     [Action in BridgeParamsAction as Action['type']]: Action extends { payload?: never }

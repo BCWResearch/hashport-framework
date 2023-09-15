@@ -7,12 +7,7 @@ import { HashportApiClient } from 'clients/hashportApiClient/index.js';
 import { MirrorNodeClient } from 'clients/mirrorNodeClient/index.js';
 import { erc20ABI, erc721ABI } from 'constants/abi.js';
 import { HashportTransactionData, HashportTransactionState } from 'types/state';
-import {
-    BridgeParams,
-    EvmBridgeStep,
-    HederaBridgeStep,
-    PollBridgeStep,
-} from 'types/api/bridge';
+import { BridgeParams, EvmBridgeStep, HederaBridgeStep, PollBridgeStep } from 'types/api/bridge';
 import { HashportClientConfig } from 'types/clients';
 import { EvmSigner } from 'types/signers/evmSigner';
 import { HederaSigner } from 'types/signers/hederaSigner';
@@ -236,7 +231,7 @@ export class HashportClient {
      * the token will be associated automatically. Returns null if the token is already associated,
      * or the transaction id of the successful association transaction.
      */
-    private async handleTokenAssociation(tokenId: string) {
+    private async handleTokenAssociation(id: string, tokenId: string) {
         if (tokenId === 'HBAR') return null;
         const hederaTokenId = assertHederaTokenId(tokenId);
         const hederaTxFactory = new HederaTxFactory(this.hederaSigner.accountId);
@@ -245,6 +240,9 @@ export class HashportClient {
             hederaTokenId,
         );
         if (!isAssociated) {
+            this.transactionStore.updateTransactionState(id, {
+                tokenAssociationStatus: 'ASSOCIATING',
+            });
             const associateTx = hederaTxFactory.createAssociation([hederaTokenId]);
             const associateRx = await this.hederaSigner.associateToken(associateTx);
             // Confirm association with exponential backoff
@@ -280,7 +278,7 @@ export class HashportClient {
     ): Promise<HashportTransactionState> {
         const hederaTxFactory = new HederaTxFactory(this.hederaSigner.accountId);
         if (step.tokenId && step.target === 'AccountBalanceQuery') {
-            const associationResult = await this.handleTokenAssociation(step.tokenId);
+            const associationResult = await this.handleTokenAssociation(id, step.tokenId);
             return { tokenAssociationStatus: associationResult || 'ALREADY_ASSOCIATED' };
         } else if (step.amount) {
             const transactionData = this.transactionStore.getTransactionData(id);
@@ -372,25 +370,26 @@ export class HashportClient {
                 sourceAssetId,
             );
             const targetAsset = sourceAsset?.bridgeableNetworks?.[targetNetworkId]?.wrappedAsset;
-            if (targetAsset) await this.handleTokenAssociation(targetAsset);
+            if (targetAsset) await this.handleTokenAssociation(id, targetAsset);
         }
         const contractHandler = new EvmContractHandler(this.evmSigner, step, transactionData);
         const { result, confirmations } = await contractHandler.execute();
-        if (confirmations !== undefined) {
-            const { evmTransactionHash } = result;
-            this.transactionStore.updateTransactionState(id, { evmTransactionHash });
-            const receipt = await this.evmSigner.waitForTransaction(
-                evmTransactionHash,
-                confirmations,
-            );
-            const routerContractAddress = assertHexString(step.target);
-            const pollingId = formatPollingId(receipt, routerContractAddress);
-            return {
-                evmTransactionHash: evmTransactionHash,
-                validatorPollingId: pollingId,
-            };
+        const { key, value, hash } = result;
+        if (hash) {
+            this.transactionStore.updateTransactionState(id, { [key]: hash });
+            const receipt = await this.evmSigner.waitForTransaction(hash, confirmations);
+            if (confirmations) {
+                const routerContractAddress = assertHexString(step.target);
+                const pollingId = formatPollingId(receipt, routerContractAddress);
+                return {
+                    [key]: receipt.transactionHash,
+                    validatorPollingId: pollingId,
+                };
+            } else {
+                return { [key]: receipt.transactionHash };
+            }
         } else {
-            return { ...result };
+            return { [key]: value };
         }
     }
 

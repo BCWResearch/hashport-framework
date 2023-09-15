@@ -2,8 +2,11 @@
   "name": "@hashport/widget",
   "version": "0.0.1",
   "description": "React widget for hashport bridge",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "private": true,
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
@@ -22,8 +25,30 @@
     "@types/react-dom": "^18.2.7",
     "@types/react-window": "^1.8.5"
   },
+  "peerDependencies": {
+    "@hashgraph/sdk": "^2.24.2",
+    "hashconnect": "^0.2.4",
+    "react": ">=17",
+    "react-dom": ">=17"
+  },
+  "peerDependenciesMeta": {
+    "@hashgraph/sdk": {
+      "optional": false
+    },
+    "hashconnect": {
+      "optional": false
+    },
+    "react": {
+      "optional": false
+    },
+    "react-dom": {
+      "optional": false
+    }
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc && tsc-alias",
+    "build:watch": "tsc && (concurrently \"tsc -w\" \"tsc-alias -w\")"
   },
   "repository": {
     "type": "git",

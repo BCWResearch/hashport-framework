@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { BlockConfirmations } from '../packages/widget/src/components/HashportWidget/BlockConfirmations';
+import { BlockConfirmations } from '@hashport/widget';
 
 const meta = {
     title: 'Block Confirmations',

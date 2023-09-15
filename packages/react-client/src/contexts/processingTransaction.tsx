@@ -36,10 +36,10 @@ type ProcessingTransactionAction = {
 const processingTransactionReducer: Reducer<
     ProcessingTransactionState,
     ProcessingTransactionAction
-> = ({ id }, { type, payload }) => {
+> = (_, { type, payload }) => {
     switch (type) {
         case 'idle': {
-            return { status: 'idle', id };
+            return { status: 'idle' };
         }
         case 'processing': {
             const { id } = payload;
