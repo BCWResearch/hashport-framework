@@ -1,10 +1,5 @@
-<style>
-    .hashport {
-        filter: drop-shadow(-2px 1px 2px rgba(0,0,0,0.75));
-    }
-</style>
 <p align="center">
-    <a href="https://www.hashport.network/"><img class="hashport" width="300px" src="https://hashport.network/wp-content/uploads/hashport-logo-dark.svg" alt="hashport"></a>
+    <a href="https://www.hashport.network/"><img width="300px" src="https://www.cdn.hashport.network/hashportdocslogo.svg" alt="hashport"></a>
 </p>
 
 # hashport-framework
