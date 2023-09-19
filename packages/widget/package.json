@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "React widget for hashport bridge",
   "main": "./dist/index.js",
-  "private": true,
+  "private": false,
   "files": [
     "dist"
   ],
