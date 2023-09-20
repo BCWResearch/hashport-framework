@@ -1,6 +1,6 @@
 {
   "name": "@hashport/react-client",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "React Context for hashport bridging operations",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,7 +15,7 @@
     "build:watch": "tsc --project tsconfig.build.json && (concurrently \"tsc -w -p tsconfig.build.json\" \"tsc-alias -w -p tsconfig.build.json\")"
   },
   "dependencies": {
-    "@hashport/sdk": "^0.0.1",
+    "@hashport/sdk": "^0.0.2",
     "@tanstack/react-query": "^4.29.25",
     "viem": "^1.4.2"
   },
