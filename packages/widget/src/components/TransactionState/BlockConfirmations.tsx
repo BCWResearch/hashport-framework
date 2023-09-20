@@ -16,19 +16,19 @@ export const BlockConfirmations = () => {
     const { evmSigner } = useHashportClient();
     const chainId = evmSigner.getChainId();
     const { currentTransaction } = useProcessingTransaction();
+    const evmTransactionHash = currentTransaction?.state.evmTransactionHash;
+    const sourceAssetId = currentTransaction?.params.sourceAssetId;
     const { data: blockConfirmations = 5 } = useBlockConfirmations(chainId);
     const { data: txReceipt } = useWaitForTransaction({
         confirmations: 0,
-        hash: currentTransaction?.state.evmTransactionHash,
+        hash: evmTransactionHash,
     });
     const { data: currentBlock } = useBlockNumber({ watch: true });
-
-    const isMissingData = Boolean(!txReceipt || !blockConfirmations || !currentBlock);
-    const isOpen = isHex(currentTransaction?.params.sourceAssetId) && !isMissingData;
 
     const progress = currentBlock && txReceipt ? currentBlock - txReceipt.blockNumber : 0n;
     const blockConfirmsBn = BigInt(blockConfirmations);
     const progressValue = (progress * 100n) / blockConfirmsBn;
+    const isOpen = isHex(sourceAssetId) && !!blockConfirmations && !!evmTransactionHash;
 
     return (
         <Collapse in={isOpen}>

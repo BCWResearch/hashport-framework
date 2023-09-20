@@ -46,5 +46,5 @@ export const useHashConnect = ({ debug = false, mode = 'mainnet' }: UseHashConne
         };
     }, [initialize, hashConnect.pairingEvent, hashConnect.connectionStatusChangeEvent]);
 
-    return { pairingData, hashConnect, status };
+    return { pairingData, hashConnect, status, initialize };
 };

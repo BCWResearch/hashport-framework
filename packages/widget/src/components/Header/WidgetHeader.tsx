@@ -31,8 +31,9 @@ const customEvmConnectButton: ComponentProps<typeof ConnectButton.Custom>['child
 
 export const renderWidgetHeader: (
     hashConnect: ReturnType<typeof useHashConnect>['hashConnect'],
+    initializeHashPack: () => Promise<void>,
 ) => ComponentProps<typeof HashportClientProviderWithRainbowKit>['renderConnectButton'] =
-    hashConnect => (children, ConnectButton) => {
+    (hashConnect, initializeHashPack) => (children, ConnectButton) => {
         const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
         const hederaId = hashConnect?.hcData.pairingData[0]?.accountIds[0];
         const topic = hashConnect?.hcData.pairingData[0]?.topic ?? '';
@@ -42,8 +43,18 @@ export const renderWidgetHeader: (
             handleClose();
         };
 
+        const clearData = async () => {
+            hashConnect?.clearConnectionsAndData();
+            handleClose();
+        };
+
+        const connect = async () => {
+            if (!hashConnect?.hcData.pairingString) await initializeHashPack();
+            hashConnect?.connectToLocalWallet();
+        };
+
         const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-            hederaId ? setAnchorEl(e.currentTarget) : hashConnect?.connectToLocalWallet();
+            hederaId ? setAnchorEl(e.currentTarget) : connect();
         };
 
         const handleClose = () => setAnchorEl(null);
@@ -70,14 +81,19 @@ export const renderWidgetHeader: (
                         onClose={handleClose}
                         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
                     >
-                        <Button
-                            sx={{ margin: 2 }}
-                            color="error"
-                            endIcon={<PowerOffIcon />}
-                            onClick={disconnect}
-                        >
-                            Disconnect HashPack
-                        </Button>
+                        <Stack m={1} spacing={1}>
+                            <Button color="error" endIcon={<PowerOffIcon />} onClick={disconnect}>
+                                Disconnect HashPack
+                            </Button>
+                            <Button
+                                color="error"
+                                variant="outlined"
+                                endIcon={<PowerOffIcon />}
+                                onClick={clearData}
+                            >
+                                Clear Data
+                            </Button>
+                        </Stack>
                     </Popover>
                 </Row>
                 {children}

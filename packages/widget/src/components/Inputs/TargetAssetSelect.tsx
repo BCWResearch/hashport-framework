@@ -16,6 +16,7 @@ import { Button } from 'components/styled/Button';
 import { Modal } from 'components/styled/Modal';
 import { SelectionFilterProvider } from 'contexts/selectionFilterContext';
 import { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
 
 const ModalHeader = () => {
     return (
@@ -28,6 +29,8 @@ const ModalHeader = () => {
 
 export const TargetAssetSelect = ({ disabled, ...props }: ButtonProps) => {
     const hashportClient = useHashportClient();
+    const { address: evmAccount = '' } = useAccount();
+    const hederaId = hashportClient.hederaSigner.accountId;
     const dispatch = useBridgeParamsDispatch();
     const { targetAsset, sourceAsset } = useSelectedTokens();
     const { targetNetworkId } = useBridgeParams();
@@ -38,16 +41,9 @@ export const TargetAssetSelect = ({ disabled, ...props }: ButtonProps) => {
             dispatch.setRecipient('');
             return;
         }
-        const hederaId = hashportClient.hederaSigner.accountId;
-        const evmAccount = hashportClient.evmSigner.getAddress();
         const hederaChains = [296, 295];
         dispatch.setRecipient(hederaChains.includes(+targetNetworkId) ? hederaId : evmAccount);
-    }, [
-        targetNetworkId,
-        dispatch,
-        hashportClient.evmSigner,
-        hashportClient.hederaSigner.accountId,
-    ]);
+    }, [targetNetworkId, dispatch, evmAccount, hederaId]);
 
     const handleOpen = () => setIsModalOpen(true);
 

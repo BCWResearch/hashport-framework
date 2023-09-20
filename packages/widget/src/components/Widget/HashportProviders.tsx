@@ -15,8 +15,15 @@ type HashportProvidersProps = Omit<
     'hederaSigner'
 >;
 
-export const HashportProviders = ({ children, mode, ...props }: HashportProvidersProps) => {
-    const { hashConnect, pairingData } = useHashConnect({ mode, debug: mode === 'testnet' });
+export const HashportProviders = ({
+    children,
+    mode = 'mainnet',
+    ...props
+}: HashportProvidersProps) => {
+    const { hashConnect, pairingData, initialize } = useHashConnect({
+        mode,
+        debug: mode === 'testnet',
+    });
     return (
         <ThemeProvider>
             <Container>
@@ -26,7 +33,7 @@ export const HashportProviders = ({ children, mode, ...props }: HashportProvider
                     hederaSigner={
                         hashConnect && pairingData && createHashPackSigner(hashConnect, pairingData)
                     }
-                    renderConnectButton={renderWidgetHeader(hashConnect)}
+                    renderConnectButton={renderWidgetHeader(hashConnect, initialize)}
                     disconnectedAccountsFallback={<DisconnectedAccountsFallback />}
                 >
                     <ProcessingTransactionProvider>{children}</ProcessingTransactionProvider>
