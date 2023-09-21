@@ -11,7 +11,7 @@ The hashport React Client contains a set of React [contexts](https://react.dev/l
 1. [Quick Start](#quick-start)
 1. [Contexts](#contexts)
 1. [Hooks](#hooks)
-1. [Examples] (#examples)
+1. [Examples](#examples)
 1. [Development Environment](#development-environment)
 1. [Troubleshooting](#troubleshooting)
 

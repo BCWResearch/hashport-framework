@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@hashgraph/sdk": "^2.33.0",
-    "@hashport/react-client": "^0.0.2",
+    "@hashport/react-client": "^0.0.3",
     "@rainbow-me/rainbowkit": "^1.0.10",
     "hashconnect": "^0.2.4",
     "react": "^18.2.0",
