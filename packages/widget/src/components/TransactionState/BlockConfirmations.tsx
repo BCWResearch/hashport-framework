@@ -25,7 +25,8 @@ export const BlockConfirmations = () => {
     });
     const { data: currentBlock } = useBlockNumber({ watch: true });
 
-    const progress = currentBlock && txReceipt ? currentBlock - txReceipt.blockNumber : 0n;
+    const rawProgress = currentBlock && txReceipt ? currentBlock - txReceipt.blockNumber : 0n;
+    const progress = rawProgress < 0n ? 0n : rawProgress;
     const blockConfirmsBn = BigInt(blockConfirmations);
     const progressValue = (progress * 100n) / blockConfirmsBn;
     const isOpen = isHex(sourceAssetId) && !!blockConfirmations && !!evmTransactionHash;
