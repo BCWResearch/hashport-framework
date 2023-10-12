@@ -1,5 +1,11 @@
 # @hashport/react-client
 
+## 0.0.4
+
+### Patch Changes
+
+-   ffe78b2: Fix readme typo
+
 ## 0.0.3
 
 ### Patch Changes
