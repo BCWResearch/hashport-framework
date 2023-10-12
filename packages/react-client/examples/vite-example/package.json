@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@hashgraph/sdk": "^2.33.0",
-    "@hashport/react-client": "^0.0.2",
+    "@hashport/react-client": "^0.0.3",
     "@rainbow-me/rainbowkit": "^1.0.10",
     "hashconnect": "^0.2.4",
     "react": "^18.2.0",
@@ -24,7 +24,6 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react-swc": "^3.3.2",
-    "esbuild-plugin-polyfill-node": "^0.3.0",
     "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
