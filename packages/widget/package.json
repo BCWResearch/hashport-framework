@@ -1,6 +1,6 @@
 {
   "name": "@hashport/widget",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "React widget for hashport bridge",
   "main": "./dist/index.js",
   "private": false,
@@ -10,7 +10,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@hashport/react-client": "^0.0.3",
+    "@hashport/react-client": "^0.0.4",
     "@mui/base": "^5.0.0-beta.10",
     "@mui/icons-material": "^5.14.3",
     "@mui/material": "^5.14.3",

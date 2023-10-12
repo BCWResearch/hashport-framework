@@ -1,5 +1,13 @@
 # @hashport/widget
 
+## 0.0.3
+
+### Patch Changes
+
+-   ffe78b2: Display min of 0 in block confirmations
+-   Updated dependencies [ffe78b2]
+    -   @hashport/react-client@0.0.4
+
 ## 0.0.2
 
 ### Patch Changes
